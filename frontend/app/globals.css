@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --wilo-green: #79b53a;
+    --wilo-green-deep: #194d2b;
+    --wilo-green-soft: #edf6e4;
+    --wilo-border: #d6e6c8;
+    --wilo-ink: #183225;
+    --wilo-muted: #617565;
+    --wilo-panel: #ffffff;
+    --wilo-bg: #f5f8f1;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen antialiased;
+    color: var(--wilo-ink);
+    background-color: var(--wilo-bg);
+    background:
+      linear-gradient(180deg, rgba(121, 181, 58, 0.08) 0%, rgba(121, 181, 58, 0) 16rem),
+      linear-gradient(180deg, #f9fbf6 0%, #f2f6ee 100%);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: theme("backgroundImage.signal-grid");
+    background-size: 44px 44px;
+    opacity: 0.035;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+}
+
+@layer components {
+  .shell {
+    @apply relative z-[1] mx-auto w-full max-w-[1360px] px-4 pb-10 sm:px-5 lg:px-8;
+  }
+
+  .section-title {
+    @apply m-0 grid gap-2;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[0.72rem] uppercase tracking-[0.22em];
+    color: var(--wilo-green-deep);
+  }
+
+  .section-heading {
+    @apply font-display text-[clamp(2rem,4vw,3.8rem)] leading-[0.95] tracking-[-0.05em];
+  }
+
+  .glass-card {
+    @apply rounded-3xl shadow-haze;
+    border: 1px solid var(--wilo-border);
+    background: var(--wilo-panel);
+  }
+
+  .status-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.16em];
+    border: 1px solid var(--wilo-border);
+    background: #f8fbf4;
+    color: var(--wilo-green-deep);
+  }
+
+  .metric-card {
+    @apply rounded-[1.4rem] p-4 sm:p-5;
+    border: 1px solid var(--wilo-border);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbf5 100%);
+  }
+}

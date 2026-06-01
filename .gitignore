@@ -191,3 +191,21 @@ docs/build/
 local_config.py
 test_data/
 debug_output/
+
+# Frontend build and local runtime artifacts
+frontend/.next/
+frontend/node_modules/
+frontend/devserver.log
+frontend/prodserver.log
+frontend/prodserver-3001.log
+
+# Local Codex skill artifacts
+.agents/
+skills-lock.json
+
+# Local firmware build artifacts
+.arduino-build/
+.arduino-build-recv/
+
+# Local runtime state
+logs/pump/pump_state.json
