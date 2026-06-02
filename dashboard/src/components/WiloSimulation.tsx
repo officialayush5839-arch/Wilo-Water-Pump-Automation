@@ -80,6 +80,7 @@ interface PressurePoint {
 
 const DASHBOARD_POLL_MS = 3000;
 const MAX_HISTORY_POINTS = 20;
+const DEFAULT_API_BASE_URL = "http://192.168.119.111:5050";
 
 const formatTimestamp = (value?: string | null) => {
   if (!value) {
@@ -103,7 +104,10 @@ const formatTimestamp = (value?: string | null) => {
 export function WiloSimulation() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const apiBaseUrl = useMemo(() => import.meta.env.VITE_API_BASE_URL ?? "", []);
+  const apiBaseUrl = useMemo(
+    () => import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL,
+    [],
+  );
 
   const [manualOverrideEnabled, setManualOverrideEnabled] = useState(true);
   const [backendReachable, setBackendReachable] = useState(false);
@@ -324,6 +328,11 @@ export function WiloSimulation() {
         throw new Error(payload?.detail || payload?.error || `command ${response.status}`);
       }
 
+      setPumpMode(nextMode);
+      setSystemStatus((current) => ({
+        ...current,
+        pumpStatus: nextMode,
+      }));
       appendEvent(actionLabel, detail, payload.pump?.timestamp);
       toast({
         title: actionLabel,
@@ -345,6 +354,7 @@ export function WiloSimulation() {
   };
 
   const pumpRunning = pumpMode === "RUNNING";
+  const relayOn = pumpMeta?.pump_relay_on === true;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -431,6 +441,16 @@ export function WiloSimulation() {
               <div className="flex items-center justify-between">
                 <span className="text-sm">Network</span>
                 <span className="text-sm font-medium">{systemStatus.networkStatus}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Relay Output</span>
+                <span className="text-sm font-medium">
+                  {pumpMeta?.available === false
+                    ? "Unavailable"
+                    : relayOn
+                      ? "ON"
+                      : "OFF"}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">LoRa Packet</span>

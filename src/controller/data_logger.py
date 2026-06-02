@@ -81,7 +81,9 @@ class DataLogger:
             self._last_flush = now
 
     def close(self):
-        if self._file:
+        if not self._file:
+            return
+        if not self._file.closed:
             self._file.flush()
             self._file.close()
-            logger.info(f"CSV closed — {self._count} rows written")
+        logger.info(f"CSV closed — {self._count} rows written")

@@ -23,10 +23,14 @@ def _output_level(turn_on: bool) -> int:
     return GPIO.HIGH if turn_on else GPIO.LOW
 
 
-def _ensure_gpio() -> None:
+def _ensure_gpio(*, force_off: bool = False) -> None:
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=_output_level(False))
+    relay_level = _output_level(False) if force_off else None
+    if relay_level is None:
+        GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT)
+    else:
+        GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=relay_level)
     GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.LOW)
 
 
@@ -50,14 +54,14 @@ def _pump_state_from_gpio(gpio_level: int) -> bool:
 
 
 def set_pump(turn_on: bool) -> dict:
-    _ensure_gpio()
+    _ensure_gpio(force_off=False)
     GPIO.output(CFG.RELAY_PUMP_PIN, _output_level(turn_on))
     GPIO.output(CFG.LED_STATUS_PIN, GPIO.HIGH if turn_on else GPIO.LOW)
     return _write_state(turn_on)
 
 
 def read_status() -> dict:
-    _ensure_gpio()
+    _ensure_gpio(force_off=False)
     saved = read_json(CFG.DIRECT_PUMP_STATE_FILE) or {}
     gpio_level = int(GPIO.input(CFG.RELAY_PUMP_PIN))
     return {
