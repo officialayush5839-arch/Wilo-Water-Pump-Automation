@@ -163,4 +163,6 @@ class SX127x:
 
     def close(self):
         self.spi.close()
-        GPIO.cleanup()
+        # Do not reset unrelated GPIOs such as the pump relay pin.
+        # A global cleanup() here can leave the relay input floating.
+        GPIO.cleanup([self.reset_pin, self.dio0_pin])
