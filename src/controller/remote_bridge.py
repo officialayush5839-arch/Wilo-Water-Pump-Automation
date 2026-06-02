@@ -131,13 +131,12 @@ def set_pump_state(turn_on: bool) -> dict:
 
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT)
-    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT)
-
+    target_level = GPIO.HIGH if turn_on else GPIO.LOW
     if CFG.RELAY_ACTIVE_LOW:
-        GPIO.output(CFG.RELAY_PUMP_PIN, GPIO.LOW if turn_on else GPIO.HIGH)
-    else:
-        GPIO.output(CFG.RELAY_PUMP_PIN, GPIO.HIGH if turn_on else GPIO.LOW)
+        target_level = GPIO.LOW if turn_on else GPIO.HIGH
+    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=target_level)
+    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.HIGH if turn_on else GPIO.LOW)
+    GPIO.output(CFG.RELAY_PUMP_PIN, target_level)
 
     GPIO.output(CFG.LED_STATUS_PIN, GPIO.HIGH if turn_on else GPIO.LOW)
 

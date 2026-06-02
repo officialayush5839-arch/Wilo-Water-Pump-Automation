@@ -15,11 +15,10 @@ import tank_config as CFG
 def main() -> int:
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT)
-    GPIO.setup(CFG.RELAY_VALVE_PIN, GPIO.OUT)
-    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT)
-
     off_level = GPIO.HIGH if CFG.RELAY_ACTIVE_LOW else GPIO.LOW
+    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=off_level)
+    GPIO.setup(CFG.RELAY_VALVE_PIN, GPIO.OUT, initial=off_level)
+    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.LOW)
     GPIO.output(CFG.RELAY_PUMP_PIN, off_level)
     GPIO.output(CFG.RELAY_VALVE_PIN, off_level)
     GPIO.output(CFG.LED_STATUS_PIN, GPIO.LOW)

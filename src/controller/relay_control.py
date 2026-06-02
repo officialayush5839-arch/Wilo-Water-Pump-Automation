@@ -47,6 +47,9 @@ class RelayController:
         gpio.setup(self.btn_off,   gpio.IN, pull_up_down=gpio.PUD_UP)
 
         # Start with everything OFF
+        gpio.output(self.pump_pin, gpio.HIGH if self.active_low else gpio.LOW)
+        gpio.output(self.valve_pin, gpio.HIGH if self.active_low else gpio.LOW)
+        gpio.output(self.led_pin, gpio.LOW)
         self._relay(self.pump_pin, False)
         self._relay(self.valve_pin, False)
         gpio.output(self.led_pin, gpio.LOW)

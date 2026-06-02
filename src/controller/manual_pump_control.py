@@ -26,8 +26,8 @@ def _output_level(turn_on: bool) -> int:
 def _ensure_gpio() -> None:
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT)
-    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT)
+    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=_output_level(False))
+    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.LOW)
 
 
 def _write_state(turn_on: bool) -> dict:
