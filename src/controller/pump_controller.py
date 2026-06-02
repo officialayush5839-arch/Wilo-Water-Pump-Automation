@@ -30,6 +30,7 @@ sys.path.insert(0, _HERE)
 import tank_config as CFG
 from pump_logic import HybridPumpLogic, PumpDecision
 from data_logger import DataLogger
+from runtime_channel import atomic_write_json, read_json, remove_file
 
 # ── Logging setup ────────────────────────────────────────────
 
@@ -110,6 +111,9 @@ class PumpController:
         # ── Latest data ──
         self.last_packet = None
         self.upper_pct   = None
+        self.last_decision = None
+        self.last_rssi = None
+        self.last_snr = None
 
     def initialize(self):
         logger.info("=" * 60)
@@ -176,6 +180,9 @@ class PumpController:
             lora_timeout_s=CFG.LORA_TIMEOUT_S, max_run_min=CFG.MAX_CONTINUOUS_RUN_MIN,
             dry_run_a=CFG.PUMP_DRY_RUN_CURRENT_A, dry_run_enabled=CFG.DRY_RUN_PROTECTION,
             power_delay_s=CFG.POWER_RESTORE_DELAY_S,
+            require_valid_lora_before_start=CFG.REQUIRE_VALID_LORA_BEFORE_START,
+            voltage_guard_enabled=CFG.POWER_VOLTAGE_PROTECTION,
+            min_voltage_ac=CFG.MIN_MAINS_VOLTAGE_AC,
             override_timeout_min=CFG.OVERRIDE_TIMEOUT_MIN,
             ml_enabled=CFG.ML_ENABLED, ml_window_min=CFG.ML_ACTIVATION_WINDOW_MIN
         )
@@ -184,6 +191,7 @@ class PumpController:
         self._update_ml_prediction()
 
         logger.info("All subsystems initialised ✓")
+        self._write_runtime_status(decision=None, current_a=None, voltage_v=None)
 
     # ── ML prediction (optional) ──────────────────────────────
 
@@ -202,6 +210,79 @@ class PumpController:
         except Exception as e:
             logger.warning(f"ML prediction unavailable: {e}")
 
+    def _consume_control_command(self):
+        try:
+            command = read_json(CFG.CONTROL_FILE)
+        except Exception as e:
+            logger.warning(f"Control command read failed: {e}")
+            return
+
+        if not command:
+            return
+
+        remove_file(CFG.CONTROL_FILE)
+        issued_at = command.get('issued_at')
+        action = command.get('action')
+
+        if issued_at:
+            try:
+                age_s = (datetime.now() - datetime.fromisoformat(issued_at)).total_seconds()
+                if age_s > CFG.CONTROL_COMMAND_TTL_S:
+                    logger.warning("Ignoring stale control command %s age=%.1fs", action, age_s)
+                    return
+            except ValueError:
+                logger.warning("Ignoring malformed control command timestamp: %s", issued_at)
+                return
+
+        if action == 'override_on':
+            self.logic.set_override('ON')
+            logger.info("Control command accepted: override ON")
+        elif action == 'override_off':
+            self.logic.set_override('OFF')
+            logger.info("Control command accepted: override OFF")
+        elif action == 'override_clear':
+            self.logic.set_override(None)
+            logger.info("Control command accepted: override CLEAR")
+        else:
+            logger.warning("Unknown control command: %s", action)
+
+    def _write_runtime_status(self, decision, current_a, voltage_v):
+        packet = self.last_packet or {}
+        payload = {
+            'connected': True,
+            'controller_mode': 'dry-run' if self.dry_run else 'live',
+            'current_amps': current_a,
+            'decision': {
+                'action': decision.action if decision else None,
+                'reason': decision.reason if decision else None,
+                'state': decision.state.value if decision else None,
+                'ts': decision.ts.isoformat() if decision else None,
+            },
+            'host': os.uname().nodename,
+            'last_lora_ts': self.logic.last_lora_ts.isoformat() if self.logic and self.logic.last_lora_ts else None,
+            'lora_age_s': (
+                round((datetime.now() - self.logic.last_lora_ts).total_seconds(), 1)
+                if self.logic and self.logic.last_lora_ts else None
+            ),
+            'lora_pkt': packet.get('pkt'),
+            'lora_rssi': self.last_rssi,
+            'lora_snr': self.last_snr,
+            'ml_prediction': self.logic.ml_prediction if self.logic else None,
+            'override': self.logic.override if self.logic else None,
+            'pressure_kpa': packet.get('pressure_kpa'),
+            'pump_relay_on': self.relay.pump_on if self.relay else False,
+            'sensor_status': packet.get('status'),
+            'sensor_voltage': packet.get('voltage'),
+            'timestamp': datetime.now().isoformat(),
+            'upper_pct': self.upper_pct,
+            'voltage_ac': voltage_v,
+        }
+
+        try:
+            atomic_write_json(CFG.STATUS_FILE, payload)
+        except Exception as e:
+            logger.debug(f"Runtime status write failed: {e}")
+
     # ── Main loop ─────────────────────────────────────────────
 
     def run(self):
@@ -213,6 +294,7 @@ class PumpController:
             try:
                 cycle += 1
                 rssi = snr = None
+                self._consume_control_command()
 
                 # ── Read LoRa ──
                 if self.lora and self.lora.available():
@@ -221,6 +303,8 @@ class PumpController:
                         raw_str = ''.join(chr(c) for c in raw)
                         rssi = self.lora.get_packet_rssi()
                         snr  = self.lora.get_packet_snr()
+                        self.last_rssi = rssi
+                        self.last_snr = snr
                         pkt_data = parse_lora_packet(raw_str)
 
                         if pkt_data:
@@ -231,15 +315,24 @@ class PumpController:
                                 self.upper_pct = None
                                 logger.debug(f"LoRa #{pkt_data['pkt']}  SENSOR FAULT  RSSI={rssi}")
                             else:
-                                self.logic.signal_lora_ok()
-                                self.upper_pct = pressure_to_level_pct(
-                                    pkt_data['pressure_kpa'])
-                                logger.debug(
-                                    f"LoRa #{pkt_data['pkt']}  "
-                                    f"{pkt_data['pressure_kpa']:.2f}kPa → "
-                                    f"{self.upper_pct:.1f}%  "
-                                    f"RSSI={rssi}  SNR={snr:.1f}"
-                                )
+                                upper_pct = pressure_to_level_pct(pkt_data['pressure_kpa'])
+                                if upper_pct is None:
+                                    self.logic.signal_lora_fault()
+                                    self.upper_pct = None
+                                    logger.warning(
+                                        "LoRa #%s invalid pressure payload %.2fkPa",
+                                        pkt_data['pkt'],
+                                        pkt_data['pressure_kpa'],
+                                    )
+                                else:
+                                    self.logic.signal_lora_ok()
+                                    self.upper_pct = upper_pct
+                                    logger.debug(
+                                        f"LoRa #{pkt_data['pkt']}  "
+                                        f"{pkt_data['pressure_kpa']:.2f}kPa → "
+                                        f"{self.upper_pct:.1f}%  "
+                                        f"RSSI={rssi}  SNR={snr:.1f}"
+                                    )
                     except Exception as e:
                         logger.error(f"LoRa read error: {e}")
 
@@ -259,8 +352,10 @@ class PumpController:
                 decision = self.logic.decide(
                     upper_pct=self.upper_pct,
                     pump_is_on=pump_is_on,
-                    current_amps=current_a
+                    current_amps=current_a,
+                    voltage_ac=voltage_v
                 )
+                self.last_decision = decision
 
                 # ── Act ──
                 if decision.action == 'ON' and not pump_is_on:
@@ -284,6 +379,7 @@ class PumpController:
                     pump_relay=(self.relay.pump_on if self.relay else False),
                     decision=decision,
                 )
+                self._write_runtime_status(decision=decision, current_a=current_a, voltage_v=voltage_v)
 
                 # ── Periodic ML update ──
                 if CFG.ML_ENABLED:

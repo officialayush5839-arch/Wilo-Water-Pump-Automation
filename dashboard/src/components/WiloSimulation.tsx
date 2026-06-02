@@ -1,421 +1,507 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { SystemDashboard } from "./SystemDashboard";
-import { TimelineSimulation } from "./TimelineSimulation";
 import { Card } from "@/components/ui/card";
-import { RotateCcw, FastForward, SkipBack, Activity, Zap, AlertTriangle, Settings } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  LoaderCircle,
+  Power,
+  Settings,
+  ShieldAlert,
+  Zap,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+
+type PumpMode = "STANDBY" | "RUNNING";
+
+interface OperatorEvent {
+  id: number;
+  action: string;
+  detail: string;
+  timestamp: string;
+}
+
+interface PumpStatusPayload {
+  available?: boolean;
+  pump_relay_on?: boolean | null;
+  timestamp?: string | null;
+  relay_pin?: number | null;
+  active_low?: boolean | null;
+  gpio_level?: number | null;
+  error?: string | null;
+}
+
+interface DashboardStatusPayload {
+  ok: boolean;
+  manual_override_available?: boolean;
+  manual_override_enabled?: boolean;
+  pump?: PumpStatusPayload;
+  telemetry?: {
+    status?: string;
+    timestamp?: string;
+    pressure_kpa?: number;
+    voltage?: number;
+    packet?: number;
+  };
+  timestamp?: string;
+}
+
+const DASHBOARD_POLL_MS = 5000;
+
+const formatTimestamp = (value?: string | null) => {
+  if (!value) {
+    return new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return parsed.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 export function WiloSimulation() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [currentDay, setCurrentDay] = useState(1);
+  const apiBaseUrl = useMemo(() => import.meta.env.VITE_API_BASE_URL ?? "", []);
 
-  // System status state
-
+  const [manualOverrideEnabled, setManualOverrideEnabled] = useState(true);
+  const [backendReachable, setBackendReachable] = useState(false);
+  const [backendError, setBackendError] = useState<string | null>(null);
+  const [pumpMode, setPumpMode] = useState<PumpMode>("STANDBY");
+  const [pumpMeta, setPumpMeta] = useState<PumpStatusPayload | null>(null);
+  const [pressureKpa, setPressureKpa] = useState<number | null>(null);
+  const [sensorVoltage, setSensorVoltage] = useState<number | null>(null);
+  const [telemetryPacket, setTelemetryPacket] = useState<number | null>(null);
+  const [isBootstrapping, setIsBootstrapping] = useState(true);
+  const [isCommandPending, setIsCommandPending] = useState(false);
   const [systemStatus, setSystemStatus] = useState({
     pumpStatus: "STANDBY",
-    aiConfidence: "94%",
+    aiConfidence: "Manual",
     sensorHealth: "7/7 Active",
-    uptime: "0.0 days",
-    networkStatus: "Connected"
+    uptime: "Live backend",
+    networkStatus: "Disconnected",
   });
-
   const [aiPredictions, setAiPredictions] = useState({
-    nextStart: "06:00 AM",
-    duration: "45 min",
-    dataSource: "Real",
-    reliability: "High"
+    nextStart: "Manual override",
+    duration: "Operator controlled",
+    dataSource: "Flask API",
+    reliability: "High",
   });
+  const [operatorEvents, setOperatorEvents] = useState<OperatorEvent[]>([
+    {
+      id: 1,
+      action: "Dashboard ready",
+      detail: "Waiting for Flask backend status.",
+      timestamp: formatTimestamp(),
+    },
+  ]);
 
-  const timelineEvents = [
-    {
-      id: "day1",
-      day: 1,
-      title: "Day 1: Sensor Degradation Begins",
-      status: "optimal" as const,
-      sensorStatus: "6/7 Active",
-      startTime: "06:00 AM",
-      duration: "45 min",
-      aiDecision: "Water level sensor failed. Compensating using usage pattern analysis and temperature correlation. Confidence: 98%"
-    },
-    {
-      id: "day10",
-      day: 10,
-      title: "Day 10: Multiple Sensor Failures",
-      status: "degraded" as const,
-      sensorStatus: "4/7 Failed",
-      startTime: "05:50 AM",
-      duration: "38 min",
-      aiDecision: "Hybrid mode activated. Blending synthetic patterns with remaining sensor data. Adjusting for historical peak usage. Confidence: 85%"
-    },
-    {
-      id: "day20",
-      day: 20,
-      title: "Day 20: Critical Sensor Failure",
-      status: "critical" as const,
-      sensorStatus: "Only Date/Time",
-      startTime: "06:00 AM",
-      duration: "35 min",
-      aiDecision: "Fallback to hardcoded safe daily cycle. Conservative approach ensuring no overflow. System remains operational. Confidence: 75%"
-    },
-    {
-      id: "day30",
-      day: 30,
-      title: "Day 30: Maintenance & Recovery",
-      status: "restored" as const,
-      sensorStatus: "7/7 Active",
-      startTime: "05:45 AM",
-      duration: "42 min",
-      aiDecision: "All sensors restored. AI recalibrating with fresh data. Improved predictions using 30-day learning cycle. Confidence: 96%"
-    }
-  ];
-
-  const updateDashboard = () => {
-    if (currentDay <= 5) {
-      setSystemStatus({
-        pumpStatus: "RUNNING",
-        aiConfidence: "98%",
-        sensorHealth: "6/7 Active",
-        uptime: `${currentDay - 1}.${Math.floor(Math.random() * 10)} days`,
-        networkStatus: "Connected"
-      });
-      setAiPredictions({
-        nextStart: "06:00 AM",
-        duration: "45 min",
-        dataSource: "Real+Synthetic",
-        reliability: "High"
-      });
-    } else if (currentDay <= 15) {
-      setSystemStatus({
-        pumpStatus: "RUNNING",
-        aiConfidence: "85%",
-        sensorHealth: "4/7 Active",
-        uptime: `${currentDay - 1}.${Math.floor(Math.random() * 10)} days`,
-        networkStatus: "Connected"
-      });
-      setAiPredictions({
-        nextStart: `${5 + Math.floor(Math.random() * 2)}:${30 + Math.floor(Math.random() * 30)} AM`,
-        duration: `${35 + Math.floor(Math.random() * 15)} min`,
-        dataSource: "Hybrid",
-        reliability: "Medium"
-      });
-    } else if (currentDay <= 25) {
-      setSystemStatus({
-        pumpStatus: "RUNNING",
-        aiConfidence: "75%",
-        sensorHealth: "2/7 Active",
-        uptime: `${currentDay - 1}.${Math.floor(Math.random() * 10)} days`,
-        networkStatus: "Disconnected"
-      });
-      setAiPredictions({
-        nextStart: "06:00 AM",
-        duration: "35 min",
-        dataSource: "Synthetic",
-        reliability: "Conservative"
-      });
-    } else {
-      setSystemStatus({
-        pumpStatus: "RUNNING",
-        aiConfidence: "96%",
-        sensorHealth: "7/7 Active",
-        uptime: `${currentDay - 1}.${Math.floor(Math.random() * 10)} days`,
-        networkStatus: "Connected"
-      });
-      setAiPredictions({
-        nextStart: "05:45 AM",
-        duration: "42 min",
-        dataSource: "Real",
-        reliability: "High"
-      });
-    }
+  const appendEvent = (action: string, detail: string, timestamp?: string | null) => {
+    setOperatorEvents((current) => [
+      {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        action,
+        detail,
+        timestamp: formatTimestamp(timestamp),
+      },
+      ...current,
+    ]);
   };
 
-  const handleDayChange = (value: number[]) => {
-    const newDay = value[0];
-    setCurrentDay(newDay);
-    toast({
-      title: `Day ${newDay}`,
-      description: `Switched to day ${newDay}`,
-    });
+  const formatMetric = (value: number | null, digits: number) => {
+    if (value === null || Number.isNaN(value)) {
+      return "--";
+    }
+    return value.toFixed(digits);
   };
 
-  const resetDemo = () => {
-    setCurrentDay(1);
+  const applyDashboardStatus = (payload: DashboardStatusPayload) => {
+    const relayOn = payload.pump?.pump_relay_on === true;
+    const available = payload.manual_override_available !== false && payload.pump?.available !== false;
+    const telemetryOk = payload.telemetry?.status && payload.telemetry.status !== "disconnected";
+
+    setBackendReachable(true);
+    setBackendError(null);
+    setManualOverrideEnabled(available);
+    setPumpMeta(payload.pump ?? null);
+    setPumpMode(relayOn ? "RUNNING" : "STANDBY");
+    setPressureKpa(
+      typeof payload.telemetry?.pressure_kpa === "number" ? payload.telemetry.pressure_kpa : null
+    );
+    setSensorVoltage(
+      typeof payload.telemetry?.voltage === "number" ? payload.telemetry.voltage : null
+    );
+    setTelemetryPacket(
+      typeof payload.telemetry?.packet === "number" ? payload.telemetry.packet : null
+    );
     setSystemStatus({
-      pumpStatus: "STANDBY",
-      aiConfidence: "94%",
-      sensorHealth: "7/7 Active",
-      uptime: "0.0 days",
-      networkStatus: "Connected"
+      pumpStatus: relayOn ? "RUNNING" : "STANDBY",
+      aiConfidence: available ? "Manual" : "Unavailable",
+      sensorHealth: telemetryOk ? "7/7 Active" : "Telemetry waiting",
+      uptime: payload.pump?.timestamp ? `Last command ${formatTimestamp(payload.pump.timestamp)}` : "Live backend",
+      networkStatus: telemetryOk ? "Connected" : "Degraded",
     });
     setAiPredictions({
-      nextStart: "06:00 AM",
-      duration: "45 min",
-      dataSource: "Real",
-      reliability: "High"
-    });
-
-    toast({
-      title: "Demo Reset",
-      description: "System returned to Day 1",
+      nextStart: relayOn ? "Running now" : available ? "Awaiting operator" : "Backend unavailable",
+      duration: relayOn ? "Manual until stopped" : "Operator controlled",
+      dataSource: "Flask API",
+      reliability: available ? "High" : "Conservative",
     });
   };
 
-  // Filter events to only show those that have been reached
+  const loadDashboardStatus = async (announceFailure: boolean) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/dashboard/status`, {
+        headers: { Accept: "application/json" },
+      });
 
-  // Filter events to only show those that have been reached
-  const visibleEvents = timelineEvents.filter(event => {
-    if (currentDay >= 30) return true;
-    if (currentDay >= 20) return event.day <= 20;
-    if (currentDay >= 10) return event.day <= 10;
-    return event.day <= 1;
-  });
+      if (!response.ok) {
+        throw new Error(`status ${response.status}`);
+      }
+
+      const payload = (await response.json()) as DashboardStatusPayload;
+      applyDashboardStatus(payload);
+      return true;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "status request failed";
+      setBackendReachable(false);
+      setBackendError(message);
+      setManualOverrideEnabled(false);
+      setSystemStatus((current) => ({
+        ...current,
+        aiConfidence: "Unavailable",
+        networkStatus: "Disconnected",
+      }));
+      setAiPredictions((current) => ({
+        ...current,
+        nextStart: "Backend offline",
+        reliability: "Conservative",
+      }));
+
+      if (announceFailure) {
+        appendEvent("Backend unavailable", `Unable to load Flask API status: ${message}`);
+      }
+
+      return false;
+    } finally {
+      setIsBootstrapping(false);
+    }
+  };
 
   useEffect(() => {
-    updateDashboard();
-  }, [currentDay]);
+    let active = true;
+
+    const bootstrap = async () => {
+      const ok = await loadDashboardStatus(true);
+      if (ok && active) {
+        appendEvent("Backend connected", "Dashboard synced with Flask control API.");
+      }
+    };
+
+    void bootstrap();
+
+    const interval = window.setInterval(() => {
+      void loadDashboardStatus(false);
+    }, DASHBOARD_POLL_MS);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [apiBaseUrl]);
+
+  const sendPumpCommand = async (nextMode: PumpMode) => {
+    if (!manualOverrideEnabled) {
+      toast({
+        title: "Manual override unavailable",
+        description: "The backend did not expose manual pump control.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const endpoint = nextMode === "RUNNING" ? "/api/pump/on" : "/api/pump/off";
+    const actionLabel = nextMode === "RUNNING" ? "Pump started" : "Pump stopped";
+    const detail =
+      nextMode === "RUNNING"
+        ? "Manual override turned the transfer pump on."
+        : "Manual override turned the transfer pump off.";
+
+    setIsCommandPending(true);
+
+    try {
+      const response = await fetch(`${apiBaseUrl}${endpoint}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ source: "dashboard-ui" }),
+      });
+
+      const payload = (await response.json()) as
+        | { ok?: boolean; pump?: PumpStatusPayload; detail?: string; error?: string }
+        | undefined;
+
+      if (!response.ok || !payload?.ok) {
+        throw new Error(payload?.detail || payload?.error || `command ${response.status}`);
+      }
+
+      const relayOn = payload.pump?.pump_relay_on === true;
+      setPumpMeta(payload.pump ?? null);
+      setPumpMode(relayOn ? "RUNNING" : "STANDBY");
+      setSystemStatus((current) => ({
+        ...current,
+        pumpStatus: relayOn ? "RUNNING" : "STANDBY",
+        uptime: payload.pump?.timestamp
+          ? `Last command ${formatTimestamp(payload.pump.timestamp)}`
+          : current.uptime,
+      }));
+      setAiPredictions((current) => ({
+        ...current,
+        nextStart: relayOn ? "Running now" : "Awaiting operator",
+        duration: relayOn ? "Manual until stopped" : "Operator controlled",
+      }));
+
+      appendEvent(actionLabel, detail, payload.pump?.timestamp);
+      toast({
+        title: actionLabel,
+        description: detail,
+      });
+
+      void loadDashboardStatus(false);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "command failed";
+      appendEvent("Command failed", message);
+      toast({
+        title: "Pump command failed",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsCommandPending(false);
+    }
+  };
+
+  const pumpRunning = pumpMode === "RUNNING";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto px-4 py-4 max-w-7xl">
-        <Card className="p-6 mb-6 bg-gradient-primary text-white border-0 shadow-xl">
+      <div className="container mx-auto max-w-7xl px-4 py-4">
+        <Card className="mb-6 border-0 bg-gradient-primary p-6 text-white shadow-xl">
           <div className="relative">
             <Button
-              onClick={() => navigate('/admin')}
+              onClick={() => navigate("/admin")}
               variant="secondary"
               size="sm"
-              className="absolute top-0 right-0 flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white border-white/30"
+              className="absolute right-0 top-0 flex items-center gap-2 border-white/30 bg-white/20 text-white hover:bg-white/30"
             >
               <Settings className="h-4 w-4" />
               Admin
             </Button>
             <div className="text-center">
-              <div className="flex items-center justify-center gap-3 mb-3">
-                <h1 className="text-3xl font-bold">Wilo AI Water Transfer System - Demo Dashboard</h1>
+              <div className="mb-3 flex items-center justify-center gap-3">
+                <h1 className="text-3xl font-bold">Wilo AI Water Transfer System</h1>
               </div>
               <div className="mt-3 text-base">
-                <span className="bg-white/20 px-4 py-2 rounded-full">
-                  Day {currentDay} of 30
+                <span className="rounded-full bg-white/20 px-4 py-2">
+                  Live dashboard with Flask-backed manual pump control
                 </span>
               </div>
             </div>
           </div>
         </Card>
 
-        {/* Visual Progress Indicators */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <Card className="p-6 bg-card border-border">
-            <div className="flex items-center gap-3 mb-4">
+        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <Card className="border-border bg-card p-6">
+            <div className="mb-4 flex items-center gap-3">
               <Activity className="h-6 w-6 text-primary" />
               <h3 className="text-lg font-semibold">System Health</h3>
             </div>
             <div className="space-y-3">
               <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>AI Confidence</span>
-                  <span>{systemStatus.aiConfidence}</span>
+                <div className="mb-1 flex justify-between text-sm">
+                  <span>Water Pressure</span>
+                  <span>{pressureKpa !== null ? `${formatMetric(pressureKpa, 2)} kPa` : "--"}</span>
                 </div>
-                <Progress
-                  value={parseInt(systemStatus.aiConfidence)}
-                  className="h-2"
-                />
+                <Progress value={backendReachable ? 100 : 35} className="h-2" />
               </div>
               <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Sensor Health</span>
-                  <span>{systemStatus.sensorHealth.split('/')[0]}/7</span>
+                <div className="mb-1 flex justify-between text-sm">
+                  <span>Manual Override</span>
+                  <span>{manualOverrideEnabled ? "Enabled" : "Unavailable"}</span>
                 </div>
-                <Progress
-                  value={(parseInt(systemStatus.sensorHealth.split('/')[0]) / 7) * 100}
-                  className="h-2"
-                />
+                <Progress value={manualOverrideEnabled ? 100 : 0} className="h-2" />
               </div>
               <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Simulation Progress</span>
-                  <span>{Math.round((currentDay / 30) * 100)}%</span>
+                <div className="mb-1 flex justify-between text-sm">
+                  <span>Pump Availability</span>
+                  <span>{pumpRunning ? "Active" : "Ready"}</span>
                 </div>
-                <Progress
-                  value={(currentDay / 30) * 100}
-                  className="h-2"
-                />
+                <Progress value={pumpRunning ? 100 : 68} className="h-2" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-border">
-            <div className="flex items-center gap-3 mb-4">
+          <Card className="border-border bg-card p-6">
+            <div className="mb-4 flex items-center gap-3">
               <Zap className="h-6 w-6 text-primary" />
-              <h3 className="text-lg font-semibold">System Status</h3>
+              <h3 className="text-lg font-semibold">Pump State</h3>
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm">Pump Status</span>
+                <span className="text-sm">Current Pump Status</span>
                 <div className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full ${systemStatus.pumpStatus === "RUNNING" ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
+                  <div
+                    className={`h-3 w-3 rounded-full ${
+                      pumpRunning ? "animate-pulse bg-green-500" : "bg-gray-400"
+                    }`}
+                  />
                   <span className="text-sm font-medium">{systemStatus.pumpStatus}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Network</span>
-                <div className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full ${systemStatus.networkStatus === "Connected" ? "bg-green-500" : "bg-red-500"}`} />
-                  <span className="text-sm font-medium">{systemStatus.networkStatus}</span>
-                </div>
+                <span className="text-sm">Control Source</span>
+                <span className="text-sm font-medium">
+                  {manualOverrideEnabled ? "Flask manual API" : "Unavailable"}
+                </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Uptime</span>
-                <span className="text-sm font-medium">{systemStatus.uptime}</span>
+                <span className="text-sm">Network</span>
+                <span className="text-sm font-medium">{systemStatus.networkStatus}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">LoRa Packet</span>
+                <span className="text-sm font-medium">
+                  {telemetryPacket !== null ? `#${telemetryPacket}` : "--"}
+                </span>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-border">
-            <div className="flex items-center gap-3 mb-4">
+          <Card className="border-border bg-card p-6">
+            <div className="mb-4 flex items-center gap-3">
               <AlertTriangle className="h-6 w-6 text-primary" />
-              <h3 className="text-lg font-semibold">Alert Level</h3>
+              <h3 className="text-lg font-semibold">Operator Status</h3>
             </div>
             <div className="text-center">
-              <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-2xl font-bold mb-3 ${currentDay <= 5 ? "bg-green-100 text-green-700" :
-                currentDay <= 15 ? "bg-yellow-100 text-yellow-700" :
-                  currentDay <= 25 ? "bg-red-100 text-red-700" :
-                    "bg-blue-100 text-blue-700"
-                }`}>
-                {currentDay <= 5 ? "✓" : currentDay <= 15 ? "!" : currentDay <= 25 ? "⚠" : "✓"}
+              <div
+                className={`mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold ${
+                  manualOverrideEnabled
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {manualOverrideEnabled ? "MAN" : "ERR"}
               </div>
               <p className="text-sm font-medium">
-                {currentDay <= 5 ? "Optimal" :
-                  currentDay <= 15 ? "Degraded" :
-                    currentDay <= 25 ? "Critical" : "Restored"}
+                {manualOverrideEnabled
+                  ? "Manual override endpoint is available"
+                  : backendError ?? "Manual override endpoint is not available"}
               </p>
             </div>
           </Card>
         </div>
 
-        <SystemDashboard
-          systemStatus={systemStatus}
-          aiPredictions={aiPredictions}
-        />
+        <SystemDashboard systemStatus={systemStatus} aiPredictions={aiPredictions} />
 
-        <TimelineSimulation
-          events={visibleEvents}
-          currentDay={currentDay}
-        />
-
-        {/* Enhanced Controls */}
-        <div className="mt-8 max-w-2xl mx-auto">
-          <Card className="p-6 bg-card border-border">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold mb-2">Simulation Controls</h3>
-              <p className="text-sm text-muted-foreground">Navigate through the 30-day simulation timeline</p>
-            </div>
-
-            {/* Quick Jump Buttons */}
-            <div className="flex justify-center gap-2 mb-6">
-              <Button
-                onClick={() => handleDayChange([1])}
-                variant={currentDay <= 5 ? "default" : "outline"}
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <SkipBack className="h-4 w-4" />
-                Day 1-5
-              </Button>
-              <Button
-                onClick={() => handleDayChange([10])}
-                variant={currentDay > 5 && currentDay <= 15 ? "default" : "outline"}
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                Day 10-15
-              </Button>
-              <Button
-                onClick={() => handleDayChange([20])}
-                variant={currentDay > 15 && currentDay <= 25 ? "default" : "outline"}
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                Day 20-25
-              </Button>
-              <Button
-                onClick={() => handleDayChange([30])}
-                variant={currentDay > 25 ? "default" : "outline"}
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <FastForward className="h-4 w-4" />
-                Day 30
-              </Button>
-            </div>
-
-            {/* Day Slider */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-4">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Day Selection
-                </label>
-                <div className="bg-primary/10 px-3 py-1 rounded-full">
-                  <span className="text-sm font-bold text-primary">Day {currentDay}</span>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <Card className="border-border bg-card p-6">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <div className="mb-2 flex items-center gap-3">
+                  <Power className="h-6 w-6 text-primary" />
+                  <h2 className="text-xl font-semibold text-foreground">
+                    Manual Pump Override
+                  </h2>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Start or stop the pump directly through the Flask control API.
+                </p>
               </div>
-              <div className="px-4">
-                <Slider
-                  value={[currentDay]}
-                  onValueChange={handleDayChange}
-                  max={30}
-                  min={1}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                  <span>Day 1</span>
-                  <span>Day 10</span>
-                  <span>Day 20</span>
-                  <span>Day 30</span>
+              {isBootstrapping || isCommandPending ? (
+                <div className="flex min-w-40 items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground">
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                  Syncing
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="rounded-xl border border-border bg-muted/40 p-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  Command State
+                </p>
+                <p className="text-2xl font-bold text-foreground">{pumpMode}</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {pumpRunning
+                    ? "Pump is currently running under backend manual control."
+                    : "Pump is idle and waiting for an operator command."}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-muted/40 p-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  Water pressure
+                </p>
+                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  <ShieldAlert className="h-4 w-4 text-primary" />
+                  {pressureKpa !== null
+                    ? `${formatMetric(pressureKpa, 2)} kPa at ${formatMetric(sensorVoltage, 3)} V`
+                    : manualOverrideEnabled
+                      ? `GPIO relay ready${pumpMeta?.relay_pin ? ` on pin ${pumpMeta.relay_pin}` : ""}.`
+                      : "Backend manual override is not available on this host."}
                 </div>
               </div>
             </div>
 
-            {/* Control Buttons */}
-            <div className="flex justify-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Button
-                onClick={() => handleDayChange([Math.max(1, currentDay - 1)])}
-                variant="outline"
-                size="sm"
-                disabled={currentDay === 1}
-                className="flex items-center gap-2"
+                onClick={() => void sendPumpCommand("RUNNING")}
+                disabled={!manualOverrideEnabled || pumpRunning || isCommandPending}
+                className="flex-1"
               >
-                <SkipBack className="h-4 w-4" />
-                Previous
+                Turn Pump On
               </Button>
               <Button
-                onClick={resetDemo}
+                onClick={() => void sendPumpCommand("STANDBY")}
+                disabled={!manualOverrideEnabled || !pumpRunning || isCommandPending}
                 variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
+                className="flex-1"
               >
-                <RotateCcw className="h-4 w-4" />
-                Reset
-              </Button>
-              <Button
-                onClick={() => handleDayChange([Math.min(30, currentDay + 1)])}
-                variant="outline"
-                size="sm"
-                disabled={currentDay === 30}
-                className="flex items-center gap-2"
-              >
-                Next
-                <FastForward className="h-4 w-4" />
+                Turn Pump Off
               </Button>
             </div>
           </Card>
+
+          <Card className="border-border bg-card p-6">
+            <div className="mb-4 flex items-center gap-3">
+              <Activity className="h-6 w-6 text-primary" />
+              <h2 className="text-xl font-semibold text-foreground">Recent Actions</h2>
+            </div>
+            <div className="space-y-3">
+              {operatorEvents.slice(0, 5).map((event) => (
+                <div key={event.id} className="rounded-xl border border-border bg-muted/30 p-4">
+                  <div className="mb-1 flex items-center justify-between gap-3">
+                    <p className="font-medium text-foreground">{event.action}</p>
+                    <span className="text-xs text-muted-foreground">{event.timestamp}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{event.detail}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
-
-
       </div>
     </div>
   );

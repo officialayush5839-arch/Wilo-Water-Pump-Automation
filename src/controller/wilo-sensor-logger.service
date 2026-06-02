@@ -1,0 +1,16 @@
+[Unit]
+Description=Wilo Sensor CSV Logger
+After=network.target
+
+[Service]
+Type=simple
+User=wilopi
+WorkingDirectory=/home/wilopi/Desktop/Wilo-Water-Pump-Automation/src/controller
+ExecStart=/usr/bin/python3 current_voltage_logger.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

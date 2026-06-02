@@ -86,7 +86,8 @@ void setup() {
   LoRa.disableCrc();
   LoRa.setPreambleLength(8);
   LoRa.setSyncWord(0xF3);
-  Serial.println("LoRa OK. Starting readings...\n");
+  Serial.println("LoRa OK. BW=125kHz SF=7 CR=4/5 PRE=8 CRC=OFF SW=0xF3");
+  Serial.println("Starting readings...\n");
 }
 
 void loop() {

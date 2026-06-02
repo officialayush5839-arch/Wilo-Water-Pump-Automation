@@ -63,9 +63,10 @@ class SensorReader:
             i2c = busio.I2C(board.SCL, board.SDA)
             self.ads = ADS.ADS1115(i2c, address=self.adc_addr)
             self.ads.gain = 2/3                     # ±6.144 V (allows 0-5 V)
-            ch = [ADS.P0, ADS.P1, ADS.P2, ADS.P3]
-            self.chan_i = AnalogIn(self.ads, ch[self.ch_i])
-            self.chan_v = AnalogIn(self.ads, ch[self.ch_v])
+            # Newer adafruit_ads1x15 releases accept integer channel indices
+            # directly and may not expose ADS.P0..ADS.P3 constants.
+            self.chan_i = AnalogIn(self.ads, self.ch_i)
+            self.chan_v = AnalogIn(self.ads, self.ch_v)
             self.available = True
             logger.info(f"ADS1115 OK  current→A{self.ch_i}  voltage→A{self.ch_v}")
             return True

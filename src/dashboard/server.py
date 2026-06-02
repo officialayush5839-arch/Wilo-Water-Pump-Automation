@@ -8,15 +8,18 @@ Usage: python3 server.py [--port 5050] [--fresh]
 
 import serial
 import serial.tools.list_ports
-import re, csv, threading, queue, time, os, json, argparse
+import re, csv, threading, queue, time, os, json, argparse, sys, traceback
 from datetime import datetime
-from flask import Flask, Response, render_template_string
+from flask import Flask, Response, jsonify, request
 
 app = Flask(__name__)
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'pressure_log.csv')
 SERIAL_PORT = None
 BAUD = 115200
+_CONTROLLER_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'controller'))
+if _CONTROLLER_DIR not in sys.path:
+    sys.path.insert(0, _CONTROLLER_DIR)
 
 subscribers = []
 subscribers_lock = threading.Lock()
@@ -24,11 +27,93 @@ latest = {"packet": -1, "voltage": 0.0, "pressure_kpa": 0.0, "pressure_mpa": 0.0
 reader_thread = None
 stop_event = threading.Event()
 
+
+def _json_error(message: str, status_code: int = 500, **extra):
+    payload = {"ok": False, "error": message}
+    payload.update(extra)
+    response = jsonify(payload)
+    response.status_code = status_code
+    return response
+
+
+def _load_manual_pump_module():
+    try:
+        import manual_pump_control  # type: ignore
+
+        return manual_pump_control, None
+    except Exception as exc:
+        return None, exc
+
+
+def _read_manual_pump_status():
+    manual_pump_control, import_error = _load_manual_pump_module()
+    if manual_pump_control is None:
+        return {
+            "available": False,
+            "pump_relay_on": None,
+            "timestamp": None,
+            "relay_pin": None,
+            "active_low": None,
+            "gpio_level": None,
+            "error": str(import_error),
+        }
+
+    try:
+        status = manual_pump_control.read_status()
+        return {
+            "available": True,
+            **status,
+        }
+    except Exception as exc:
+        return {
+            "available": False,
+            "pump_relay_on": None,
+            "timestamp": None,
+            "relay_pin": None,
+            "active_low": None,
+            "gpio_level": None,
+            "error": str(exc),
+        }
+
+
+def _set_manual_pump(turn_on: bool):
+    manual_pump_control, import_error = _load_manual_pump_module()
+    if manual_pump_control is None:
+        raise RuntimeError(f"manual pump control unavailable: {import_error}")
+    return manual_pump_control.set_pump(turn_on)
+
+
+def _dashboard_status_payload():
+    pump_status = _read_manual_pump_status()
+    return {
+        "ok": True,
+        "manual_override_available": pump_status.get("available", False),
+        "manual_override_enabled": pump_status.get("available", False),
+        "pump": pump_status,
+        "telemetry": latest,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin", "*")
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    return response
+
 # ── Serial reader ──────────────────────────────────────────────────────────────
 
 def find_port():
     for p in serial.tools.list_ports.comports():
-        if any(k in p.device for k in ('usbserial', 'usbmodem', 'ttyUSB', 'ttyACM')):
+        device = (p.device or '').lower()
+        description = (p.description or '').lower()
+        hwid = (p.hwid or '').lower()
+        if any(k in device for k in ('usbserial', 'usbmodem', 'ttyusb', 'ttyacm', 'com')):
+            return p.device
+        if any(k in description for k in ('cp210', 'ch340', 'usb serial', 'uart bridge', 'silicon labs')):
+            return p.device
+        if any(k in hwid for k in ('vid:pid=10c4:ea60', 'vid_10c4&pid_ea60', 'vid:pid=1a86:7523')):
             return p.device
     ports = serial.tools.list_ports.comports()
     return ports[0].device if ports else None
@@ -157,8 +242,43 @@ def restart():
 
 @app.route('/latest')
 def get_latest():
-    from flask import jsonify
     return jsonify(latest)
+
+
+@app.route('/api/dashboard/status')
+def get_dashboard_status():
+    return jsonify(_dashboard_status_payload())
+
+
+@app.route('/api/pump/status')
+def get_pump_status():
+    status = _read_manual_pump_status()
+    response_status = 200 if status.get("available") else 503
+    return jsonify({"ok": status.get("available", False), "pump": status}), response_status
+
+
+@app.route('/api/pump/on', methods=['POST', 'OPTIONS'])
+def pump_on():
+    if request.method == 'OPTIONS':
+        return ('', 204)
+    try:
+        status = _set_manual_pump(True)
+        return jsonify({"ok": True, "pump": status, "message": "Pump turned on"})
+    except Exception as exc:
+        traceback.print_exc()
+        return _json_error("failed to turn pump on", 500, detail=str(exc))
+
+
+@app.route('/api/pump/off', methods=['POST', 'OPTIONS'])
+def pump_off():
+    if request.method == 'OPTIONS':
+        return ('', 204)
+    try:
+        status = _set_manual_pump(False)
+        return jsonify({"ok": True, "pump": status, "message": "Pump turned off"})
+    except Exception as exc:
+        traceback.print_exc()
+        return _json_error("failed to turn pump off", 500, detail=str(exc))
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 

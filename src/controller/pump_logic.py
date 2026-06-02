@@ -38,6 +38,7 @@ class PumpState(Enum):
     OFF_DRY_RUN        = 'OFF_DRY_RUN'
     OFF_MAX_RUN        = 'OFF_MAX_RUN'
     OFF_LORA_TIMEOUT   = 'OFF_LORA_TIMEOUT'
+    OFF_UNDERVOLTAGE   = 'OFF_UNDERVOLTAGE'
 
 
 class PumpDecision:
@@ -63,6 +64,8 @@ class HybridPumpLogic:
                  critical_low, low, high, critical_high,
                  lora_timeout_s, max_run_min, dry_run_a,
                  dry_run_enabled, power_delay_s,
+                 require_valid_lora_before_start,
+                 voltage_guard_enabled, min_voltage_ac,
                  override_timeout_min,
                  ml_enabled, ml_window_min):
         # Thresholds
@@ -77,6 +80,9 @@ class HybridPumpLogic:
         self.dry_run_a     = dry_run_a
         self.dry_run_on    = dry_run_enabled
         self.power_delay   = timedelta(seconds=power_delay_s)
+        self.require_valid_lora_before_start = require_valid_lora_before_start
+        self.voltage_guard_enabled = voltage_guard_enabled
+        self.min_voltage_ac = min_voltage_ac
 
         # Override
         self.ovr_timeout   = timedelta(minutes=override_timeout_min)
@@ -156,7 +162,7 @@ class HybridPumpLogic:
 
     # ── Main decision ────────────────────────────────────────
 
-    def decide(self, upper_pct, pump_is_on, current_amps=None) -> PumpDecision:
+    def decide(self, upper_pct, pump_is_on, current_amps=None, voltage_ac=None) -> PumpDecision:
         """
         Args:
             upper_pct:   Upper tank level 0-100 (None if unknown)
@@ -175,6 +181,10 @@ class HybridPumpLogic:
                 return PumpDecision('OFF', PumpState.OFF_POWER_RESTORE,
                     f"Power restored {elapsed.total_seconds():.0f}s ago, waiting {rem:.0f}s")
             self.power_restore_ts = None
+
+        if self.require_valid_lora_before_start and self.last_lora_ts is None:
+            return self._off(PumpState.OFF_LORA_TIMEOUT,
+                "No valid LoRa packet received yet")
 
         # ── P1  Emergency thresholds ─────────────────────────
         if upper_pct is not None:
@@ -210,6 +220,12 @@ class HybridPumpLogic:
             return self._off(PumpState.OFF_DRY_RUN,
                 f"Dry-run detected: {current_amps:.2f}A < {self.dry_run_a}A")
 
+        if (self.voltage_guard_enabled and pump_is_on
+                and voltage_ac is not None
+                and voltage_ac < self.min_voltage_ac):
+            return self._off(PumpState.OFF_UNDERVOLTAGE,
+                f"Undervoltage detected: {voltage_ac:.1f}V < {self.min_voltage_ac:.1f}V")
+
         # ── P3  Manual override ──────────────────────────────
         if self.override:
             # Auto-expire
@@ -228,8 +244,10 @@ class HybridPumpLogic:
             pred_d = self.ml_prediction.get('duration', 0)
             cur_h  = now.hour + now.minute / 60.0
             window = self.ml_window.total_seconds() / 3600.0
+            delta_h = abs(cur_h - pred_h)
+            circular_delta_h = min(delta_h, 24.0 - delta_h)
 
-            if abs(cur_h - pred_h) < window:
+            if circular_delta_h < window:
                 # Inside ML window — check if scheduled duration has elapsed
                 if pump_is_on and self.pump_start_time:
                     run_min = (now - self.pump_start_time).total_seconds() / 60

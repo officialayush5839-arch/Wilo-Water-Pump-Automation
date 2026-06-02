@@ -23,7 +23,7 @@ LORA_SYNC_WORD    = 0xF3     # Must match ESP32
 # ── Relay Module (Active-LOW) ──
 RELAY_PUMP_PIN    = 17       # GPIO 17 (Physical Pin 11)
 RELAY_VALVE_PIN   = 27       # GPIO 27 (Physical Pin 13) — spare / inlet valve
-RELAY_ACTIVE_LOW  = True     # Most relay modules trigger on LOW
+RELAY_ACTIVE_LOW  = False    # This relay module triggers on HIGH
 
 # ── Manual Override Buttons (normally-open, pull-up) ──
 BUTTON_FORCE_ON   = 22       # GPIO 22 (Physical Pin 15)
@@ -96,8 +96,11 @@ PUMP_FLOW_RATE_LPM       = 100    # PLACEHOLDER — check Wilo datasheet
 # ============================================================
 
 LORA_TIMEOUT_S           = 60     # No LoRa packet in this time → pump OFF
+REQUIRE_VALID_LORA_BEFORE_START = True  # Block starts until at least one clean LoRa packet arrives
 MAX_CONTINUOUS_RUN_MIN   = 180    # Hard limit — auto-stop
-DRY_RUN_PROTECTION       = True
+DRY_RUN_PROTECTION       = False   # Enable only after ACS712 is installed and calibrated on the real pump line
+POWER_VOLTAGE_PROTECTION = False   # Enable only after ZMPT101B is calibrated with real mains input
+MIN_MAINS_VOLTAGE_AC     = 180.0   # Placeholder undervoltage cutoff for future use
 POWER_RESTORE_DELAY_S    = 30     # Wait after power-cut before pump
 
 # ============================================================
@@ -127,7 +130,12 @@ LORA_LOG_DIR   = os.path.join(_PROJECT, 'logs', 'lora')
 DATA_DIR       = os.path.join(_PROJECT, 'data')
 CSV_LOG_PATH   = os.path.join(LOG_DIR, 'rpi_pump_log.csv')
 LORA_PACKET_CSV_PATH = os.path.join(LORA_LOG_DIR, 'esp32_pressure_packets.csv')
+SENSOR_CSV_LOG_PATH = os.path.join(LOG_DIR, 'sensor_readings.csv')
 STATE_FILE     = os.path.join(LOG_DIR, 'pump_state.json')
+STATUS_FILE    = os.path.join(LOG_DIR, 'runtime_status.json')
+CONTROL_FILE   = os.path.join(LOG_DIR, 'control_command.json')
+DIRECT_PUMP_STATE_FILE = os.path.join(LOG_DIR, 'direct_pump_state.json')
+CONTROL_COMMAND_TTL_S = 120
 
 LOOP_INTERVAL_S  = 1    # Main loop cycle
 LOG_INTERVAL_S   = 5    # CSV write interval
