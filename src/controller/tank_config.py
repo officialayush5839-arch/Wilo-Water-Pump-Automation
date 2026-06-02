@@ -23,7 +23,7 @@ LORA_SYNC_WORD    = 0xF3     # Must match ESP32
 # ── Relay Module (Active-LOW) ──
 RELAY_PUMP_PIN    = 17       # GPIO 17 (Physical Pin 11)
 RELAY_VALVE_PIN   = 27       # GPIO 27 (Physical Pin 13) — spare / inlet valve
-RELAY_ACTIVE_LOW  = False    # This relay module triggers on HIGH
+RELAY_ACTIVE_LOW  = True     # This relay module triggers on LOW
 
 # ── Manual Override Buttons (normally-open, pull-up) ──
 BUTTON_FORCE_ON   = 22       # GPIO 22 (Physical Pin 15)
