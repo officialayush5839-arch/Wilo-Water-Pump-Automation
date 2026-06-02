@@ -165,7 +165,7 @@ def _pump_status_payload(pump_status, runtime_status):
 
     return {
         "available": bool(pump_status.get("available", False)),
-        "pump_relay_on": gpio_relay_on if isinstance(gpio_relay_on, bool) else runtime_relay_on,
+        "pump_relay_on": runtime_relay_on if isinstance(runtime_relay_on, bool) else gpio_relay_on,
         "timestamp": runtime_timestamp or pump_status.get("timestamp"),
         "relay_pin": pump_status.get("relay_pin"),
         "active_low": pump_status.get("active_low"),
