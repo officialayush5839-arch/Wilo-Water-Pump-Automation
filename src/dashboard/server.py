@@ -159,12 +159,13 @@ def _telemetry_from_runtime(runtime_status):
 
 
 def _pump_status_payload(pump_status, runtime_status):
+    gpio_relay_on = pump_status.get("pump_relay_on")
     runtime_relay_on = runtime_status.get("pump_relay_on") if runtime_status else None
     runtime_timestamp = runtime_status.get("timestamp") if runtime_status else None
 
     return {
         "available": bool(pump_status.get("available", False)),
-        "pump_relay_on": runtime_relay_on if isinstance(runtime_relay_on, bool) else pump_status.get("pump_relay_on"),
+        "pump_relay_on": gpio_relay_on if isinstance(gpio_relay_on, bool) else runtime_relay_on,
         "timestamp": runtime_timestamp or pump_status.get("timestamp"),
         "relay_pin": pump_status.get("relay_pin"),
         "active_low": pump_status.get("active_low"),
@@ -365,6 +366,10 @@ def pump_on():
         return ('', 204)
     try:
         source = (request.get_json(silent=True) or {}).get("source", "dashboard-ui")
+        try:
+            _set_manual_pump(True)
+        except Exception as exc:
+            print(f"[pump_on] direct GPIO toggle unavailable: {exc}", flush=True)
         command = _queue_manual_override(True, source)
         runtime_status, acknowledged = _await_manual_override(True)
         payload = _dashboard_status_payload()
@@ -387,6 +392,10 @@ def pump_off():
         return ('', 204)
     try:
         source = (request.get_json(silent=True) or {}).get("source", "dashboard-ui")
+        try:
+            _set_manual_pump(False)
+        except Exception as exc:
+            print(f"[pump_off] direct GPIO toggle unavailable: {exc}", flush=True)
         command = _queue_manual_override(False, source)
         runtime_status, acknowledged = _await_manual_override(False)
         payload = _dashboard_status_payload()
@@ -412,5 +421,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     SERIAL_PORT = args.serial_port
     start_reader(fresh=args.fresh)
-    print(f"\n  Dashboard → http://localhost:{args.port}\n")
+    print(f"\n  Dashboard @ http://localhost:{args.port}\n")
     app.run(host='0.0.0.0', port=args.port, threaded=True)
