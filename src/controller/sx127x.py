@@ -10,7 +10,6 @@ REG_FRF_MSB = 0x06
 REG_FRF_MID = 0x07
 REG_FRF_LSB = 0x08
 REG_PA_CONFIG = 0x09
-REG_OCP = 0x0B
 REG_LNA = 0x0C
 REG_FIFO_ADDR_PTR = 0x0D
 REG_FIFO_TX_BASE_ADDR = 0x0E
@@ -26,11 +25,11 @@ REG_PREAMBLE_MSB = 0x20
 REG_PREAMBLE_LSB = 0x21
 REG_PAYLOAD_LENGTH = 0x22
 REG_MODEM_CONFIG_3 = 0x26
+REG_RSSI_WIDEBAND = 0x2C
 REG_DETECTION_OPTIMIZE = 0x31
 REG_INVERT_IQ = 0x33
 REG_DETECTION_THRESHOLD = 0x37
 REG_SYNC_WORD = 0x39
-REG_INVERT_IQ2 = 0x3B
 REG_DIO_MAPPING_1 = 0x40
 REG_VERSION = 0x42
 
@@ -52,9 +51,9 @@ class SX127x:
     def __init__(self, spi_bus=0, spi_cs=0, reset_pin=25, dio0_pin=24, frequency=433E6):
         self.spi = spidev.SpiDev()
         self.spi.open(spi_bus, spi_cs)
-        # This module is marginal on the current Pi wiring/power path.
-        # Use a conservative SPI clock while bring-up is unstable.
-        self.spi.max_speed_hz = 50000
+        # Stay conservative without dropping so low that basic register access
+        # becomes unreliable on the Pi.
+        self.spi.max_speed_hz = 500000
 
         self.reset_pin = reset_pin
         self.dio0_pin = dio0_pin
@@ -62,14 +61,17 @@ class SX127x:
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.reset_pin, GPIO.OUT, initial=GPIO.HIGH)
         GPIO.setup(self.dio0_pin, GPIO.IN)
+
+        self.reset()
         self.init()
 
     def reset(self):
         GPIO.output(self.reset_pin, GPIO.LOW)
-        time.sleep(0.01)
+        time.sleep(0.02)
         GPIO.output(self.reset_pin, GPIO.HIGH)
-        time.sleep(0.01)
+        time.sleep(0.02)
 
     def write_register(self, addr, value):
         self.spi.xfer2([addr | 0x80, value])
@@ -98,20 +100,12 @@ class SX127x:
         self.set_frequency(self.frequency)
         self.write_register(REG_FIFO_TX_BASE_ADDR, 0x00)
         self.write_register(REG_FIFO_RX_BASE_ADDR, 0x00)
-        self.write_register(REG_LNA, 0x23)
-        self.write_register(REG_OCP, 0x2B)
-
-        # Match the Arduino sender defaults.
+        self.write_register(REG_LNA, self.read_register(REG_LNA) | 0x03)
+        self.write_register(REG_MODEM_CONFIG_3, 0x04)
         self.write_register(REG_MODEM_CONFIG_1, 0x72)
         self.write_register(REG_MODEM_CONFIG_2, 0x70)
-        self.write_register(REG_MODEM_CONFIG_3, 0x04)
-        self.write_register(REG_DETECTION_OPTIMIZE, 0xC3)
-        self.write_register(REG_DETECTION_THRESHOLD, 0x0A)
-        self.write_register(REG_INVERT_IQ, 0x27)
-        self.write_register(REG_INVERT_IQ2, 0x1D)
         self.write_register(REG_PREAMBLE_MSB, 0x00)
         self.write_register(REG_PREAMBLE_LSB, 0x08)
-        self.write_register(REG_PAYLOAD_LENGTH, 0xFF)
         self.write_register(REG_SYNC_WORD, 0xF3)
         self.write_register(REG_PA_CONFIG, PA_BOOST | 0x0F)
 
@@ -135,9 +129,6 @@ class SX127x:
         self.write_register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS)
 
     def available(self):
-        if not GPIO.input(self.dio0_pin):
-            return False
-
         irq_flags = self.read_register(REG_IRQ_FLAGS)
         if irq_flags & IRQ_PAYLOAD_CRC_ERROR_MASK:
             self.write_register(REG_IRQ_FLAGS, irq_flags)
@@ -149,8 +140,7 @@ class SX127x:
 
     def get_packet_rssi(self):
         rssi = self.read_register(REG_PKT_RSSI_VALUE)
-        offset = -164 if self.frequency < 525E6 else -157
-        return rssi + offset
+        return rssi - 164
 
     def get_packet_snr(self):
         raw_snr = self.read_register(REG_PKT_SNR_VALUE)
@@ -169,7 +159,6 @@ class SX127x:
         payload = []
         for _ in range(length):
             payload.append(self.read_register(REG_FIFO))
-
         return payload
 
     def close(self):

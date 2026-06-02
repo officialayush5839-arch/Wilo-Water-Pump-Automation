@@ -83,14 +83,53 @@ def _set_manual_pump(turn_on: bool):
     return manual_pump_control.set_pump(turn_on)
 
 
+def _load_remote_bridge_module():
+    try:
+        import remote_bridge  # type: ignore
+
+        return remote_bridge, None
+    except Exception as exc:
+        return None, exc
+
+
+def _runtime_bridge_status():
+    remote_bridge, import_error = _load_remote_bridge_module()
+    if remote_bridge is None:
+        return None, import_error
+
+    try:
+        return remote_bridge.read_status(), None
+    except Exception as exc:
+        return None, exc
+
+
+def _telemetry_from_runtime(runtime_status):
+    if not runtime_status:
+        return None
+
+    pressure_kpa = runtime_status.get("pressure_kpa")
+    return {
+        "packet": runtime_status.get("lora_pkt", -1),
+        "voltage": runtime_status.get("sensor_voltage", 0.0) or 0.0,
+        "pressure_kpa": pressure_kpa if isinstance(pressure_kpa, (int, float)) else 0.0,
+        "pressure_mpa": (pressure_kpa / 1000.0) if isinstance(pressure_kpa, (int, float)) else 0.0,
+        "status": runtime_status.get("sensor_status") or ("ok" if pressure_kpa is not None else "disconnected"),
+        "timestamp": runtime_status.get("timestamp") or "",
+    }
+
+
 def _dashboard_status_payload():
     pump_status = _read_manual_pump_status()
+    runtime_status, runtime_error = _runtime_bridge_status()
+    telemetry = _telemetry_from_runtime(runtime_status) or latest
     return {
         "ok": True,
         "manual_override_available": pump_status.get("available", False),
         "manual_override_enabled": pump_status.get("available", False),
         "pump": pump_status,
-        "telemetry": latest,
+        "telemetry": telemetry,
+        "runtime": runtime_status,
+        "runtime_error": str(runtime_error) if runtime_error else None,
         "timestamp": datetime.now().isoformat(),
     }
 
@@ -202,6 +241,10 @@ def start_reader(fresh=False):
         reader_thread.join(timeout=3)
     stop_event = threading.Event()
     port = SERIAL_PORT or find_port()
+    if not port:
+        broadcast({**latest, "status": "disconnected"})
+        print("[serial] no matching serial port found; dashboard will use runtime bridge status", flush=True)
+        return
     reader_thread = threading.Thread(target=reader_loop, args=(port, fresh, stop_event), daemon=True)
     reader_thread.start()
 
