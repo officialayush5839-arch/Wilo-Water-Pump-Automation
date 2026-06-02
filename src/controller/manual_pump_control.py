@@ -31,15 +31,22 @@ def _ensure_gpio() -> None:
 
 
 def _write_state(turn_on: bool) -> dict:
+    gpio_level = int(GPIO.input(CFG.RELAY_PUMP_PIN))
     payload = {
         'pump_relay_on': turn_on,
         'timestamp': datetime.now().isoformat(),
         'relay_pin': CFG.RELAY_PUMP_PIN,
         'active_low': CFG.RELAY_ACTIVE_LOW,
-        'gpio_level': int(GPIO.input(CFG.RELAY_PUMP_PIN)),
+        'gpio_level': gpio_level,
     }
     atomic_write_json(CFG.DIRECT_PUMP_STATE_FILE, payload)
     return payload
+
+
+def _pump_state_from_gpio(gpio_level: int) -> bool:
+    if CFG.RELAY_ACTIVE_LOW:
+        return gpio_level == int(GPIO.LOW)
+    return gpio_level == int(GPIO.HIGH)
 
 
 def set_pump(turn_on: bool) -> dict:
@@ -52,12 +59,13 @@ def set_pump(turn_on: bool) -> dict:
 def read_status() -> dict:
     _ensure_gpio()
     saved = read_json(CFG.DIRECT_PUMP_STATE_FILE) or {}
+    gpio_level = int(GPIO.input(CFG.RELAY_PUMP_PIN))
     return {
-        'pump_relay_on': saved.get('pump_relay_on'),
+        'pump_relay_on': _pump_state_from_gpio(gpio_level),
         'timestamp': saved.get('timestamp'),
         'relay_pin': CFG.RELAY_PUMP_PIN,
         'active_low': CFG.RELAY_ACTIVE_LOW,
-        'gpio_level': int(GPIO.input(CFG.RELAY_PUMP_PIN)),
+        'gpio_level': gpio_level,
     }
 
 

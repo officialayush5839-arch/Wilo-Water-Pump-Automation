@@ -112,6 +112,21 @@ def _queue_manual_override(turn_on: bool, source: str):
     return remote_bridge.write_override(action, source)
 
 
+def _await_manual_override(turn_on: bool, timeout_s: float = 2.5):
+    expected_override = "ON" if turn_on else "OFF"
+    deadline = time.time() + timeout_s
+    last_runtime = None
+
+    while time.time() < deadline:
+        runtime_status, _ = _runtime_bridge_status()
+        last_runtime = runtime_status
+        if runtime_status and runtime_status.get("override") == expected_override:
+            return runtime_status, True
+        time.sleep(0.1)
+
+    return last_runtime, False
+
+
 def _telemetry_from_runtime(runtime_status):
     if not runtime_status:
         return None
@@ -351,13 +366,15 @@ def pump_on():
     try:
         source = (request.get_json(silent=True) or {}).get("source", "dashboard-ui")
         command = _queue_manual_override(True, source)
+        runtime_status, acknowledged = _await_manual_override(True)
         payload = _dashboard_status_payload()
         return jsonify({
             "ok": True,
             "command": command,
+            "acknowledged": acknowledged,
             "pump": payload["pump"],
-            "runtime": payload.get("runtime"),
-            "message": "Pump override command queued",
+            "runtime": runtime_status or payload.get("runtime"),
+            "message": "Pump override command accepted" if acknowledged else "Pump override command queued",
         })
     except Exception as exc:
         traceback.print_exc()
@@ -371,13 +388,15 @@ def pump_off():
     try:
         source = (request.get_json(silent=True) or {}).get("source", "dashboard-ui")
         command = _queue_manual_override(False, source)
+        runtime_status, acknowledged = _await_manual_override(False)
         payload = _dashboard_status_payload()
         return jsonify({
             "ok": True,
             "command": command,
+            "acknowledged": acknowledged,
             "pump": payload["pump"],
-            "runtime": payload.get("runtime"),
-            "message": "Pump override command queued",
+            "runtime": runtime_status or payload.get("runtime"),
+            "message": "Pump override command accepted" if acknowledged else "Pump override command queued",
         })
     except Exception as exc:
         traceback.print_exc()

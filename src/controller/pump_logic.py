@@ -67,6 +67,8 @@ class HybridPumpLogic:
                  require_valid_lora_before_start,
                  voltage_guard_enabled, min_voltage_ac,
                  override_timeout_min,
+                 manual_override_priority,
+                 enable_upper_tank_level_control,
                  ml_enabled, ml_window_min):
         # Thresholds
         self.crit_low  = critical_low
@@ -86,10 +88,12 @@ class HybridPumpLogic:
 
         # Override
         self.ovr_timeout   = timedelta(minutes=override_timeout_min)
+        self.manual_override_priority = manual_override_priority
 
         # ML
         self.ml_enabled    = ml_enabled
         self.ml_window     = timedelta(minutes=ml_window_min)
+        self.enable_upper_tank_level_control = enable_upper_tank_level_control
 
         # State
         self.state_file       = state_file
@@ -182,12 +186,23 @@ class HybridPumpLogic:
                     f"Power restored {elapsed.total_seconds():.0f}s ago, waiting {rem:.0f}s")
             self.power_restore_ts = None
 
+        if self.manual_override_priority and self.override:
+            # Auto-expire
+            if self.override_time and (now - self.override_time) > self.ovr_timeout:
+                logger.info("Manual override expired")
+                self.override = None
+                self.override_time = None
+            elif self.override == 'ON':
+                return self._on(PumpState.ON_MANUAL, now, "Manual override ON")
+            elif self.override == 'OFF':
+                return self._off(PumpState.OFF_MANUAL, "Manual override OFF")
+
         if self.require_valid_lora_before_start and self.last_lora_ts is None:
             return self._off(PumpState.OFF_LORA_TIMEOUT,
                 "No valid LoRa packet received yet")
 
         # ── P1  Emergency thresholds ─────────────────────────
-        if upper_pct is not None:
+        if self.enable_upper_tank_level_control and upper_pct is not None:
             if upper_pct >= self.crit_high:
                 return self._off(PumpState.OFF_EMERGENCY,
                     f"Upper tank CRITICAL HIGH {upper_pct:.1f}% ≥ {self.crit_high}%")
@@ -227,7 +242,7 @@ class HybridPumpLogic:
                 f"Undervoltage detected: {voltage_ac:.1f}V < {self.min_voltage_ac:.1f}V")
 
         # ── P3  Manual override ──────────────────────────────
-        if self.override:
+        if (not self.manual_override_priority) and self.override:
             # Auto-expire
             if self.override_time and (now - self.override_time) > self.ovr_timeout:
                 logger.info("Manual override expired")
@@ -258,7 +273,7 @@ class HybridPumpLogic:
                     f"ML schedule: {pred_h:.2f}h for {pred_d:.0f}min")
 
         # ── P5  Normal threshold hysteresis ──────────────────
-        if upper_pct is not None:
+        if self.enable_upper_tank_level_control and upper_pct is not None:
             if not pump_is_on and upper_pct <= self.low:
                 return self._on(PumpState.ON_THRESHOLD, now,
                     f"Upper tank {upper_pct:.1f}% ≤ {self.low}%")

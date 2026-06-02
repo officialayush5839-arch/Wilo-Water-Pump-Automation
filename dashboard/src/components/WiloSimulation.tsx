@@ -73,9 +73,8 @@ interface DashboardStatusPayload {
   timestamp?: string;
 }
 
-interface WaterLevelPoint {
+interface PressurePoint {
   time: string;
-  waterLevelPct: number;
   pressureKpa: number;
 }
 
@@ -114,8 +113,7 @@ export function WiloSimulation() {
   const [pressureKpa, setPressureKpa] = useState<number | null>(null);
   const [sensorVoltage, setSensorVoltage] = useState<number | null>(null);
   const [telemetryPacket, setTelemetryPacket] = useState<number | null>(null);
-  const [waterLevelPct, setWaterLevelPct] = useState<number | null>(null);
-  const [waterHistory, setWaterHistory] = useState<WaterLevelPoint[]>([]);
+  const [pressureHistory, setPressureHistory] = useState<PressurePoint[]>([]);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isCommandPending, setIsCommandPending] = useState(false);
   const [systemStatus, setSystemStatus] = useState({
@@ -159,18 +157,6 @@ export function WiloSimulation() {
     return value.toFixed(digits);
   };
 
-  const resolveWaterLevelPct = (payload: DashboardStatusPayload) => {
-    if (typeof payload.runtime?.upper_pct === "number") {
-      return Math.max(0, Math.min(100, payload.runtime.upper_pct));
-    }
-
-    if (typeof payload.telemetry?.upper_pct === "number") {
-      return Math.max(0, Math.min(100, payload.telemetry.upper_pct));
-    }
-
-    return null;
-  };
-
   const applyDashboardStatus = (payload: DashboardStatusPayload) => {
     const relayOn = payload.pump?.pump_relay_on === true;
     const available = payload.manual_override_available !== false && payload.pump?.available !== false;
@@ -198,14 +184,11 @@ export function WiloSimulation() {
     setTelemetryPacket(
       typeof payload.telemetry?.packet === "number" ? payload.telemetry.packet : null
     );
-    const nextWaterLevelPct = resolveWaterLevelPct(payload);
-    setWaterLevelPct(nextWaterLevelPct);
-    if (telemetryOk && nextWaterLevelPct !== null && nextPressure !== null) {
-      setWaterHistory((current) => [
+    if (telemetryOk && nextPressure !== null) {
+      setPressureHistory((current) => [
         ...current.slice(-(MAX_HISTORY_POINTS - 1)),
         {
           time: formatTimestamp(payload.telemetry?.timestamp ?? payload.timestamp),
-          waterLevelPct: nextWaterLevelPct,
           pressureKpa: nextPressure,
         },
       ]);
@@ -413,10 +396,10 @@ export function WiloSimulation() {
               </div>
               <div>
                 <div className="mb-1 flex justify-between text-sm">
-                  <span>Water Level</span>
-                  <span>{waterLevelPct !== null ? `${formatMetric(waterLevelPct, 1)}%` : "--"}</span>
+                  <span>Latest Packet</span>
+                  <span>{telemetryPacket !== null ? `#${telemetryPacket}` : "--"}</span>
                 </div>
-                <Progress value={waterLevelPct ?? 0} className="h-2" />
+                <Progress value={telemetryPacket !== null ? 100 : 0} className="h-2" />
               </div>
             </div>
           </Card>
@@ -491,28 +474,28 @@ export function WiloSimulation() {
                 <div className="mb-2 flex items-center gap-3">
                   <Activity className="h-6 w-6 text-primary" />
                   <h2 className="text-xl font-semibold text-foreground">
-                    Water Level Trend
+                    Pressure Trend
                   </h2>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Live upper-tank history sampled every 3 seconds from the Pi backend.
+                  Live upper-tank pressure history sampled every 3 seconds from the Pi backend.
                 </p>
               </div>
               <div className="rounded-lg border border-border bg-muted/30 px-4 py-2 text-right">
                 <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  Current level
+                  Current pressure
                 </p>
                 <p className="text-xl font-semibold text-foreground">
-                  {waterLevelPct !== null ? `${formatMetric(waterLevelPct, 1)}%` : "--"}
+                  {pressureKpa !== null ? `${formatMetric(pressureKpa, 2)} kPa` : "--"}
                 </p>
               </div>
             </div>
 
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={waterHistory}>
+                <AreaChart data={pressureHistory}>
                   <defs>
-                    <linearGradient id="waterLevelFill" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="pressureFill" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.45} />
                       <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.05} />
                     </linearGradient>
@@ -520,40 +503,22 @@ export function WiloSimulation() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#dbe4ea" />
                   <XAxis dataKey="time" tick={{ fontSize: 12 }} minTickGap={24} />
                   <YAxis
-                    yAxisId="level"
-                    domain={[0, 100]}
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => `${value}%`}
-                  />
-                  <YAxis
                     yAxisId="pressure"
-                    orientation="right"
                     domain={[0, 100]}
                     tick={{ fontSize: 12 }}
                     tickFormatter={(value) => `${value}kPa`}
                   />
                   <Tooltip
-                    formatter={(value: number, name: string) =>
-                      name === "Water Level" ? [`${value.toFixed(1)}%`, name] : [`${value.toFixed(2)} kPa`, name]
-                    }
-                  />
-                  <Area
-                    yAxisId="level"
-                    type="monotone"
-                    dataKey="waterLevelPct"
-                    name="Water Level"
-                    stroke="#0284c7"
-                    fill="url(#waterLevelFill)"
-                    strokeWidth={3}
+                    formatter={(value: number) => [`${value.toFixed(2)} kPa`, "Pressure"]}
                   />
                   <Area
                     yAxisId="pressure"
                     type="monotone"
                     dataKey="pressureKpa"
                     name="Pressure"
-                    stroke="#0f766e"
-                    fillOpacity={0}
-                    strokeWidth={2}
+                    stroke="#0284c7"
+                    fill="url(#pressureFill)"
+                    strokeWidth={3}
                   />
                 </AreaChart>
               </ResponsiveContainer>
