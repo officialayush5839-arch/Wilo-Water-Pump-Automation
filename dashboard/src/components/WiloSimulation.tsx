@@ -328,11 +328,6 @@ export function WiloSimulation() {
         throw new Error(payload?.detail || payload?.error || `command ${response.status}`);
       }
 
-      setPumpMode(nextMode);
-      setSystemStatus((current) => ({
-        ...current,
-        pumpStatus: nextMode,
-      }));
       appendEvent(actionLabel, detail, payload.pump?.timestamp);
       toast({
         title: actionLabel,
@@ -354,8 +349,6 @@ export function WiloSimulation() {
   };
 
   const pumpRunning = pumpMode === "RUNNING";
-  const relayOn = pumpMeta?.pump_relay_on === true;
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto max-w-7xl px-4 py-4">
@@ -441,16 +434,6 @@ export function WiloSimulation() {
               <div className="flex items-center justify-between">
                 <span className="text-sm">Network</span>
                 <span className="text-sm font-medium">{systemStatus.networkStatus}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Relay Output</span>
-                <span className="text-sm font-medium">
-                  {pumpMeta?.available === false
-                    ? "Unavailable"
-                    : relayOn
-                      ? "ON"
-                      : "OFF"}
-                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">LoRa Packet</span>

@@ -23,53 +23,41 @@ def _output_level(turn_on: bool) -> int:
     return GPIO.HIGH if turn_on else GPIO.LOW
 
 
-def _ensure_gpio(*, force_off: bool = False) -> None:
+def _ensure_gpio() -> None:
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    relay_level = _output_level(False) if force_off else None
-    if relay_level is None:
-        GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT)
-    else:
-        GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=relay_level)
-    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT)
+    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT)
 
 
 def _write_state(turn_on: bool) -> dict:
-    gpio_level = int(GPIO.input(CFG.RELAY_PUMP_PIN))
     payload = {
         'pump_relay_on': turn_on,
         'timestamp': datetime.now().isoformat(),
         'relay_pin': CFG.RELAY_PUMP_PIN,
         'active_low': CFG.RELAY_ACTIVE_LOW,
-        'gpio_level': gpio_level,
+        'gpio_level': int(GPIO.input(CFG.RELAY_PUMP_PIN)),
     }
     atomic_write_json(CFG.DIRECT_PUMP_STATE_FILE, payload)
     return payload
 
 
-def _pump_state_from_gpio(gpio_level: int) -> bool:
-    if CFG.RELAY_ACTIVE_LOW:
-        return gpio_level == int(GPIO.LOW)
-    return gpio_level == int(GPIO.HIGH)
-
-
 def set_pump(turn_on: bool) -> dict:
-    _ensure_gpio(force_off=False)
+    _ensure_gpio()
     GPIO.output(CFG.RELAY_PUMP_PIN, _output_level(turn_on))
     GPIO.output(CFG.LED_STATUS_PIN, GPIO.HIGH if turn_on else GPIO.LOW)
     return _write_state(turn_on)
 
 
 def read_status() -> dict:
-    _ensure_gpio(force_off=False)
+    _ensure_gpio()
     saved = read_json(CFG.DIRECT_PUMP_STATE_FILE) or {}
-    gpio_level = int(GPIO.input(CFG.RELAY_PUMP_PIN))
     return {
-        'pump_relay_on': _pump_state_from_gpio(gpio_level),
+        'pump_relay_on': saved.get('pump_relay_on'),
         'timestamp': saved.get('timestamp'),
         'relay_pin': CFG.RELAY_PUMP_PIN,
         'active_low': CFG.RELAY_ACTIVE_LOW,
-        'gpio_level': gpio_level,
+        'gpio_level': int(GPIO.input(CFG.RELAY_PUMP_PIN)),
     }
 
 

@@ -62,7 +62,6 @@ UPPER_CRITICAL_LOW  = 10   # Emergency ON — tank nearly empty
 UPPER_LOW           = 25   # Normal threshold — pump should be running
 UPPER_HIGH          = 85   # Normal threshold — pump can stop
 UPPER_CRITICAL_HIGH = 95   # Emergency OFF — overflow risk
-ENABLE_UPPER_TANK_LEVEL_CONTROL = False  # Keep pressure visible, but do not auto-control from derived % until calibrated
 
 # Hysteresis band: pump turns ON at LOW, turns OFF at HIGH
 # Prevents rapid cycling
@@ -110,7 +109,6 @@ POWER_RESTORE_DELAY_S    = 30     # Wait after power-cut before pump
 
 OVERRIDE_TIMEOUT_MIN     = 60     # Auto-release override after this
 OVERRIDE_DEBOUNCE_MS     = 200    # Button debounce
-MANUAL_OVERRIDE_PRIORITY = True   # Let operator commands bypass derived-level automation
 
 # ============================================================
 # ML PREDICTION

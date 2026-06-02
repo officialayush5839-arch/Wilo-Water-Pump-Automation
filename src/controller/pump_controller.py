@@ -184,8 +184,6 @@ class PumpController:
             voltage_guard_enabled=CFG.POWER_VOLTAGE_PROTECTION,
             min_voltage_ac=CFG.MIN_MAINS_VOLTAGE_AC,
             override_timeout_min=CFG.OVERRIDE_TIMEOUT_MIN,
-            manual_override_priority=CFG.MANUAL_OVERRIDE_PRIORITY,
-            enable_upper_tank_level_control=CFG.ENABLE_UPPER_TANK_LEVEL_CONTROL,
             ml_enabled=CFG.ML_ENABLED, ml_window_min=CFG.ML_ACTIVATION_WINDOW_MIN
         )
 

@@ -103,76 +103,18 @@ def _runtime_bridge_status():
         return None, exc
 
 
-def _queue_manual_override(turn_on: bool, source: str):
-    remote_bridge, import_error = _load_remote_bridge_module()
-    if remote_bridge is None:
-        raise RuntimeError(f"remote bridge unavailable: {import_error}")
-
-    action = 'override_on' if turn_on else 'override_off'
-    return remote_bridge.write_override(action, source)
-
-
-def _await_manual_override(turn_on: bool, timeout_s: float = 2.5):
-    expected_override = "ON" if turn_on else "OFF"
-    deadline = time.time() + timeout_s
-    last_runtime = None
-
-    while time.time() < deadline:
-        runtime_status, _ = _runtime_bridge_status()
-        last_runtime = runtime_status
-        if runtime_status and runtime_status.get("override") == expected_override:
-            return runtime_status, True
-        time.sleep(0.1)
-
-    return last_runtime, False
-
-
 def _telemetry_from_runtime(runtime_status):
     if not runtime_status:
         return None
 
     pressure_kpa = runtime_status.get("pressure_kpa")
-    sensor_voltage = runtime_status.get("sensor_voltage")
-    upper_pct = runtime_status.get("upper_pct")
-    lora_pkt = runtime_status.get("lora_pkt")
-    lora_age_s = runtime_status.get("lora_age_s")
-    sensor_status = runtime_status.get("sensor_status")
-    telemetry_status = "waiting"
-
-    if sensor_status == "fault":
-        telemetry_status = "fault"
-    elif isinstance(pressure_kpa, (int, float)) and lora_pkt is not None:
-        telemetry_status = "ok"
-    elif runtime_status.get("last_lora_ts"):
-        telemetry_status = "stale"
-
     return {
-        "packet": lora_pkt,
-        "voltage": sensor_voltage if isinstance(sensor_voltage, (int, float)) else None,
-        "pressure_kpa": pressure_kpa if isinstance(pressure_kpa, (int, float)) else None,
-        "pressure_mpa": (pressure_kpa / 1000.0) if isinstance(pressure_kpa, (int, float)) else None,
-        "upper_pct": upper_pct if isinstance(upper_pct, (int, float)) else None,
-        "lora_age_s": lora_age_s if isinstance(lora_age_s, (int, float)) else None,
-        "status": telemetry_status,
-        "timestamp": runtime_status.get("last_lora_ts") or runtime_status.get("timestamp") or "",
-    }
-
-
-def _pump_status_payload(pump_status, runtime_status):
-    gpio_relay_on = pump_status.get("pump_relay_on")
-    runtime_relay_on = runtime_status.get("pump_relay_on") if runtime_status else None
-    runtime_timestamp = runtime_status.get("timestamp") if runtime_status else None
-
-    return {
-        "available": bool(pump_status.get("available", False)),
-        "pump_relay_on": runtime_relay_on if isinstance(runtime_relay_on, bool) else gpio_relay_on,
-        "timestamp": runtime_timestamp or pump_status.get("timestamp"),
-        "relay_pin": pump_status.get("relay_pin"),
-        "active_low": pump_status.get("active_low"),
-        "gpio_level": pump_status.get("gpio_level"),
-        "error": pump_status.get("error"),
-        "control_mode": runtime_status.get("controller_mode") if runtime_status else None,
-        "override": runtime_status.get("override") if runtime_status else None,
+        "packet": runtime_status.get("lora_pkt", -1),
+        "voltage": runtime_status.get("sensor_voltage", 0.0) or 0.0,
+        "pressure_kpa": pressure_kpa if isinstance(pressure_kpa, (int, float)) else 0.0,
+        "pressure_mpa": (pressure_kpa / 1000.0) if isinstance(pressure_kpa, (int, float)) else 0.0,
+        "status": runtime_status.get("sensor_status") or ("ok" if pressure_kpa is not None else "disconnected"),
+        "timestamp": runtime_status.get("timestamp") or "",
     }
 
 
@@ -180,12 +122,11 @@ def _dashboard_status_payload():
     pump_status = _read_manual_pump_status()
     runtime_status, runtime_error = _runtime_bridge_status()
     telemetry = _telemetry_from_runtime(runtime_status) or latest
-    pump = _pump_status_payload(pump_status, runtime_status)
     return {
         "ok": True,
-        "manual_override_available": pump.get("available", False),
-        "manual_override_enabled": pump.get("available", False),
-        "pump": pump,
+        "manual_override_available": pump_status.get("available", False),
+        "manual_override_enabled": pump_status.get("available", False),
+        "pump": pump_status,
         "telemetry": telemetry,
         "runtime": runtime_status,
         "runtime_error": str(runtime_error) if runtime_error else None,
@@ -354,10 +295,9 @@ def get_dashboard_status():
 
 @app.route('/api/pump/status')
 def get_pump_status():
-    dashboard_status = _dashboard_status_payload()
-    pump = dashboard_status["pump"]
-    response_status = 200 if pump.get("available") else 503
-    return jsonify({"ok": pump.get("available", False), "pump": pump, "runtime": dashboard_status.get("runtime")}), response_status
+    status = _read_manual_pump_status()
+    response_status = 200 if status.get("available") else 503
+    return jsonify({"ok": status.get("available", False), "pump": status}), response_status
 
 
 @app.route('/api/pump/on', methods=['POST', 'OPTIONS'])
@@ -365,22 +305,8 @@ def pump_on():
     if request.method == 'OPTIONS':
         return ('', 204)
     try:
-        source = (request.get_json(silent=True) or {}).get("source", "dashboard-ui")
-        try:
-            _set_manual_pump(True)
-        except Exception as exc:
-            print(f"[pump_on] direct GPIO toggle unavailable: {exc}", flush=True)
-        command = _queue_manual_override(True, source)
-        runtime_status, acknowledged = _await_manual_override(True)
-        payload = _dashboard_status_payload()
-        return jsonify({
-            "ok": True,
-            "command": command,
-            "acknowledged": acknowledged,
-            "pump": payload["pump"],
-            "runtime": runtime_status or payload.get("runtime"),
-            "message": "Pump override command accepted" if acknowledged else "Pump override command queued",
-        })
+        status = _set_manual_pump(True)
+        return jsonify({"ok": True, "pump": status, "message": "Pump turned on"})
     except Exception as exc:
         traceback.print_exc()
         return _json_error("failed to turn pump on", 500, detail=str(exc))
@@ -391,22 +317,8 @@ def pump_off():
     if request.method == 'OPTIONS':
         return ('', 204)
     try:
-        source = (request.get_json(silent=True) or {}).get("source", "dashboard-ui")
-        try:
-            _set_manual_pump(False)
-        except Exception as exc:
-            print(f"[pump_off] direct GPIO toggle unavailable: {exc}", flush=True)
-        command = _queue_manual_override(False, source)
-        runtime_status, acknowledged = _await_manual_override(False)
-        payload = _dashboard_status_payload()
-        return jsonify({
-            "ok": True,
-            "command": command,
-            "acknowledged": acknowledged,
-            "pump": payload["pump"],
-            "runtime": runtime_status or payload.get("runtime"),
-            "message": "Pump override command accepted" if acknowledged else "Pump override command queued",
-        })
+        status = _set_manual_pump(False)
+        return jsonify({"ok": True, "pump": status, "message": "Pump turned off"})
     except Exception as exc:
         traceback.print_exc()
         return _json_error("failed to turn pump off", 500, detail=str(exc))
@@ -421,5 +333,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     SERIAL_PORT = args.serial_port
     start_reader(fresh=args.fresh)
-    print(f"\n  Dashboard @ http://localhost:{args.port}\n")
+    print(f"\n  Dashboard → http://localhost:{args.port}\n")
     app.run(host='0.0.0.0', port=args.port, threaded=True)
