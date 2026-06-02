@@ -177,15 +177,6 @@ class HybridPumpLogic:
         """
         now = datetime.now()
 
-        # ── P0  Power-cut recovery ───────────────────────────
-        if self.power_restore_ts:
-            elapsed = now - self.power_restore_ts
-            if elapsed < self.power_delay:
-                rem = (self.power_delay - elapsed).total_seconds()
-                return PumpDecision('OFF', PumpState.OFF_POWER_RESTORE,
-                    f"Power restored {elapsed.total_seconds():.0f}s ago, waiting {rem:.0f}s")
-            self.power_restore_ts = None
-
         if self.manual_override_priority and self.override:
             # Auto-expire
             if self.override_time and (now - self.override_time) > self.ovr_timeout:
@@ -196,6 +187,15 @@ class HybridPumpLogic:
                 return self._on(PumpState.ON_MANUAL, now, "Manual override ON")
             elif self.override == 'OFF':
                 return self._off(PumpState.OFF_MANUAL, "Manual override OFF")
+
+        # ── P0  Power-cut recovery ───────────────────────────
+        if self.power_restore_ts:
+            elapsed = now - self.power_restore_ts
+            if elapsed < self.power_delay:
+                rem = (self.power_delay - elapsed).total_seconds()
+                return PumpDecision('OFF', PumpState.OFF_POWER_RESTORE,
+                    f"Power restored {elapsed.total_seconds():.0f}s ago, waiting {rem:.0f}s")
+            self.power_restore_ts = None
 
         if self.require_valid_lora_before_start and self.last_lora_ts is None:
             return self._off(PumpState.OFF_LORA_TIMEOUT,
