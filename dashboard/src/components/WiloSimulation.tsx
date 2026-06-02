@@ -4,6 +4,15 @@ import { Progress } from "@/components/ui/progress";
 import { SystemDashboard } from "./SystemDashboard";
 import { Card } from "@/components/ui/card";
 import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
   Activity,
   AlertTriangle,
   LoaderCircle,
@@ -31,6 +40,8 @@ interface PumpStatusPayload {
   relay_pin?: number | null;
   active_low?: boolean | null;
   gpio_level?: number | null;
+  control_mode?: string | null;
+  override?: string | null;
   error?: string | null;
 }
 
@@ -39,17 +50,37 @@ interface DashboardStatusPayload {
   manual_override_available?: boolean;
   manual_override_enabled?: boolean;
   pump?: PumpStatusPayload;
+  runtime?: {
+    upper_pct?: number | null;
+    controller_mode?: string | null;
+    decision?: {
+      action?: string | null;
+      reason?: string | null;
+      state?: string | null;
+    };
+    override?: string | null;
+    lora_age_s?: number | null;
+  };
   telemetry?: {
     status?: string;
     timestamp?: string;
-    pressure_kpa?: number;
-    voltage?: number;
-    packet?: number;
+    pressure_kpa?: number | null;
+    voltage?: number | null;
+    packet?: number | null;
+    upper_pct?: number | null;
+    lora_age_s?: number | null;
   };
   timestamp?: string;
 }
 
-const DASHBOARD_POLL_MS = 5000;
+interface WaterLevelPoint {
+  time: string;
+  waterLevelPct: number;
+  pressureKpa: number;
+}
+
+const DASHBOARD_POLL_MS = 3000;
+const MAX_HISTORY_POINTS = 20;
 
 const formatTimestamp = (value?: string | null) => {
   if (!value) {
@@ -83,6 +114,8 @@ export function WiloSimulation() {
   const [pressureKpa, setPressureKpa] = useState<number | null>(null);
   const [sensorVoltage, setSensorVoltage] = useState<number | null>(null);
   const [telemetryPacket, setTelemetryPacket] = useState<number | null>(null);
+  const [waterLevelPct, setWaterLevelPct] = useState<number | null>(null);
+  const [waterHistory, setWaterHistory] = useState<WaterLevelPoint[]>([]);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isCommandPending, setIsCommandPending] = useState(false);
   const [systemStatus, setSystemStatus] = useState({
@@ -126,37 +159,79 @@ export function WiloSimulation() {
     return value.toFixed(digits);
   };
 
+  const resolveWaterLevelPct = (payload: DashboardStatusPayload) => {
+    if (typeof payload.runtime?.upper_pct === "number") {
+      return Math.max(0, Math.min(100, payload.runtime.upper_pct));
+    }
+
+    if (typeof payload.telemetry?.upper_pct === "number") {
+      return Math.max(0, Math.min(100, payload.telemetry.upper_pct));
+    }
+
+    return null;
+  };
+
   const applyDashboardStatus = (payload: DashboardStatusPayload) => {
     const relayOn = payload.pump?.pump_relay_on === true;
     const available = payload.manual_override_available !== false && payload.pump?.available !== false;
-    const telemetryOk = payload.telemetry?.status && payload.telemetry.status !== "disconnected";
+    const telemetryStatus = payload.telemetry?.status ?? "waiting";
+    const telemetryOk = telemetryStatus === "ok";
+    const nextPressure =
+      typeof payload.telemetry?.pressure_kpa === "number" ? payload.telemetry.pressure_kpa : null;
+    const loraAgeSeconds =
+      typeof payload.runtime?.lora_age_s === "number"
+        ? payload.runtime.lora_age_s
+        : typeof payload.telemetry?.lora_age_s === "number"
+          ? payload.telemetry.lora_age_s
+          : null;
+    const controllerReason = payload.runtime?.decision?.reason ?? null;
 
     setBackendReachable(true);
     setBackendError(null);
     setManualOverrideEnabled(available);
     setPumpMeta(payload.pump ?? null);
     setPumpMode(relayOn ? "RUNNING" : "STANDBY");
-    setPressureKpa(
-      typeof payload.telemetry?.pressure_kpa === "number" ? payload.telemetry.pressure_kpa : null
-    );
+    setPressureKpa(nextPressure);
     setSensorVoltage(
       typeof payload.telemetry?.voltage === "number" ? payload.telemetry.voltage : null
     );
     setTelemetryPacket(
       typeof payload.telemetry?.packet === "number" ? payload.telemetry.packet : null
     );
+    const nextWaterLevelPct = resolveWaterLevelPct(payload);
+    setWaterLevelPct(nextWaterLevelPct);
+    if (telemetryOk && nextWaterLevelPct !== null && nextPressure !== null) {
+      setWaterHistory((current) => [
+        ...current.slice(-(MAX_HISTORY_POINTS - 1)),
+        {
+          time: formatTimestamp(payload.telemetry?.timestamp ?? payload.timestamp),
+          waterLevelPct: nextWaterLevelPct,
+          pressureKpa: nextPressure,
+        },
+      ]);
+    }
     setSystemStatus({
       pumpStatus: relayOn ? "RUNNING" : "STANDBY",
-      aiConfidence: available ? "Manual" : "Unavailable",
-      sensorHealth: telemetryOk ? "7/7 Active" : "Telemetry waiting",
-      uptime: payload.pump?.timestamp ? `Last command ${formatTimestamp(payload.pump.timestamp)}` : "Live backend",
-      networkStatus: telemetryOk ? "Connected" : "Degraded",
+      aiConfidence: available ? "Controller linked" : "Unavailable",
+      sensorHealth: telemetryOk
+        ? "Live telemetry"
+        : telemetryStatus === "fault"
+          ? "Sensor fault"
+          : "Telemetry waiting",
+      uptime: controllerReason ?? "Live backend",
+      networkStatus: "Backend Connected",
     });
     setAiPredictions({
-      nextStart: relayOn ? "Running now" : available ? "Awaiting operator" : "Backend unavailable",
-      duration: relayOn ? "Manual until stopped" : "Operator controlled",
-      dataSource: "Flask API",
-      reliability: available ? "High" : "Conservative",
+      nextStart: relayOn
+        ? "Running now"
+        : payload.runtime?.override
+          ? `Override ${payload.runtime.override}`
+          : available
+            ? "Awaiting operator"
+            : "Backend unavailable",
+      duration: loraAgeSeconds !== null ? `Telemetry age ${Math.round(loraAgeSeconds)}s` : "Awaiting telemetry",
+      dataSource: payload.runtime?.controller_mode ?? "Flask API",
+      reliability: telemetryOk ? "High" : "Medium",
     });
   };
 
@@ -181,11 +256,13 @@ export function WiloSimulation() {
       setSystemStatus((current) => ({
         ...current,
         aiConfidence: "Unavailable",
-        networkStatus: "Disconnected",
+        sensorHealth: "Backend offline",
+        networkStatus: "Backend Offline",
       }));
       setAiPredictions((current) => ({
         ...current,
         nextStart: "Backend offline",
+        duration: "No backend link",
         reliability: "Conservative",
       }));
 
@@ -251,33 +328,23 @@ export function WiloSimulation() {
       });
 
       const payload = (await response.json()) as
-        | { ok?: boolean; pump?: PumpStatusPayload; detail?: string; error?: string }
+        | {
+            ok?: boolean;
+            pump?: PumpStatusPayload;
+            runtime?: DashboardStatusPayload["runtime"];
+            detail?: string;
+            error?: string;
+          }
         | undefined;
 
       if (!response.ok || !payload?.ok) {
         throw new Error(payload?.detail || payload?.error || `command ${response.status}`);
       }
 
-      const relayOn = payload.pump?.pump_relay_on === true;
-      setPumpMeta(payload.pump ?? null);
-      setPumpMode(relayOn ? "RUNNING" : "STANDBY");
-      setSystemStatus((current) => ({
-        ...current,
-        pumpStatus: relayOn ? "RUNNING" : "STANDBY",
-        uptime: payload.pump?.timestamp
-          ? `Last command ${formatTimestamp(payload.pump.timestamp)}`
-          : current.uptime,
-      }));
-      setAiPredictions((current) => ({
-        ...current,
-        nextStart: relayOn ? "Running now" : "Awaiting operator",
-        duration: relayOn ? "Manual until stopped" : "Operator controlled",
-      }));
-
       appendEvent(actionLabel, detail, payload.pump?.timestamp);
       toast({
         title: actionLabel,
-        description: detail,
+        description: "Controller override command queued on the Pi.",
       });
 
       void loadDashboardStatus(false);
@@ -346,10 +413,10 @@ export function WiloSimulation() {
               </div>
               <div>
                 <div className="mb-1 flex justify-between text-sm">
-                  <span>Pump Availability</span>
-                  <span>{pumpRunning ? "Active" : "Ready"}</span>
+                  <span>Water Level</span>
+                  <span>{waterLevelPct !== null ? `${formatMetric(waterLevelPct, 1)}%` : "--"}</span>
                 </div>
-                <Progress value={pumpRunning ? 100 : 68} className="h-2" />
+                <Progress value={waterLevelPct ?? 0} className="h-2" />
               </div>
             </div>
           </Card>
@@ -375,6 +442,7 @@ export function WiloSimulation() {
                 <span className="text-sm">Control Source</span>
                 <span className="text-sm font-medium">
                   {manualOverrideEnabled ? "Flask manual API" : "Unavailable"}
+                  {pumpMeta?.control_mode ? ` (${pumpMeta.control_mode})` : ""}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -416,6 +484,83 @@ export function WiloSimulation() {
 
         <SystemDashboard systemStatus={systemStatus} aiPredictions={aiPredictions} />
 
+        <div className="mb-6">
+          <Card className="border-border bg-card p-6">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <div className="mb-2 flex items-center gap-3">
+                  <Activity className="h-6 w-6 text-primary" />
+                  <h2 className="text-xl font-semibold text-foreground">
+                    Water Level Trend
+                  </h2>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Live upper-tank history sampled every 3 seconds from the Pi backend.
+                </p>
+              </div>
+              <div className="rounded-lg border border-border bg-muted/30 px-4 py-2 text-right">
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  Current level
+                </p>
+                <p className="text-xl font-semibold text-foreground">
+                  {waterLevelPct !== null ? `${formatMetric(waterLevelPct, 1)}%` : "--"}
+                </p>
+              </div>
+            </div>
+
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={waterHistory}>
+                  <defs>
+                    <linearGradient id="waterLevelFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.45} />
+                      <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.05} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#dbe4ea" />
+                  <XAxis dataKey="time" tick={{ fontSize: 12 }} minTickGap={24} />
+                  <YAxis
+                    yAxisId="level"
+                    domain={[0, 100]}
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => `${value}%`}
+                  />
+                  <YAxis
+                    yAxisId="pressure"
+                    orientation="right"
+                    domain={[0, 100]}
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => `${value}kPa`}
+                  />
+                  <Tooltip
+                    formatter={(value: number, name: string) =>
+                      name === "Water Level" ? [`${value.toFixed(1)}%`, name] : [`${value.toFixed(2)} kPa`, name]
+                    }
+                  />
+                  <Area
+                    yAxisId="level"
+                    type="monotone"
+                    dataKey="waterLevelPct"
+                    name="Water Level"
+                    stroke="#0284c7"
+                    fill="url(#waterLevelFill)"
+                    strokeWidth={3}
+                  />
+                  <Area
+                    yAxisId="pressure"
+                    type="monotone"
+                    dataKey="pressureKpa"
+                    name="Pressure"
+                    stroke="#0f766e"
+                    fillOpacity={0}
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        </div>
+
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <Card className="border-border bg-card p-6">
             <div className="mb-6 flex items-start justify-between gap-4">
@@ -446,8 +591,8 @@ export function WiloSimulation() {
                 <p className="text-2xl font-bold text-foreground">{pumpMode}</p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {pumpRunning
-                    ? "Pump is currently running under backend manual control."
-                    : "Pump is idle and waiting for an operator command."}
+                    ? "Pump is currently running under controller supervision."
+                    : "Pump is idle and waiting for a controller decision or operator command."}
                 </p>
               </div>
               <div className="rounded-xl border border-border bg-muted/40 p-4">
@@ -459,7 +604,7 @@ export function WiloSimulation() {
                   {pressureKpa !== null
                     ? `${formatMetric(pressureKpa, 2)} kPa at ${formatMetric(sensorVoltage, 3)} V`
                     : manualOverrideEnabled
-                      ? `GPIO relay ready${pumpMeta?.relay_pin ? ` on pin ${pumpMeta.relay_pin}` : ""}.`
+                      ? "Waiting for a valid LoRa reading from the Pi controller."
                       : "Backend manual override is not available on this host."}
                 </div>
               </div>
