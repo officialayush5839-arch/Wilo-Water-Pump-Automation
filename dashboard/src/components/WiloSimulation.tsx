@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { SystemDashboard } from "./SystemDashboard";
@@ -110,6 +110,8 @@ export function WiloSimulation() {
   );
 
   const [controlMode, setControlMode] = useState<"auto" | "manual">("auto");
+  const lastModeToggleAt = useRef(0);
+  const MODE_SYNC_GRACE_MS = 5000;
   const [manualOverrideEnabled, setManualOverrideEnabled] = useState(true);
   const [backendReachable, setBackendReachable] = useState(false);
   const [backendError, setBackendError] = useState<string | null>(null);
@@ -184,7 +186,11 @@ export function WiloSimulation() {
     const mlDuration = typeof mlPrediction?.duration === "number" ? mlPrediction.duration : null;
 
     const override = payload.runtime?.override ?? null;
-    setControlMode(override ? "manual" : "auto");
+    const backendMode = override ? "manual" : "auto";
+    const graceRemaining = Date.now() - lastModeToggleAt.current;
+    if (graceRemaining > MODE_SYNC_GRACE_MS) {
+      setControlMode(backendMode);
+    }
     setBackendReachable(true);
     setBackendError(null);
     setManualOverrideEnabled(available);
@@ -390,8 +396,8 @@ export function WiloSimulation() {
         title: mode === "auto" ? "Automatic mode" : "Manual mode",
         description: payload?.message ?? `Switched to ${mode} mode.`,
       });
+      lastModeToggleAt.current = Date.now();
       setControlMode(mode);
-      void loadDashboardStatus(false);
     } catch (error) {
       const message = error instanceof Error ? error.message : "mode switch failed";
       appendEvent("Mode switch failed", message);
