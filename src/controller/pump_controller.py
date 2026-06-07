@@ -54,11 +54,16 @@ def pressure_to_level_pct(pressure_kpa):
     """
     Convert pressure at bottom of upper tank to water level percentage.
     P = ρ × g × h  →  h = P / (ρ × g)
+    Applies PRESSURE_OFFSET_KPA to zero the sensor (subtracts atmospheric baseline).
     """
     if pressure_kpa is None or pressure_kpa < 0:
         return None
+    # Apply calibration offset
+    net_pressure_kpa = pressure_kpa - CFG.PRESSURE_OFFSET_KPA
+    if net_pressure_kpa <= 0:
+        return 0.0
     # Pressure in Pascals
-    pressure_pa = pressure_kpa * 1000.0
+    pressure_pa = net_pressure_kpa * 1000.0
     # Water column height in metres
     h_m = pressure_pa / (CFG.WATER_DENSITY * CFG.GRAVITY)
     # Height in cm
@@ -174,7 +179,6 @@ class PumpController:
 
         # ── 5. Hybrid pump logic ──
         self.logic = HybridPumpLogic(
-            state_file=CFG.STATE_FILE,
             critical_low=CFG.UPPER_CRITICAL_LOW, low=CFG.UPPER_LOW,
             high=CFG.UPPER_HIGH, critical_high=CFG.UPPER_CRITICAL_HIGH,
             lora_timeout_s=CFG.LORA_TIMEOUT_S, max_run_min=CFG.MAX_CONTINUOUS_RUN_MIN,
@@ -234,7 +238,14 @@ class PumpController:
                 logger.warning("Ignoring malformed control command timestamp: %s", issued_at)
                 return
 
-        if action == 'override_on':
+        if action == 'manual_mode_on':
+            self.logic.set_manual_mode(True)
+            logger.info("Control command accepted: manual_mode ON")
+        elif action == 'manual_mode_off':
+            self.logic.set_manual_mode(False)
+            self.logic.set_override(None)
+            logger.info("Control command accepted: manual_mode OFF")
+        elif action == 'override_on':
             self.logic.set_override('ON')
             logger.info("Control command accepted: override ON")
         elif action == 'override_off':
@@ -242,7 +253,8 @@ class PumpController:
             logger.info("Control command accepted: override OFF")
         elif action == 'override_clear':
             self.logic.set_override(None)
-            logger.info("Control command accepted: override CLEAR")
+            self.logic.set_manual_mode(False)
+            logger.info("Control command accepted: override CLEAR — also disabled manual mode")
         else:
             logger.warning("Unknown control command: %s", action)
 
@@ -269,6 +281,7 @@ class PumpController:
             'lora_snr': self.last_snr,
             'ml_prediction': self.logic.ml_prediction if self.logic else None,
             'override': self.logic.override if self.logic else None,
+            'system_mode': 'manual' if self.logic and self.logic.manual_mode else 'auto',
             'pressure_kpa': packet.get('pressure_kpa'),
             'pump_relay_on': self.relay.pump_on if self.relay else False,
             'sensor_status': packet.get('status'),

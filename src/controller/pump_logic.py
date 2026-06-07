@@ -3,18 +3,18 @@ Hybrid Pump Control Logic
 ==========================
 Decision engine evaluates triggers in strict priority order:
 
-  P0 — Power-cut recovery     (wait delay after power restore)
-  P1 — Emergency thresholds   (tank critical LOW → ON, critical HIGH → OFF)
-  P2 — Safety guards          (LoRa timeout, sensor fault, max-run, dry-run → OFF)
-  P3 — Manual override        (button force ON/OFF, auto-expires)
-  P4 — ML prediction          (scheduled ON window from trained model)
-  P5 — Normal threshold       (hysteresis: ON at LOW%, OFF at HIGH%)
+  P0 — Manual mode freeze     (operator froze automation; only manual override commands work)
+  P1 — Power-cut recovery     (delay after power restore)
+  P2 — Manual override        (button force ON/OFF, auto-expires)
+  P3 — Emergency thresholds   (tank critical LOW → ON, critical HIGH → OFF)
+  P4 — Safety guards          (LoRa timeout, sensor fault, max-run, dry-run, undervoltage → OFF)
+  P5 — ML prediction          (scheduled ON window from trained model)
+  P6 — Normal threshold       (hysteresis: ON at LOW%, OFF at HIGH%)
 
 If no trigger fires, the current pump state is held (HOLD).
+
 """
 
-import os
-import json
 import logging
 from enum import Enum
 from datetime import datetime, timedelta
@@ -60,8 +60,7 @@ class PumpDecision:
 class HybridPumpLogic:
     """Stateful pump decision engine."""
 
-    def __init__(self, *, state_file,
-                 critical_low, low, high, critical_high,
+    def __init__(self, *, critical_low, low, high, critical_high,
                  lora_timeout_s, max_run_min, dry_run_a,
                  dry_run_enabled, power_delay_s,
                  require_valid_lora_before_start,
@@ -92,7 +91,6 @@ class HybridPumpLogic:
         self.ml_window     = timedelta(minutes=ml_window_min)
 
         # State
-        self.state_file       = state_file
         self.current_state    = PumpState.OFF
         self.pump_start_time  = None
         self.override         = None        # 'ON' | 'OFF' | None
@@ -102,38 +100,7 @@ class HybridPumpLogic:
         self.power_restore_ts = None
         self.ml_prediction    = None        # {'start_hour':float, 'duration':float}
         self.ml_check_ts      = None
-
-        self._load_state()
-
-    # ── Persistence (power-cut recovery) ─────────────────────
-
-    def _save_state(self):
-        try:
-            os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
-            with open(self.state_file, 'w') as f:
-                json.dump({
-                    'state': self.current_state.value,
-                    'pump_start': self.pump_start_time.isoformat() if self.pump_start_time else None,
-                    'ts': datetime.now().isoformat(),
-                }, f)
-        except Exception as e:
-            logger.error(f"State save failed: {e}")
-
-    def _load_state(self):
-        try:
-            if not os.path.exists(self.state_file):
-                return
-            with open(self.state_file) as f:
-                d = json.load(f)
-            saved = datetime.fromisoformat(d['ts'])
-            gap = (datetime.now() - saved).total_seconds()
-            if gap > 10:
-                self.power_restore_ts = datetime.now()
-                logger.warning(f"Power-cut detected (gap {gap:.0f}s). "
-                               f"Previous state: {d['state']}. "
-                               f"Waiting {self.power_delay.total_seconds():.0f}s…")
-        except Exception as e:
-            logger.error(f"State load failed: {e}")
+        self.manual_mode      = False       # True = automation frozen, only manual override works
 
     # ── External updates ─────────────────────────────────────
 
@@ -154,6 +121,13 @@ class HybridPumpLogic:
         if mode:
             logger.info(f"Manual override → {mode}")
 
+    def set_manual_mode(self, enabled: bool):
+        self.manual_mode = enabled
+        if not enabled:
+            self.override = None
+            self.override_time = None
+        logger.info(f"Manual mode {'ENABLED' if enabled else 'DISABLED'} — automation {'frozen' if enabled else 'resumed'}")
+
     def set_ml_prediction(self, pred: dict):
         self.ml_prediction = pred
         self.ml_check_ts = datetime.now()
@@ -173,7 +147,21 @@ class HybridPumpLogic:
         """
         now = datetime.now()
 
-        # ── P0  Power-cut recovery ───────────────────────────
+        # ── P0  Manual mode — freeze all automation ──────────
+        # When manual mode is active, only explicit override ON/OFF commands
+        # from the operator are honoured. All tank levels, ML predictions,
+        # thresholds, and safety guards are bypassed — the operator has
+        # full authority.
+        if self.manual_mode:
+            if self.override:
+                if self.override == 'ON':
+                    return self._on(PumpState.ON_MANUAL, now, "Manual mode ON")
+                elif self.override == 'OFF':
+                    return self._off(PumpState.OFF_MANUAL, "Manual mode OFF")
+            return PumpDecision('HOLD', self.current_state,
+                "Manual mode active — automation frozen, awaiting operator command")
+
+        # ── P1  Power-cut recovery ───────────────────────────
         if self.power_restore_ts:
             elapsed = now - self.power_restore_ts
             if elapsed < self.power_delay:
@@ -182,11 +170,29 @@ class HybridPumpLogic:
                     f"Power restored {elapsed.total_seconds():.0f}s ago, waiting {rem:.0f}s")
             self.power_restore_ts = None
 
-        if self.require_valid_lora_before_start and self.last_lora_ts is None:
-            return self._off(PumpState.OFF_LORA_TIMEOUT,
-                "No valid LoRa packet received yet")
+        # ── P2  Manual override ──────────────────────────────
+        # Operator commands must override automation, including emergency thresholds.
+        # An explicit OFF must be respected even when the tank is CRITICAL LOW —
+        # the operator has decided the pump stays off, full stop.
+        if self.override:
+            if self.override_time and (now - self.override_time) > self.ovr_timeout:
+                logger.info("Manual override expired")
+                self.override = None
+                self.override_time = None
+            elif self.override == 'ON':
+                return self._on(PumpState.ON_MANUAL, now, "Manual override ON")
+            elif self.override == 'OFF':
+                return self._off(PumpState.OFF_MANUAL, "Manual override OFF")
 
-        # ── P1  Emergency thresholds ─────────────────────────
+        if self.require_valid_lora_before_start:
+            if self.last_lora_ts is None:
+                return self._off(PumpState.OFF_LORA_TIMEOUT,
+                    "No valid LoRa packet received yet")
+            if (now - self.last_lora_ts) > self.lora_timeout:
+                return self._off(PumpState.OFF_LORA_TIMEOUT,
+                    f"LoRa data stale ({(now - self.last_lora_ts).total_seconds():.0f}s old)")
+
+        # ── P2  Emergency thresholds ─────────────────────────
         if upper_pct is not None:
             if upper_pct >= self.crit_high:
                 return self._off(PumpState.OFF_EMERGENCY,
@@ -195,7 +201,7 @@ class HybridPumpLogic:
                 return self._on(PumpState.ON_EMERGENCY, now,
                     f"Upper tank CRITICAL LOW {upper_pct:.1f}% ≤ {self.crit_low}%")
 
-        # ── P2  Safety guards ────────────────────────────────
+        # ── P3  Safety guards ────────────────────────────────
         # LoRa timeout
         if self.last_lora_ts and (now - self.last_lora_ts) > self.lora_timeout:
             return self._off(PumpState.OFF_LORA_TIMEOUT,
@@ -225,18 +231,6 @@ class HybridPumpLogic:
                 and voltage_ac < self.min_voltage_ac):
             return self._off(PumpState.OFF_UNDERVOLTAGE,
                 f"Undervoltage detected: {voltage_ac:.1f}V < {self.min_voltage_ac:.1f}V")
-
-        # ── P3  Manual override ──────────────────────────────
-        if self.override:
-            # Auto-expire
-            if self.override_time and (now - self.override_time) > self.ovr_timeout:
-                logger.info("Manual override expired")
-                self.override = None
-                self.override_time = None
-            elif self.override == 'ON':
-                return self._on(PumpState.ON_MANUAL, now, "Manual override ON")
-            elif self.override == 'OFF':
-                return self._off(PumpState.OFF_MANUAL, "Manual override OFF")
 
         # ── P4  ML prediction ────────────────────────────────
         if self.ml_enabled and self.ml_prediction:
@@ -275,11 +269,9 @@ class HybridPumpLogic:
         if self.pump_start_time is None:
             self.pump_start_time = now
         self.current_state = state
-        self._save_state()
         return PumpDecision('ON', state, reason)
 
     def _off(self, state, reason):
         self.pump_start_time = None
         self.current_state = state
-        self._save_state()
         return PumpDecision('OFF', state, reason)

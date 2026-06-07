@@ -12,6 +12,7 @@ type RuntimeDecision = {
 type RuntimePayload = {
   connected?: boolean;
   controller_mode?: string;
+  system_mode?: string;
   current_amps?: number | null;
   decision?: RuntimeDecision;
   host?: string;
@@ -38,6 +39,7 @@ type RuntimePayload = {
 type DashboardState = {
   connected: boolean;
   controllerMode: string;
+  systemMode: string;
   currentAmps: number | null;
   decision: RuntimeDecision;
   host: string;
@@ -61,6 +63,7 @@ type DashboardState = {
 const initialState: DashboardState = {
   connected: false,
   controllerMode: "website-demo",
+  systemMode: "auto",
   currentAmps: 4.8,
   decision: {
     action: "HOLD",
@@ -124,6 +127,7 @@ function withPayload(prev: DashboardState, payload: RuntimePayload): DashboardSt
   return {
     connected: payload.connected ?? prev.connected,
     controllerMode: payload.controller_mode ?? prev.controllerMode,
+    systemMode: payload.system_mode ?? prev.systemMode,
     currentAmps:
       typeof payload.current_amps === "number" ? payload.current_amps : prev.currentAmps,
     decision: payload.decision ?? prev.decision,
@@ -485,7 +489,7 @@ export function SystemDashboard() {
               {state.decision.reason ?? "No decision reason provided"}
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-              <InfoCard label="Controller mode" value={state.controllerMode} />
+              <InfoCard label="System mode" value={state.systemMode === "manual" ? "Manual" : "Auto"} />
               <InfoCard label="Manual override" value={state.override ?? "none"} />
               <InfoCard label="ML prediction window" value={formatPrediction(state.mlPrediction)} />
               <InfoCard label="Host" value={state.host} />

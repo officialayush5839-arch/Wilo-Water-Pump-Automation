@@ -26,8 +26,9 @@ def _output_level(turn_on: bool) -> int:
 def _ensure_gpio() -> None:
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT)
-    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT)
+    off_level = GPIO.LOW if CFG.RELAY_ACTIVE_LOW else GPIO.HIGH
+    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=off_level)
+    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.LOW)
 
 
 def _write_state(turn_on: bool) -> dict:
@@ -42,10 +43,31 @@ def _write_state(turn_on: bool) -> dict:
     return payload
 
 
+def _notify_controller(action: str) -> None:
+    """Drop a control command so the pump_controller's main loop honours the override.
+
+    Without this, the controller will re-assert the relay on its next cycle
+    because the tank-level-based automation logic does not know the operator
+    flipped the switch manually. Manual override has higher priority and
+    must persist until an explicit clear command is sent.
+    """
+    try:
+        command = {
+            'action': action,
+            'issued_at': datetime.now().isoformat(),
+            'source': 'manual_pump_control',
+        }
+        atomic_write_json(CFG.CONTROL_FILE, command)
+    except Exception as exc:
+        # Never let notification failure block the actual relay toggle.
+        print(f'[manual_pump_control] WARN failed to notify controller: {exc}', file=sys.stderr)
+
+
 def set_pump(turn_on: bool) -> dict:
     _ensure_gpio()
     GPIO.output(CFG.RELAY_PUMP_PIN, _output_level(turn_on))
     GPIO.output(CFG.LED_STATUS_PIN, GPIO.HIGH if turn_on else GPIO.LOW)
+    _notify_controller('override_on' if turn_on else 'override_off')
     return _write_state(turn_on)
 
 

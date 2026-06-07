@@ -20,10 +20,10 @@ LORA_DIO0_PIN     = 24       # GPIO 24 (Physical Pin 18)
 LORA_FREQUENCY    = 433E6    # Must match ESP32
 LORA_SYNC_WORD    = 0xF3     # Must match ESP32
 
-# ── Relay Module (Active-LOW) ──
+# ── Relay Module ──
 RELAY_PUMP_PIN    = 17       # GPIO 17 (Physical Pin 11)
 RELAY_VALVE_PIN   = 27       # GPIO 27 (Physical Pin 13) — spare / inlet valve
-RELAY_ACTIVE_LOW  = True     # This relay module triggers on LOW
+RELAY_ACTIVE_LOW  = True     # True = active-LOW (GPIO LOW → relay ON, HIGH → relay OFF) for standard 1ch 5V relay
 
 # ── Manual Override Buttons (normally-open, pull-up) ──
 BUTTON_FORCE_ON   = 22       # GPIO 22 (Physical Pin 15)
@@ -45,14 +45,13 @@ ADC_CH_VOLTAGE    = 1        # ZMPT101B → A1
 UPPER_TANK_CAPACITY_L  = 25000
 UPPER_TANK_HEIGHT_CM   = 200     # PLACEHOLDER — measure and update!
 UPPER_TANK_DIAMETER_CM = 180     # PLACEHOLDER — measure and update!
-
-# Main / Lower Tank (ground, near pump)
-MAIN_TANK_CAPACITY_L   = 25000
-MAIN_TANK_HEIGHT_CM    = 200     # PLACEHOLDER — measure and update!
-
-# Physics constants for pressure → level conversion
 WATER_DENSITY = 998.0   # kg/m³ at ~20 °C
 GRAVITY       = 9.81    # m/s²
+
+# Pressure sensor calibration — subtract this from raw reading to zero the sensor
+# (sensor reads atmospheric + water column; this removes the atmospheric baseline)
+# Set by reading the sensor with an EMPTY tank and updating this value
+PRESSURE_OFFSET_KPA = 23.0   # Calibrated 2026-06-04: empty-tank LoRa reading ~22.5-23.5 kPa
 
 # ============================================================
 # PUMP CONTROL THRESHOLDS (percentage of upper tank)
@@ -107,7 +106,7 @@ POWER_RESTORE_DELAY_S    = 30     # Wait after power-cut before pump
 # MANUAL OVERRIDE
 # ============================================================
 
-OVERRIDE_TIMEOUT_MIN     = 60     # Auto-release override after this
+OVERRIDE_TIMEOUT_MIN     = 1440   # Auto-release override after this (24h safety net)
 OVERRIDE_DEBOUNCE_MS     = 200    # Button debounce
 
 # ============================================================

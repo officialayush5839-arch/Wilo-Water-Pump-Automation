@@ -40,20 +40,22 @@ class RelayController:
     def initialize(self):
         """Setup GPIO pins. Call AFTER GPIO.setmode(BCM) in main."""
         gpio = _gpio()
-        gpio.setup(self.pump_pin,  gpio.OUT)
-        gpio.setup(self.valve_pin, gpio.OUT)
-        gpio.setup(self.led_pin,   gpio.OUT)
+
+        # Set initial pin levels BEFORE setup to prevent relay chatter on boot
+        # active_low=True → OFF state = HIGH
+        off_level = gpio.HIGH if self.active_low else gpio.LOW
+
+        gpio.setup(self.pump_pin,  gpio.OUT, initial=off_level)
+        gpio.setup(self.valve_pin, gpio.OUT, initial=off_level)
+        gpio.setup(self.led_pin,   gpio.OUT, initial=gpio.LOW)
         gpio.setup(self.btn_on,    gpio.IN, pull_up_down=gpio.PUD_UP)
         gpio.setup(self.btn_off,   gpio.IN, pull_up_down=gpio.PUD_UP)
 
-        # Start with everything OFF
-        self._relay(self.pump_pin, False)
-        self._relay(self.valve_pin, False)
-        gpio.output(self.led_pin, gpio.LOW)
+        self.pump_on = False
         self._ready = True
         logger.info("Relay controller initialised  "
                      f"pump=GPIO{self.pump_pin}  valve=GPIO{self.valve_pin}  "
-                     f"active_low={self.active_low}")
+                     f"active_low={self.active_low}  pump_relay=OFF")
 
     def cleanup(self):
         """Ensure pump OFF before shutdown."""

@@ -130,6 +130,7 @@ def _dashboard_status_payload():
         "telemetry": telemetry,
         "runtime": runtime_status,
         "runtime_error": str(runtime_error) if runtime_error else None,
+        "system_mode": 'manual' if runtime_status and runtime_status.get('override') else 'auto',
         "timestamp": datetime.now().isoformat(),
     }
 
@@ -322,6 +323,53 @@ def pump_off():
     except Exception as exc:
         traceback.print_exc()
         return _json_error("failed to turn pump off", 500, detail=str(exc))
+
+
+@app.route('/api/mode', methods=['GET', 'POST', 'OPTIONS'])
+def system_mode():
+    if request.method == 'OPTIONS':
+        return ('', 204)
+    if request.method == 'GET':
+        payload = _dashboard_status_payload()
+        return jsonify({"ok": True, "mode": payload.get('system_mode', 'auto')})
+    data = request.get_json(silent=True) or {}
+    mode = data.get('mode', 'auto')
+    try:
+        import tank_config as CFG
+        from runtime_channel import atomic_write_json
+        from datetime import datetime
+        action = 'manual_mode_on' if mode == 'manual' else 'manual_mode_off'
+        command = {
+            'action': action,
+            'issued_at': datetime.now().isoformat(),
+            'source': 'dashboard-ui',
+        }
+        atomic_write_json(CFG.CONTROL_FILE, command)
+        return jsonify({"ok": True, "mode": mode, "message": f"Switched to {mode} mode"})
+    except Exception as exc:
+        traceback.print_exc()
+        return _json_error(f"failed to switch to {mode} mode", 500, detail=str(exc))
+
+
+@app.route('/api/pump/clear-override', methods=['POST', 'OPTIONS'])
+def pump_clear_override():
+    """Drop the manual override so the controller returns to automated mode."""
+    if request.method == 'OPTIONS':
+        return ('', 204)
+    try:
+        import tank_config as CFG
+        from runtime_channel import atomic_write_json
+        from datetime import datetime
+        command = {
+            'action': 'override_clear',
+            'issued_at': datetime.now().isoformat(),
+            'source': 'dashboard-ui',
+        }
+        atomic_write_json(CFG.CONTROL_FILE, command)
+        return jsonify({"ok": True, "message": "Manual override cleared; controller resumed automated mode"})
+    except Exception as exc:
+        traceback.print_exc()
+        return _json_error("failed to clear override", 500, detail=str(exc))
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 
