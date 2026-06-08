@@ -27,6 +27,15 @@ def print_json(payload: dict) -> None:
 def read_status() -> dict:
     payload = read_json(CFG.STATUS_FILE)
     if payload is not None:
+        latest_packet = _read_latest_lora_packet()
+        if latest_packet:
+            payload.update({
+                'lora_age_s': latest_packet.get('lora_age_s'),
+                'lora_pkt': latest_packet.get('pkt'),
+                'pressure_kpa': latest_packet.get('pressure_kpa'),
+                'sensor_status': latest_packet.get('status'),
+                'sensor_voltage': latest_packet.get('voltage'),
+            })
         return payload
 
     latest_packet = _read_latest_lora_packet()

@@ -18,6 +18,9 @@ CSV_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'pressure_log.c
 SERIAL_PORT = None
 BAUD = 115200
 _CONTROLLER_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'controller'))
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 if _CONTROLLER_DIR not in sys.path:
     sys.path.insert(0, _CONTROLLER_DIR)
 
@@ -76,11 +79,11 @@ def _read_manual_pump_status():
         }
 
 
-def _set_manual_pump(turn_on: bool):
+def _set_manual_pump(turn_on: bool, notify_controller: bool = True):
     manual_pump_control, import_error = _load_manual_pump_module()
     if manual_pump_control is None:
         raise RuntimeError(f"manual pump control unavailable: {import_error}")
-    return manual_pump_control.set_pump(turn_on)
+    return manual_pump_control.set_pump(turn_on, notify_controller=notify_controller)
 
 
 def _load_remote_bridge_module():
@@ -136,6 +139,72 @@ def _write_dashboard_mode(mode: str):
     })
 
 
+def _prediction_payload():
+    try:
+        from config.settings import FALLBACK_START_HOUR, FALLBACK_DURATION
+    except Exception:
+        FALLBACK_START_HOUR = 7.0
+        FALLBACK_DURATION = 90
+
+    try:
+        from src.models.prediction import get_comprehensive_prediction
+        from src.utils.sensors import get_fallback_sensor_data
+
+        prediction = get_comprehensive_prediction(get_fallback_sensor_data())
+        return {
+            "start_hour": float(prediction["start_hour"]),
+            "duration": float(prediction["duration"]),
+            "method": prediction.get("method", "prediction"),
+            "confidence": prediction.get("confidence", "medium"),
+        }
+    except Exception as exc:
+        return {
+            "start_hour": float(FALLBACK_START_HOUR),
+            "duration": float(FALLBACK_DURATION),
+            "method": "fallback",
+            "confidence": "low",
+            "error": str(exc),
+        }
+
+
+def _is_in_prediction_window(prediction: dict, now: datetime | None = None) -> bool:
+    now = now or datetime.now()
+    start_min = int(round(float(prediction.get("start_hour", 7.0)) * 60)) % (24 * 60)
+    duration_min = max(0, int(round(float(prediction.get("duration", 0)))))
+    current_min = now.hour * 60 + now.minute
+
+    if duration_min <= 0:
+        return False
+    if duration_min >= 24 * 60:
+        return True
+
+    elapsed = (current_min - start_min) % (24 * 60)
+    return elapsed < duration_min
+
+
+def _apply_auto_control_if_needed(system_mode: str, pump_status: dict, prediction: dict) -> tuple[dict, dict]:
+    if system_mode != "auto" or not pump_status.get("available", False):
+        return pump_status, {"enabled": False}
+
+    should_run = _is_in_prediction_window(prediction)
+    current_state = pump_status.get("pump_relay_on")
+    action = "hold"
+
+    if isinstance(current_state, bool) and current_state != should_run:
+        pump_status = {
+            "available": True,
+            **_set_manual_pump(should_run, notify_controller=False),
+        }
+        action = "on" if should_run else "off"
+
+    return pump_status, {
+        "enabled": True,
+        "action": action,
+        "should_run": should_run,
+        "reason": "inside predicted run window" if should_run else "outside predicted run window",
+    }
+
+
 def _telemetry_from_runtime(runtime_status):
     if not runtime_status:
         return None
@@ -156,14 +225,21 @@ def _dashboard_status_payload():
     runtime_status, runtime_error = _runtime_bridge_status()
     telemetry = _telemetry_from_runtime(runtime_status) or latest
     system_mode = _read_dashboard_mode(runtime_status)
+    prediction = _prediction_payload()
+    pump_status, auto_control = _apply_auto_control_if_needed(system_mode, pump_status, prediction)
+    runtime_payload = dict(runtime_status or {})
+    runtime_payload["ml_prediction"] = runtime_payload.get("ml_prediction") or prediction
+    runtime_payload["system_mode"] = system_mode
+    runtime_payload["pump_relay_on"] = pump_status.get("pump_relay_on")
     return {
         "ok": True,
         "manual_override_available": pump_status.get("available", False),
         "manual_override_enabled": pump_status.get("available", False),
         "pump": pump_status,
         "telemetry": telemetry,
-        "runtime": runtime_status,
+        "runtime": runtime_payload,
         "runtime_error": str(runtime_error) if runtime_error else None,
+        "auto_control": auto_control,
         "system_mode": system_mode,
         "timestamp": datetime.now().isoformat(),
     }

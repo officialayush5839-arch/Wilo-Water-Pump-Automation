@@ -65,6 +65,12 @@ interface DashboardStatusPayload {
       duration?: number;
     } | null;
   };
+  auto_control?: {
+    enabled?: boolean;
+    action?: string;
+    should_run?: boolean;
+    reason?: string;
+  };
   system_mode?: "auto" | "manual";
   telemetry?: {
     status?: string;
@@ -141,6 +147,11 @@ export function WiloSimulation() {
     dataSource: "Flask API",
     reliability: "High",
   });
+  const [autoControl, setAutoControl] = useState({
+    enabled: false,
+    shouldRun: false,
+    reason: "Waiting for backend status",
+  });
   const [operatorEvents, setOperatorEvents] = useState<OperatorEvent[]>([
     {
       id: 1,
@@ -194,10 +205,16 @@ export function WiloSimulation() {
 
     const override = payload.runtime?.override ?? null;
     const backendMode = payload.system_mode ?? (override ? "manual" : "auto");
+    const effectiveOverride = backendMode === "manual" ? override : null;
     const graceRemaining = Date.now() - lastModeToggleAt.current;
     if (graceRemaining > MODE_SYNC_GRACE_MS) {
       setControlMode(backendMode);
     }
+    setAutoControl({
+      enabled: payload.auto_control?.enabled === true,
+      shouldRun: payload.auto_control?.should_run === true,
+      reason: payload.auto_control?.reason ?? "No auto-control decision yet",
+    });
     setBackendReachable(true);
     setBackendError(null);
     setManualOverrideEnabled(available);
@@ -239,8 +256,8 @@ export function WiloSimulation() {
     setAiPredictions({
       nextStart: relayOn
         ? "Running now"
-        : payload.runtime?.override
-          ? `Override ${payload.runtime.override} (held by safety)`
+        : effectiveOverride
+          ? `Override ${effectiveOverride} (held by safety)`
           : mlStartHour !== null
             ? `${Math.floor(mlStartHour)}:${String(Math.round((mlStartHour % 1) * 60)).padStart(2, "0")}`
             : "Awaiting data",
@@ -727,6 +744,33 @@ export function WiloSimulation() {
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-sm text-green-700">
                   <span className="h-2 w-2 rounded-full bg-green-500" />
                   Controller managing pump automatically
+                </div>
+                <div className="mx-auto mb-6 grid max-w-xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
+                  <div className="rounded-xl border border-border bg-muted/40 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Predicted Start
+                    </p>
+                    <p className="text-xl font-bold text-foreground">{aiPredictions.nextStart}</p>
+                  </div>
+                  <div className="rounded-xl border border-border bg-muted/40 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Duration
+                    </p>
+                    <p className="text-xl font-bold text-foreground">{aiPredictions.duration}</p>
+                  </div>
+                  <div className="rounded-xl border border-border bg-muted/40 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Auto Decision
+                    </p>
+                    <p className="text-sm font-semibold text-foreground">
+                      {autoControl.enabled
+                        ? autoControl.shouldRun
+                          ? "Relay should be ON"
+                          : "Relay should be OFF"
+                        : "Auto control inactive"}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">{autoControl.reason}</p>
+                  </div>
                 </div>
                 <div className="mt-4">
                   <Button

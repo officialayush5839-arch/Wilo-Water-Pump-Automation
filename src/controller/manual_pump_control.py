@@ -16,7 +16,7 @@ import RPi.GPIO as GPIO
 import tank_config as CFG
 from runtime_channel import atomic_write_json, read_json
 
-RELAY_CONTROL_PINS = (CFG.RELAY_PUMP_PIN, CFG.RELAY_VALVE_PIN, CFG.LORA_DIO0_PIN)
+RELAY_CONTROL_PINS = (CFG.RELAY_PUMP_PIN, CFG.RELAY_VALVE_PIN)
 
 
 def _relay_pins() -> tuple[int, ...]:
@@ -76,12 +76,13 @@ def _notify_controller(action: str) -> None:
         print(f'[manual_pump_control] WARN failed to notify controller: {exc}', file=sys.stderr)
 
 
-def set_pump(turn_on: bool) -> dict:
+def set_pump(turn_on: bool, notify_controller: bool = True) -> dict:
     if turn_on:
         _set_relay_outputs_on()
     else:
         _release_relay_outputs_off()
-    _notify_controller('override_on' if turn_on else 'override_off')
+    if notify_controller:
+        _notify_controller('override_on' if turn_on else 'override_off')
     return _write_state(turn_on)
 
 
