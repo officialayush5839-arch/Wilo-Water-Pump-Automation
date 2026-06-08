@@ -103,6 +103,39 @@ def _runtime_bridge_status():
         return None, exc
 
 
+def _dashboard_mode_file():
+    import tank_config as CFG
+
+    return os.path.join(CFG.LOG_DIR, 'dashboard_mode.json')
+
+
+def _read_dashboard_mode(runtime_status=None):
+    try:
+        from runtime_channel import read_json
+
+        saved = read_json(_dashboard_mode_file()) or {}
+        mode = saved.get('mode')
+        if mode in ('auto', 'manual'):
+            return mode
+    except Exception:
+        pass
+
+    if runtime_status and runtime_status.get('system_mode') in ('auto', 'manual'):
+        return runtime_status.get('system_mode')
+
+    return 'manual' if runtime_status and runtime_status.get('override') else 'auto'
+
+
+def _write_dashboard_mode(mode: str):
+    from runtime_channel import atomic_write_json
+
+    atomic_write_json(_dashboard_mode_file(), {
+        'mode': mode,
+        'timestamp': datetime.now().isoformat(),
+        'source': 'dashboard-ui',
+    })
+
+
 def _telemetry_from_runtime(runtime_status):
     if not runtime_status:
         return None
@@ -122,6 +155,7 @@ def _dashboard_status_payload():
     pump_status = _read_manual_pump_status()
     runtime_status, runtime_error = _runtime_bridge_status()
     telemetry = _telemetry_from_runtime(runtime_status) or latest
+    system_mode = _read_dashboard_mode(runtime_status)
     return {
         "ok": True,
         "manual_override_available": pump_status.get("available", False),
@@ -130,7 +164,7 @@ def _dashboard_status_payload():
         "telemetry": telemetry,
         "runtime": runtime_status,
         "runtime_error": str(runtime_error) if runtime_error else None,
-        "system_mode": 'manual' if runtime_status and runtime_status.get('override') else 'auto',
+        "system_mode": system_mode,
         "timestamp": datetime.now().isoformat(),
     }
 
@@ -345,6 +379,7 @@ def system_mode():
             'source': 'dashboard-ui',
         }
         atomic_write_json(CFG.CONTROL_FILE, command)
+        _write_dashboard_mode(mode)
         return jsonify({"ok": True, "mode": mode, "message": f"Switched to {mode} mode"})
     except Exception as exc:
         traceback.print_exc()
@@ -366,6 +401,7 @@ def pump_clear_override():
             'source': 'dashboard-ui',
         }
         atomic_write_json(CFG.CONTROL_FILE, command)
+        _write_dashboard_mode('auto')
         return jsonify({"ok": True, "message": "Manual override cleared; controller resumed automated mode"})
     except Exception as exc:
         traceback.print_exc()

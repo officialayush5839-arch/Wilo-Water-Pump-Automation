@@ -60,7 +60,12 @@ interface DashboardStatusPayload {
     };
     override?: string | null;
     lora_age_s?: number | null;
+    ml_prediction?: {
+      start_hour?: number;
+      duration?: number;
+    } | null;
   };
+  system_mode?: "auto" | "manual";
   telemetry?: {
     status?: string;
     timestamp?: string;
@@ -165,11 +170,13 @@ export function WiloSimulation() {
   };
 
   const applyDashboardStatus = (payload: DashboardStatusPayload) => {
-    // Use the controller's runtime decision as the source of truth for pump state
-    // (payload.pump.pump_relay_on only reflects manual override state, not automated control)
-    const decisionAction = (payload.runtime?.decision?.action ?? "").toUpperCase();
-    const relayOn = decisionAction === "ON";
     const available = payload.manual_override_available !== false && payload.pump?.available !== false;
+    // Manual relay commands are applied directly by the backend, while runtime
+    // status can be stale if the main controller service is stopped.
+    const decisionAction = (payload.runtime?.decision?.action ?? "").toUpperCase();
+    const directRelayState =
+      typeof payload.pump?.pump_relay_on === "boolean" ? payload.pump.pump_relay_on : null;
+    const relayOn = available && directRelayState !== null ? directRelayState : decisionAction === "ON";
     const telemetryStatus = payload.telemetry?.status ?? "waiting";
     const telemetryOk = telemetryStatus === "ok";
     const nextPressure =
@@ -186,7 +193,7 @@ export function WiloSimulation() {
     const mlDuration = typeof mlPrediction?.duration === "number" ? mlPrediction.duration : null;
 
     const override = payload.runtime?.override ?? null;
-    const backendMode = override ? "manual" : "auto";
+    const backendMode = payload.system_mode ?? (override ? "manual" : "auto");
     const graceRemaining = Date.now() - lastModeToggleAt.current;
     if (graceRemaining > MODE_SYNC_GRACE_MS) {
       setControlMode(backendMode);

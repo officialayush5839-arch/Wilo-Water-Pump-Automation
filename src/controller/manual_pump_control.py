@@ -16,28 +16,41 @@ import RPi.GPIO as GPIO
 import tank_config as CFG
 from runtime_channel import atomic_write_json, read_json
 
-
-def _output_level(turn_on: bool) -> int:
-    if CFG.RELAY_ACTIVE_LOW:
-        return GPIO.LOW if turn_on else GPIO.HIGH
-    return GPIO.HIGH if turn_on else GPIO.LOW
+RELAY_CONTROL_PINS = (CFG.RELAY_PUMP_PIN, CFG.RELAY_VALVE_PIN, CFG.LORA_DIO0_PIN)
 
 
-def _ensure_gpio() -> None:
+def _relay_pins() -> tuple[int, ...]:
+    return tuple(dict.fromkeys(RELAY_CONTROL_PINS))
+
+
+def _set_relay_outputs_on() -> None:
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    off_level = GPIO.LOW if CFG.RELAY_ACTIVE_LOW else GPIO.HIGH
-    GPIO.setup(CFG.RELAY_PUMP_PIN, GPIO.OUT, initial=off_level)
+    for pin in _relay_pins():
+        GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.output(pin, GPIO.LOW)
+    GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.HIGH)
+
+
+def _release_relay_outputs_off() -> None:
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    for pin in _relay_pins():
+        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(CFG.LED_STATUS_PIN, GPIO.OUT, initial=GPIO.LOW)
 
 
 def _write_state(turn_on: bool) -> dict:
+    gpio_level = int(GPIO.input(CFG.RELAY_PUMP_PIN))
     payload = {
         'pump_relay_on': turn_on,
         'timestamp': datetime.now().isoformat(),
         'relay_pin': CFG.RELAY_PUMP_PIN,
-        'active_low': CFG.RELAY_ACTIVE_LOW,
-        'gpio_level': int(GPIO.input(CFG.RELAY_PUMP_PIN)),
+        'relay_control_pins': list(_relay_pins()),
+        'off_mode': 'input_pullup',
+        'on_mode': 'output_low',
+        'active_low': True,
+        'gpio_level': gpio_level,
     }
     atomic_write_json(CFG.DIRECT_PUMP_STATE_FILE, payload)
     return payload
@@ -64,21 +77,29 @@ def _notify_controller(action: str) -> None:
 
 
 def set_pump(turn_on: bool) -> dict:
-    _ensure_gpio()
-    GPIO.output(CFG.RELAY_PUMP_PIN, _output_level(turn_on))
-    GPIO.output(CFG.LED_STATUS_PIN, GPIO.HIGH if turn_on else GPIO.LOW)
+    if turn_on:
+        _set_relay_outputs_on()
+    else:
+        _release_relay_outputs_off()
     _notify_controller('override_on' if turn_on else 'override_off')
     return _write_state(turn_on)
 
 
 def read_status() -> dict:
-    _ensure_gpio()
     saved = read_json(CFG.DIRECT_PUMP_STATE_FILE) or {}
+    saved_on = saved.get('pump_relay_on')
+    if saved_on is True:
+        _set_relay_outputs_on()
+    else:
+        _release_relay_outputs_off()
     return {
-        'pump_relay_on': saved.get('pump_relay_on'),
+        'pump_relay_on': saved_on,
         'timestamp': saved.get('timestamp'),
         'relay_pin': CFG.RELAY_PUMP_PIN,
-        'active_low': CFG.RELAY_ACTIVE_LOW,
+        'relay_control_pins': list(_relay_pins()),
+        'off_mode': 'input_pullup',
+        'on_mode': 'output_low',
+        'active_low': True,
         'gpio_level': int(GPIO.input(CFG.RELAY_PUMP_PIN)),
     }
 
