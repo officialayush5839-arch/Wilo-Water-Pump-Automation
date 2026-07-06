@@ -427,33 +427,129 @@ python -m pytest tests/integration/
 
 Set `LOG_LEVEL = 'DEBUG'` in `config/settings.py` for detailed logging.
 
-## 📝 License
+## 🔌 Connecting the Laptop to the Raspberry Pi over SSH (Mobile Hotspot)
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+The Pi runs headless — you control it from your laptop over SSH. In the field there's usually no router, so the simplest setup is a **phone hotspot** that both the Pi and the laptop join. Both devices must be on the **same hotspot**.
 
-## 🤝 Contributing
+```
+   📱 Phone Hotspot  (e.g. "Sarthak-iPhone")
+        │
+   ┌────┴─────┐
+   │          │
+ 💻 Laptop   🍓 Raspberry Pi
+              (headless — SSH target)
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+### 1. Enable SSH on the Raspberry Pi
 
-## 📞 Support
+- **Raspberry Pi Imager**: enable SSH (and set hostname/user/password) in the advanced options before flashing, **or**
+- On a running Pi: `sudo raspi-config` → *Interface Options* → *SSH* → *Enable*, **or**
+- Headless: drop an empty file named `ssh` into the boot partition of the SD card.
 
-For support and questions:
+Default project user/hostname (from the systemd + TUI config): user `wilopi`, hostname `wilopi.local`.
 
-- Create an issue in the repository
-- Check the documentation in `docs/`
-- Review the troubleshooting section
+### 2. Make the Pi auto-join the phone hotspot
 
-## 🔄 Version History
+Since the Pi is headless, it must already know the hotspot's Wi-Fi so it connects on boot. Set a **fixed SSID + password** on the phone hotspot, then tell the Pi about it:
 
-### v1.0.0
+- **Easiest (before flashing):** in Raspberry Pi Imager advanced options, set the Wi-Fi SSID/password to your **hotspot's** name and password.
+- **Headless SD-card edit:** create `wpa_supplicant.conf` in the SD card's boot partition:
 
-- Initial release
-- Core pump automation functionality
-- Professional terminal dashboard
-- Historical pattern analysis
-- Simulation capabilities
-- Comprehensive documentation
+  ```text
+  country=IN
+  ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+  update_config=1
+
+  network={
+      ssid="YOUR_HOTSPOT_NAME"
+      psk="YOUR_HOTSPOT_PASSWORD"
+  }
+  ```
+
+- **On a Pi you can already reach:** `sudo raspi-config` → *System Options* → *Wireless LAN*, or `sudo nmcli dev wifi connect "YOUR_HOTSPOT_NAME" password "YOUR_HOTSPOT_PASSWORD"`.
+
+> 💡 Turn the phone hotspot **on first**, then power the Pi — it joins automatically. Keep the SSID/password the same every time so the Pi always reconnects.
+
+### 3. Connect the laptop to the **same** hotspot, then find the Pi's IP
+
+Join the laptop to the same phone hotspot. Phone hotspots often **don't** resolve `wilopi.local` (no mDNS), so find the Pi's IP address:
+
+- **On the phone:** open *Hotspot / Connected Devices* — it lists each connected device's name and IP (the Pi shows up as `wilopi` or `raspberrypi`).
+- **From the laptop:** scan the hotspot subnet (commonly `172.20.10.x` on iPhone, `192.168.43.x` on Android):
+
+  ```bash
+  # try the hostname first (sometimes works)
+  ping wilopi.local
+
+  # otherwise scan the subnet (install nmap, or use arp)
+  nmap -sn 172.20.10.0/24
+  arp -a | grep -iE 'b8:27:eb|dc:a6:32|e4:5f:01'   # Raspberry Pi MAC prefixes
+  ```
+
+### 4. SSH in from the laptop
+
+```bash
+# macOS / Linux / Windows (PowerShell or Terminal)
+# use the IP you found on the hotspot in step 3
+ssh wilopi@172.20.10.5
+# …or by hostname if mDNS works on your hotspot
+ssh wilopi@wilopi.local
+```
+
+First connection asks to confirm the host fingerprint — type `yes`. Then enter the Pi password.
+
+### 5. Passwordless login (SSH keys — recommended)
+
+Generate a key on the **laptop** (skip if you already have `~/.ssh/id_ed25519.pub`), then copy it to the Pi:
+
+```bash
+ssh-keygen -t ed25519            # press Enter through the prompts
+ssh-copy-id wilopi@wilopi.local  # copies your public key to the Pi
+```
+
+Now `ssh wilopi@wilopi.local` logs in with no password. Add a shortcut in `~/.ssh/config` on the laptop:
+
+```text
+Host wilopi
+    HostName wilopi.local
+    User wilopi
+```
+
+…then just `ssh wilopi`.
+
+### 6. Reach the dashboard from the laptop browser
+
+On the same hotspot you can usually just open the Pi's IP directly — start `server.py` on the Pi and browse to `http://172.20.10.5:5050` from the laptop.
+
+If a port isn't reachable, tunnel it over SSH instead:
+
+```bash
+# Forward Pi's :5050 to laptop's localhost:5050
+ssh -L 5050:localhost:5050 wilopi@172.20.10.5
+# Then open http://localhost:5050 in the laptop browser
+```
+
+### 7. Run the controller / server over the SSH session
+
+```bash
+ssh wilopi@172.20.10.5
+cd Wilo-Water-Pump-Automation
+
+# start the pieces (see the "How to Run" section for details)
+python3 src/controller/pump_controller.py &
+python3 src/dashboard/server.py &
+
+# or manage the systemd services
+sudo systemctl status wilo-pump
+journalctl -u wilo-pump -f
+```
+
+> To control a **running** controller from the laptop without racing GPIO, use the terminal UI in `tui/` (it sends override commands over SSH) — set `WILO_PI_HOST=wilopi.local` and `WILO_PI_USER=wilopi`.
+
+### Troubleshooting SSH
+
+- **Pi never appears on the hotspot** — the hotspot SSID/password changed, or the Pi booted before the hotspot was on. Fix the Wi-Fi in step 2 and power-cycle the Pi with the hotspot already running.
+- **`ssh: connect to host … port 22: Connection refused`** — SSH isn't enabled on the Pi (see step 1).
+- **`wilopi.local` not found** — phone hotspots usually don't do mDNS; use the raw IP from step 3 instead.
+- **`Connection timed out`** — Pi and laptop aren't on the **same** hotspot, or the Pi is off. Some hotspots also enable *client isolation* (AP isolation) which blocks device-to-device traffic — turn it off in the phone's hotspot settings if available.
+- **`REMOTE HOST IDENTIFICATION HAS CHANGED`** — the Pi was reimaged or got a new IP; clear the old key with `ssh-keygen -R 172.20.10.5`.
