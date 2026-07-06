@@ -147,32 +147,147 @@ scikit-learn>=1.0.0
    python run.py --help
    ```
 
-## 🏃 Quick Start
+## 🏃 How to Run
 
-### Basic Usage
+This is a multi-device system. Each component runs on a **specific device** — read the table first, then jump to the section for the device you're setting up.
+
+### System Overview — who runs what
+
+| # | Device | Component | Path | Command | Port |
+|---|--------|-----------|------|---------|------|
+| 1 | **ESP32** (sender) | Sensor firmware | `firmware/esp32_sender/` | Flash via Arduino IDE | LoRa 433 MHz |
+| 2 | **Raspberry Pi** | Pump controller (the brain) | `src/controller/pump_controller.py` | `python3 pump_controller.py` | — (GPIO) |
+| 3 | **Raspberry Pi** | Backend API + live dashboard | `src/dashboard/server.py` | `python3 server.py` | `5050` |
+| 4 | **Any PC / the Pi** | Frontend web dashboard (React) | `dashboard/` | `bun dev` / `npm run dev` | `8080` |
+| 5 | **Any PC** (optional) | Terminal control panel (TUI) | `tui/` | `npm run dev` (over SSH) | — |
+| 6 | **Any PC** (optional) | ML simulation / offline app | `run.py` | `python run.py` | — |
+
+**Data flow:** ESP32 → *(LoRa)* → Pi controller → *(status JSON + `/api`)* → Backend `server.py` → *(HTTP :5050)* → Frontend dashboard.
+
+> The **backend** (`server.py`) both serves the built-in HTML dashboard on port `5050` **and** exposes the `/api/*` endpoints that the React **frontend** talks to. The React app (port `8080`) proxies `/api`, `/latest`, `/stream` to `127.0.0.1:5050`.
+
+---
+
+### 1. ESP32 — Sensor Node (sender)
+
+The ESP32 reads the PR12-P210 pressure sensor on the upper tank and broadcasts JSON packets over LoRa.
+
+1. Open `firmware/esp32_sender/esp32_sender.ino` in the **Arduino IDE** (or `arduino-cli`).
+2. Install the ESP32 board package and a LoRa (SX127x) library.
+3. Select your ESP32 board + port, then **Upload**.
+4. Wire per `docs/HARDWARE_GUIDE.md` (sensor on GPIO34, LoRa on the SPI pins defined at the top of the sketch).
+
+Test sketches also live in `firmware/`: `esp32_relay_test/`, `esp32_lora_hello/`, `esp32_receiver/`.
+
+---
+
+### 2. Raspberry Pi — Backend (controller + server)
+
+The Pi is the backend. It needs two processes running: the **controller** (owns the relay/GPIO) and the **dashboard server** (serves the UI + API).
+
+**Install dependencies (on the Pi):**
 
 ```bash
-# Run the main application
-python run.py
+cd Wilo-Water-Pump-Automation
+python3 -m venv env && source env/bin/activate
 
-# Run simulation
-python src/simulation/run_simulation.py
+# ML + core
+pip install -r requirements.txt
+# Pi hardware drivers (GPIO, SPI, ADC)
+pip install -r src/controller/requirements.txt
+# Backend web server
+pip install flask pyserial
+```
 
-# Run 30-day simulation
-python src/simulation/simulation_30days.py
+**a) Pump controller** — the decision engine + relay control:
 
-# Run tests
-python tests/unit/test_analysis.py
+```bash
+cd src/controller
+python3 pump_controller.py            # LIVE — drives real GPIO/relay
+python3 pump_controller.py --dry-run  # no GPIO, safe to test off-Pi
+python3 pump_controller.py --verbose  # extra debug logging
+```
+
+**b) Backend / dashboard server** — Flask API + Server-Sent-Events feed:
+
+```bash
+cd src/dashboard
+python3 server.py                 # serves on http://<pi-ip>:5050
+python3 server.py --port 5050 --fresh
+```
+
+Open `http://<pi-ip>:5050` for the simple built-in dashboard, or point the React frontend (below) at it for the full UI.
+
+**Run on boot (systemd, recommended for production):**
+
+```bash
+sudo cp src/controller/wilo-pump.service /etc/systemd/system/
+sudo cp src/controller/wilo-lora-csv-receiver.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now wilo-pump wilo-lora-csv-receiver
+# check status / logs
+systemctl status wilo-pump
+journalctl -u wilo-pump -f
+```
+
+> ⚠️ The `.service` files hardcode `User=` and `WorkingDirectory=` (`pi` / `wilopi`). Edit them to match your Pi's username and clone path before installing.
+
+---
+
+### 3. Frontend — React Web Dashboard
+
+The full UI lives in `dashboard/` (Vite + React + shadcn/ui). It can run on the Pi or any PC on the same network as the backend.
+
+```bash
+cd dashboard
+bun install        # or: npm install
+bun dev            # or: npm run dev  → http://localhost:8080
+```
+
+- In **dev**, Vite (port `8080`) proxies `/api`, `/stream`, `/latest` to `http://127.0.0.1:5050` — so run it **on the Pi**, or set `VITE_API_BASE_URL` to the Pi's address:
+
+  ```bash
+  VITE_API_BASE_URL="http://<pi-ip>:5050" bun dev
+  ```
+
+- For a **production build**:
+
+  ```bash
+  bun run build      # outputs to dashboard/dist
+  bun run preview    # or serve dist/ with any static host
+  ```
+
+---
+
+### 4. Optional — Terminal UI (remote control over SSH)
+
+Controls the Pi's live controller from your laptop without racing GPIO (it writes override commands the controller consumes):
+
+```bash
+cd tui
+npm install
+WILO_PI_HOST=wilopi.local WILO_PI_USER=wilopi npm run dev
+```
+
+---
+
+### 5. Optional — ML Simulation / Offline App
+
+Runs anywhere (no hardware needed) — the predictive dashboard, simulations, and tests:
+
+```bash
+python run.py                              # predictive terminal app
+python src/simulation/run_simulation.py    # basic simulation
+python src/simulation/simulation_30days.py # 30-day fast-forward simulation
+python -m pytest tests/unit/               # tests
 ```
 
 ### Configuration
 
-Edit `config/settings.py` to customize:
+Two separate config files — don't mix them up:
 
-- File paths
-- System parameters
-- Simulation settings
-- Dashboard preferences
+- `config/settings.py` — the **ML / simulation app** (model paths, fallbacks, dashboard widths).
+- `src/controller/tank_config.py` — the **Pi hardware** (GPIO pins, tank thresholds, LoRa/sensor calibration, safety guards).
 
 ## 📊 Data Structure
 
