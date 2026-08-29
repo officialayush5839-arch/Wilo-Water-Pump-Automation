@@ -89,10 +89,8 @@ def set_pump(turn_on: bool, notify_controller: bool = True) -> dict:
 def read_status() -> dict:
     saved = read_json(CFG.DIRECT_PUMP_STATE_FILE) or {}
     saved_on = saved.get('pump_relay_on')
-    if saved_on is True:
-        _set_relay_outputs_on()
-    else:
-        _release_relay_outputs_off()
+    # SAFETY PATCH: Never allow a 'read' function to physically assert GPIO pins!
+    # This prevents the Flask server from randomly killing the pump controller's commands.
     return {
         'pump_relay_on': saved_on,
         'timestamp': saved.get('timestamp'),

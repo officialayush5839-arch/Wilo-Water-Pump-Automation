@@ -23,7 +23,7 @@ LORA_SYNC_WORD    = 0xF3     # Must match ESP32
 # ── Relay Module ──
 RELAY_PUMP_PIN    = 17       # GPIO 17 (Physical Pin 11)
 RELAY_VALVE_PIN   = 27       # GPIO 27 (Physical Pin 13) — spare / inlet valve
-RELAY_ACTIVE_LOW  = True     # True = active-LOW (GPIO LOW → relay ON, HIGH → relay OFF) for standard 1ch 5V relay
+RELAY_ACTIVE_LOW  = False     # True = active-LOW (GPIO LOW → relay ON, HIGH → relay OFF) for standard 1ch 5V relay
 
 # ── Manual Override Buttons (normally-open, pull-up) ──
 BUTTON_FORCE_ON   = 22       # GPIO 22 (Physical Pin 15)
@@ -71,15 +71,15 @@ UPPER_CRITICAL_HIGH = 95   # Emergency OFF — overflow risk
 
 ACS712_MODEL          = '30A'           # '5A', '20A', or '30A'
 ACS712_ZERO_V         = 2.5             # Midpoint of 0–5 V supply (V at 0 A)
-ACS712_DIVIDER_RATIO  = 1.0   # No voltage divider used
+ACS712_DIVIDER_RATIO  = 0.5   # No voltage divider used
 
 # ============================================================
 # ZMPT101B VOLTAGE SENSOR
 # ============================================================
 
-ZMPT101B_CAL_FACTOR    = 1.0    # PLACEHOLDER — calibrate with multimeter
+ZMPT101B_CAL_FACTOR    = 209.09    # PLACEHOLDER — calibrate with multimeter
 ZMPT101B_ZERO_V        = 2.5   # Midpoint of 0–5 V supply
-ZMPT101B_DIVIDER_RATIO = 1.0
+ZMPT101B_DIVIDER_RATIO = 0.5
 
 # ============================================================
 # PUMP SPECIFICATIONS (Wilo)

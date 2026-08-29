@@ -248,6 +248,16 @@ class HybridPumpLogic:
                     if run_min >= pred_d:
                         return self._off(PumpState.OFF,
                             f"ML schedule complete ({run_min:.0f}/{pred_d:.0f}min)")
+                # SAFETY CHECK: Cancel AI schedule if tank is already full
+                if upper_pct is not None and upper_pct >= self.high:
+                    return self._off(PumpState.OFF,
+                        f"ML schedule skipped: tank already full ({upper_pct:.1f}% >= {self.high}%)")
+
+                # SAFETY CHECK: Cancel AI schedule if tank is already full
+                if upper_pct is not None and upper_pct >= self.high:
+                    return self._off(PumpState.OFF,
+                        f"ML schedule skipped: tank already full ({upper_pct:.1f}% >= {self.high}%)")
+
                 return self._on(PumpState.ON_ML_SCHEDULED, now,
                     f"ML schedule: {pred_h:.2f}h for {pred_d:.0f}min")
 

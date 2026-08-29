@@ -77,6 +77,8 @@ interface DashboardStatusPayload {
     timestamp?: string;
     pressure_kpa?: number | null;
     voltage?: number | null;
+    mains_voltage?: number | null;
+    mains_current?: number | null;
     packet?: number | null;
     upper_pct?: number | null;
     lora_age_s?: number | null;
@@ -129,7 +131,10 @@ export function WiloSimulation() {
   const [pumpMode, setPumpMode] = useState<PumpMode>("STANDBY");
   const [pumpMeta, setPumpMeta] = useState<PumpStatusPayload | null>(null);
   const [pressureKpa, setPressureKpa] = useState<number | null>(null);
+  const [tankLevelPct, setTankLevelPct] = useState<number | null>(null);
   const [sensorVoltage, setSensorVoltage] = useState<number | null>(null);
+  const [mainsVoltage, setMainsVoltage] = useState<number | null>(null);
+  const [mainsCurrent, setMainsCurrent] = useState<number | null>(null);
   const [telemetryPacket, setTelemetryPacket] = useState<number | null>(null);
   const [pressureHistory, setPressureHistory] = useState<PressurePoint[]>([]);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
@@ -221,8 +226,15 @@ export function WiloSimulation() {
     setPumpMeta(payload.pump ?? null);
     setPumpMode(relayOn ? "RUNNING" : "STANDBY");
     setPressureKpa(nextPressure);
+    setTankLevelPct(payload.runtime?.upper_pct ?? null);
     setSensorVoltage(
       typeof payload.telemetry?.voltage === "number" ? payload.telemetry.voltage : null
+    );
+    setMainsVoltage(
+      typeof payload.telemetry?.mains_voltage === "number" ? payload.telemetry.mains_voltage : null
+    );
+    setMainsCurrent(
+      typeof payload.telemetry?.mains_current === "number" ? payload.telemetry.mains_current : null
     );
     setTelemetryPacket(
       typeof payload.telemetry?.packet === "number" ? payload.telemetry.packet : null
@@ -572,6 +584,14 @@ export function WiloSimulation() {
               <h3 className="text-lg font-semibold">System Health</h3>
             </div>
             <div className="space-y-3">
+
+              <div>
+                <div className="mb-1 flex justify-between text-sm items-center">
+                  <span>Tank Level</span>
+                  <span className="font-bold text-blue-400">{tankLevelPct !== null ? `${tankLevelPct.toFixed(1)}%` : "--"}</span>
+                </div>
+                <Progress value={tankLevelPct ?? 0} className="h-2 bg-slate-800 [&>div]:bg-blue-500" />
+              </div>
               <div>
                 <div className="mb-1 flex justify-between text-sm">
                   <span>Water Pressure</span>
@@ -603,6 +623,12 @@ export function WiloSimulation() {
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-primary">Power Consumption</span>
+                  <span className="text-sm font-bold text-primary">
+                    {mainsVoltage !== null ? `${Math.round(mainsVoltage)}V` : "--V"} @ {mainsCurrent !== null ? `${mainsCurrent.toFixed(2)}A` : "--A"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
                 <span className="text-sm">Current Pump Status</span>
                 <div className="flex items-center gap-2">
                   <div
@@ -872,6 +898,14 @@ export function WiloSimulation() {
               <h2 className="text-xl font-semibold text-foreground">Recent Actions</h2>
             </div>
             <div className="space-y-3">
+
+              <div>
+                <div className="mb-1 flex justify-between text-sm items-center">
+                  <span>Tank Level</span>
+                  <span className="font-bold text-blue-400">{tankLevelPct !== null ? `${tankLevelPct.toFixed(1)}%` : "--"}</span>
+                </div>
+                <Progress value={tankLevelPct ?? 0} className="h-2 bg-slate-800 [&>div]:bg-blue-500" />
+              </div>
               {operatorEvents.slice(0, 5).map((event) => (
                 <div key={event.id} className="rounded-xl border border-border bg-muted/30 p-4">
                   <div className="mb-1 flex items-center justify-between gap-3">

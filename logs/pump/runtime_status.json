@@ -1,0 +1,30 @@
+{
+  "connected": true,
+  "controller_mode": "live",
+  "current_amps": 0.0,
+  "decision": {
+    "action": "OFF",
+    "reason": "Upper tank CRITICAL HIGH 100.0% \u2265 95%",
+    "state": "OFF_EMERGENCY",
+    "ts": "2026-08-26T14:32:53.177529"
+  },
+  "host": "wilo",
+  "last_lora_ts": "2026-08-26T14:32:51.754596",
+  "lora_age_s": 1.4,
+  "lora_pkt": 1288,
+  "lora_rssi": -106,
+  "lora_snr": 8.75,
+  "ml_prediction": {
+    "duration": 164.90073600000002,
+    "start_hour": 12.3
+  },
+  "override": null,
+  "pressure_kpa": 70.0,
+  "pump_relay_on": false,
+  "sensor_status": "ok",
+  "sensor_voltage": 3.3,
+  "system_mode": "auto",
+  "timestamp": "2026-08-26T14:32:53.177803",
+  "upper_pct": 100.0,
+  "voltage_ac": 0.7
+}

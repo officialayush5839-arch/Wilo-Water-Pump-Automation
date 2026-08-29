@@ -43,10 +43,9 @@ class RelayController:
 
         # Set initial pin levels BEFORE setup to prevent relay chatter on boot
         # active_low=True → OFF state = HIGH
-        off_level = gpio.HIGH if self.active_low else gpio.LOW
-
-        gpio.setup(self.pump_pin,  gpio.OUT, initial=off_level)
-        gpio.setup(self.valve_pin, gpio.OUT, initial=off_level)
+        # Open-Drain Fix
+        gpio.setup(self.pump_pin, gpio.IN)
+        gpio.setup(self.valve_pin, gpio.IN)
         gpio.setup(self.led_pin,   gpio.OUT, initial=gpio.LOW)
         gpio.setup(self.btn_on,    gpio.IN, pull_up_down=gpio.PUD_UP)
         gpio.setup(self.btn_off,   gpio.IN, pull_up_down=gpio.PUD_UP)
@@ -68,10 +67,10 @@ class RelayController:
 
     def _relay(self, pin, on: bool):
         gpio = _gpio()
-        if self.active_low:
-            gpio.output(pin, gpio.LOW if on else gpio.HIGH)
+        if on:
+            gpio.setup(pin, gpio.OUT, initial=gpio.LOW)
         else:
-            gpio.output(pin, gpio.HIGH if on else gpio.LOW)
+            gpio.setup(pin, gpio.IN)
 
     # ── Pump control ─────────────────────────────────────────
 
@@ -98,9 +97,8 @@ class RelayController:
     def emergency_stop(self):
         """All relays OFF immediately — no checks."""
         gpio = _gpio()
-        off = gpio.HIGH if self.active_low else gpio.LOW
-        gpio.output(self.pump_pin, off)
-        gpio.output(self.valve_pin, off)
+        gpio.setup(self.pump_pin, gpio.IN)
+        gpio.setup(self.valve_pin, gpio.IN)
         gpio.output(self.led_pin, gpio.LOW)
         self.pump_on = False
         logger.warning("🚨 EMERGENCY STOP — all relays OFF")

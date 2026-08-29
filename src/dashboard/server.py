@@ -183,25 +183,11 @@ def _is_in_prediction_window(prediction: dict, now: datetime | None = None) -> b
 
 
 def _apply_auto_control_if_needed(system_mode: str, pump_status: dict, prediction: dict) -> tuple[dict, dict]:
-    if system_mode != "auto" or not pump_status.get("available", False):
-        return pump_status, {"enabled": False}
-
-    should_run = _is_in_prediction_window(prediction)
-    current_state = pump_status.get("pump_relay_on")
-    action = "hold"
-
-    if isinstance(current_state, bool) and current_state != should_run:
-        pump_status = {
-            "available": True,
-            **_set_manual_pump(should_run, notify_controller=False),
-        }
-        action = "on" if should_run else "off"
-
     return pump_status, {
-        "enabled": True,
-        "action": action,
-        "should_run": should_run,
-        "reason": "inside predicted run window" if should_run else "outside predicted run window",
+        "enabled": system_mode == "auto",
+        "action": "hold",
+        "should_run": False,
+        "reason": "Handled securely by pump_controller hardware loop"
     }
 
 
@@ -213,6 +199,8 @@ def _telemetry_from_runtime(runtime_status):
     return {
         "packet": runtime_status.get("lora_pkt", -1),
         "voltage": runtime_status.get("sensor_voltage", 0.0) or 0.0,
+        "mains_voltage": runtime_status.get("voltage_ac", 0.0) or 0.0,
+        "mains_current": runtime_status.get("current_amps", 0.0) or 0.0,
         "pressure_kpa": pressure_kpa if isinstance(pressure_kpa, (int, float)) else 0.0,
         "pressure_mpa": (pressure_kpa / 1000.0) if isinstance(pressure_kpa, (int, float)) else 0.0,
         "status": runtime_status.get("sensor_status") or ("ok" if pressure_kpa is not None else "disconnected"),
@@ -230,7 +218,7 @@ def _dashboard_status_payload():
     runtime_payload = dict(runtime_status or {})
     runtime_payload["ml_prediction"] = runtime_payload.get("ml_prediction") or prediction
     runtime_payload["system_mode"] = system_mode
-    runtime_payload["pump_relay_on"] = pump_status.get("pump_relay_on")
+    # DO NOT overwrite the true hardware relay state reported by pump_controller.py!
     return {
         "ok": True,
         "manual_override_available": pump_status.get("available", False),
