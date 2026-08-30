@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { SystemDashboard } from "./SystemDashboard";
 import { Card } from "@/components/ui/card";
@@ -16,16 +15,19 @@ import {
 import {
   Activity,
   AlertTriangle,
+  Calendar,
+  Droplets,
   LoaderCircle,
+  PartyPopper,
   Power,
   Settings,
   ShieldAlert,
-  Sparkles,
   Zap,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { FestivalPolicyModal, type FestivalStatus } from "./FestivalPolicyModal";
+import { WaterCutDialog, WaterCutStatus } from "./WaterCutDialog";
+import { FestivalPolicyModal } from "./FestivalPolicyModal";
 
 type PumpMode = "STANDBY" | "RUNNING";
 
@@ -67,7 +69,28 @@ interface DashboardStatusPayload {
       start_hour?: number;
       duration?: number;
     } | null;
+    water_cut?: WaterCutStatus | null;
+    current_classification?: {
+      raw_amps?: number | null;
+      filtered_amps?: number | null;
+      state?: string;
+      full_persisted?: boolean;
+      full_persistence_seconds?: number;
+      startup_blanking?: boolean;
+      status_detail?: string;
+    } | null;
+    current_tank_state?: string;
   };
+  water_cut?: WaterCutStatus | null;
+  current_classification?: {
+    raw_amps?: number | null;
+    filtered_amps?: number | null;
+    state?: string;
+    full_persisted?: boolean;
+    full_persistence_seconds?: number;
+    startup_blanking?: boolean;
+    status_detail?: string;
+  } | null;
   auto_control?: {
     enabled?: boolean;
     action?: string;
@@ -86,7 +109,6 @@ interface DashboardStatusPayload {
     upper_pct?: number | null;
     lora_age_s?: number | null;
   };
-  festival?: FestivalStatus | null;
   timestamp?: string;
 }
 
@@ -143,8 +165,20 @@ export function WiloSimulation() {
   const [pressureHistory, setPressureHistory] = useState<PressurePoint[]>([]);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isCommandPending, setIsCommandPending] = useState(false);
+  const [isWaterCutOpen, setIsWaterCutOpen] = useState(false);
+  const [waterCutStatus, setWaterCutStatus] = useState<WaterCutStatus | null>(null);
   const [isFestivalModalOpen, setIsFestivalModalOpen] = useState(false);
-  const [festivalStatus, setFestivalStatus] = useState<FestivalStatus | null>(null);
+  const [festivalStatus, setFestivalStatus] = useState<any | null>(null);
+  const [currentClassification, setCurrentClassification] = useState<{
+    raw_amps?: number | null;
+    filtered_amps?: number | null;
+    state?: string;
+    full_persisted?: boolean;
+    full_persistence_seconds?: number;
+    startup_blanking?: boolean;
+    status_detail?: string;
+  } | null>(null);
+
   const [systemStatus, setSystemStatus] = useState({
     pumpStatus: "STANDBY",
     aiConfidence: "Auto",
@@ -228,9 +262,6 @@ export function WiloSimulation() {
     });
     setBackendReachable(true);
     setBackendError(null);
-    if (payload.festival !== undefined) {
-      setFestivalStatus(payload.festival);
-    }
     setManualOverrideEnabled(available);
     setPumpMeta(payload.pump ?? null);
     setPumpMode(relayOn ? "RUNNING" : "STANDBY");
@@ -248,6 +279,20 @@ export function WiloSimulation() {
     setTelemetryPacket(
       typeof payload.telemetry?.packet === "number" ? payload.telemetry.packet : null
     );
+
+    const wc = payload.water_cut || payload.runtime?.water_cut || null;
+    if (wc) {
+      setWaterCutStatus(wc);
+    }
+    const fp = (payload as any).festival_policy || (payload.runtime as any)?.festival_policy || null;
+    if (fp) {
+      setFestivalStatus(fp);
+    }
+    const cc = payload.current_classification || payload.runtime?.current_classification || null;
+    if (cc) {
+      setCurrentClassification(cc);
+    }
+
     if (telemetryOk && nextPressure !== null) {
       setPressureHistory((current) => [
         ...current.slice(-(MAX_HISTORY_POINTS - 1)),
@@ -525,7 +570,43 @@ export function WiloSimulation() {
       <div className="container mx-auto max-w-7xl px-4 py-4">
         <Card className="mb-6 border-0 bg-gradient-primary p-6 text-white shadow-xl">
           <div className="relative">
-            <div className="absolute right-0 top-0 flex flex-col items-end gap-2 z-20">
+            <div className="absolute right-0 top-0 flex items-center gap-2">
+              <Button
+                onClick={() => setIsWaterCutOpen(true)}
+                variant="secondary"
+                size="sm"
+                className="flex items-center gap-1.5 border-white/30 bg-blue-500/30 text-white hover:bg-blue-500/50 shadow-sm transition-all"
+              >
+                <Droplets className="h-4 w-4 text-cyan-200" />
+                <span>Water Cut</span>
+                {waterCutStatus?.is_cut_active ? (
+                  <span className="ml-1 rounded-full bg-red-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white animate-pulse">
+                    CUT ACTIVE
+                  </span>
+                ) : waterCutStatus?.is_prefill_active ? (
+                  <span className="ml-1 rounded-full bg-amber-400 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-900">
+                    PREFILL
+                  </span>
+                ) : null}
+              </Button>
+              <Button
+                onClick={() => setIsFestivalModalOpen(true)}
+                variant="secondary"
+                size="sm"
+                className="flex items-center gap-1.5 border-white/30 bg-white/20 text-white hover:bg-white/30 shadow-sm transition-all"
+              >
+                <Calendar className="h-4 w-4 text-cyan-100" />
+                <span>Festivals</span>
+                {festivalStatus?.restriction_active ? (
+                  <span className="ml-1 rounded-full bg-red-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white animate-pulse">
+                    BLOCKED
+                  </span>
+                ) : festivalStatus?.is_rang_panchami ? (
+                  <span className="ml-1 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                    RELEASED
+                  </span>
+                ) : null}
+              </Button>
               <Button
                 onClick={() => navigate("/admin")}
                 variant="secondary"
@@ -534,24 +615,6 @@ export function WiloSimulation() {
               >
                 <Settings className="h-4 w-4" />
                 Admin
-              </Button>
-              <Button
-                onClick={() => setIsFestivalModalOpen(true)}
-                variant="secondary"
-                size="sm"
-                className="flex items-center gap-1.5 border-white/30 bg-white/20 text-white hover:bg-white/30 text-xs px-2.5 py-1.5 shadow-sm backdrop-blur-sm"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
-                Holiday / Festival Policy
-                <span
-                  className={`ml-1 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                    festivalStatus?.mode_enabled
-                      ? "bg-amber-400 text-amber-950"
-                      : "bg-white/20 text-white/80"
-                  }`}
-                >
-                  {festivalStatus?.mode_enabled ? "ON" : "OFF"}
-                </span>
               </Button>
             </div>
             <div className="text-center">
@@ -606,43 +669,95 @@ export function WiloSimulation() {
           </div>
         </Card>
 
-        {festivalStatus?.mode_enabled && festivalStatus?.is_rang_panchami && festivalStatus?.automatic_start_blocked && (
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-amber-500/50 bg-amber-500/15 p-4 text-amber-200 shadow-lg backdrop-blur-sm">
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-amber-500/20 p-2 text-amber-400">
-                <ShieldAlert className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-base text-white">RANG PANCHAMI — AUTOMATIC START RESTRICTION ACTIVE</h4>
-                  <span className="rounded bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white animate-pulse">
-                    BLOCKED
-                  </span>
+        {/* Municipal Water Cut Banner */}
+        {waterCutStatus && (waterCutStatus.is_cut_active || waterCutStatus.is_prefill_active) && (
+          <div className="mb-6">
+            {waterCutStatus.is_cut_active ? (
+              <Card className="p-4 bg-gradient-to-r from-amber-500/15 via-red-500/10 to-card border-amber-500/40 shadow-lg">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="h-6 w-6 text-amber-500 shrink-0 animate-pulse" />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-sm text-foreground">Municipal Water Cut In Progress</h4>
+                        <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white uppercase">
+                          Conserving Supply
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {waterCutStatus.active_cut?.reason || "Municipal maintenance"} • Automation held to protect tank supply.
+                      </p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => setIsWaterCutOpen(true)} className="text-xs border-amber-500/40">
+                    Manage Schedule
+                  </Button>
                 </div>
-                <p className="text-xs text-amber-200/90 mt-0.5">
-                  Automatic pump start is inhibited until 07:00 PM IST (Release at 19:00 IST). Safety shutdowns & manual operations remain fully active.
-                </p>
-              </div>
-            </div>
-            <Button
-              onClick={() => setIsFestivalModalOpen(true)}
-              variant="outline"
-              size="sm"
-              className="border-amber-400/50 bg-amber-500/20 text-white hover:bg-amber-500/30 text-xs shrink-0"
-            >
-              View Policy Details
-            </Button>
+              </Card>
+            ) : (
+              <Card className="p-4 bg-gradient-to-r from-blue-500/15 via-cyan-500/10 to-card border-blue-500/40 shadow-lg">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div className="flex items-center gap-3">
+                    <Droplets className="h-6 w-6 text-blue-500 shrink-0 animate-bounce" />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-sm text-foreground">Municipal Water Cut Pre-Fill Active</h4>
+                        <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase">
+                          Target Reserve: {waterCutStatus.target_reserve_pct ?? 95}%
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        System is actively filling Master Tank before municipal outage.
+                      </p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => setIsWaterCutOpen(true)} className="text-xs border-blue-500/40">
+                    Manage Schedule
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
         )}
 
-        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+        {/* Festival / Rang Panchami Alert Banner */}
+        {festivalStatus && festivalStatus.mode_enabled && festivalStatus.restriction_active && (
+          <div className="mb-6">
+            <Card className="p-4 bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-200 shadow-sm">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-amber-500/20 text-amber-600 animate-pulse">
+                    <Calendar className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-sm text-foreground">
+                        {festivalStatus.festival_name || "Rang Panchami"} — Automatic Start Blocked
+                      </h4>
+                      <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase">
+                        Release: 07:00 PM IST ({festivalStatus.remaining_minutes ?? 0}m left)
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {festivalStatus.reason || "Automatic pump starts restricted on Rang Panchami until 7 PM IST."}
+                    </p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => setIsFestivalModalOpen(true)} className="text-xs border-amber-500/40 text-amber-900 dark:text-amber-100 hover:bg-amber-500/20">
+                  Festival Policy Details
+                </Button>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Card className="border-border bg-card p-6">
             <div className="mb-4 flex items-center gap-3">
               <Activity className="h-6 w-6 text-primary" />
               <h3 className="text-lg font-semibold">System Health</h3>
             </div>
             <div className="space-y-3">
-
               <div>
                 <div className="mb-1 flex justify-between text-sm items-center">
                   <span>Tank Level</span>
@@ -681,12 +796,51 @@ export function WiloSimulation() {
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-primary">Power Consumption</span>
-                  <span className="text-sm font-bold text-primary">
-                    {mainsVoltage !== null ? `${Math.round(mainsVoltage)}V` : "--V"} @ {mainsCurrent !== null ? `${mainsCurrent.toFixed(2)}A` : "--A"}
-                  </span>
-                </div>
+                <span className="text-sm">Power Consumption</span>
+                <span className="text-sm font-bold text-primary">
+                  {mainsVoltage !== null ? `${Math.round(mainsVoltage)}V` : "--V"} @ {mainsCurrent !== null ? `${mainsCurrent.toFixed(2)}A` : "--A"}
+                </span>
+              </div>
+
+              {/* Current-Based Tank Hydraulic Status */}
+              <div className="rounded-xl border border-border bg-muted/20 p-3 space-y-2">
                 <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Hydraulic Tank State
+                  </span>
+                  {currentClassification?.state === "FULL" ? (
+                    <span className="rounded-md bg-green-500/20 px-2 py-0.5 text-xs font-bold text-green-600 dark:text-green-300 border border-green-500/40">
+                      TANK FULL (≈6A)
+                    </span>
+                  ) : currentClassification?.state === "EMPTY" ? (
+                    <span className="rounded-md bg-red-500/20 px-2 py-0.5 text-xs font-bold text-red-600 dark:text-red-300 border border-red-500/40 animate-pulse">
+                      TANK EMPTY (≈12A)
+                    </span>
+                  ) : currentClassification?.state === "MID" ? (
+                    <span className="rounded-md bg-blue-500/20 px-2 py-0.5 text-xs font-bold text-blue-600 dark:text-blue-300 border border-blue-500/40">
+                      TANK ≈50% (≈9A)
+                    </span>
+                  ) : currentClassification?.state === "STARTING" ? (
+                    <span className="rounded-md bg-purple-500/20 px-2 py-0.5 text-xs font-bold text-purple-600 dark:text-purple-300 border border-purple-500/40">
+                      STARTING (5s)
+                    </span>
+                  ) : (
+                    <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground border border-border">
+                      IDLE / UNKNOWN
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>Filtered: {currentClassification?.filtered_amps !== null && currentClassification?.filtered_amps !== undefined ? `${currentClassification.filtered_amps.toFixed(2)} A` : mainsCurrent !== null ? `${mainsCurrent.toFixed(2)} A` : "--"}</span>
+                  {currentClassification?.state === "FULL" && (
+                    <span className="font-semibold text-green-600 dark:text-green-400">
+                      Persistence: {currentClassification.full_persistence_seconds ?? 0}s / 5s
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
                 <span className="text-sm">Current Pump Status</span>
                 <div className="flex items-center gap-2">
                   <div
@@ -747,77 +901,6 @@ export function WiloSimulation() {
                 {backendReachable ? "Backend connected" : backendError ?? "Backend offline"}
               </p>
             </div>
-          </Card>
-
-          <Card className="border-border bg-card p-6 flex flex-col justify-between">
-            <div>
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <Sparkles className="h-6 w-6 text-amber-400" />
-                  <h3 className="text-lg font-semibold">Festival Policy</h3>
-                </div>
-                <Badge
-                  variant={
-                    festivalStatus?.mode_enabled
-                      ? festivalStatus.automatic_start_blocked
-                        ? "destructive"
-                        : "default"
-                      : "secondary"
-                  }
-                  className="text-xs"
-                >
-                  {festivalStatus?.mode_enabled ? (festivalStatus.automatic_start_blocked ? "BLOCKED" : "ACTIVE") : "OFF"}
-                </Badge>
-              </div>
-              <div className="space-y-2.5 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Festival</span>
-                  <span className="font-semibold text-foreground truncate max-w-[140px] text-right">
-                    {festivalStatus?.mode_enabled
-                      ? festivalStatus.festival_name || "Holiday"
-                      : "Standard Day"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Policy Rule</span>
-                  <span className="font-semibold text-foreground">
-                    {festivalStatus?.mode_enabled && festivalStatus.is_rang_panchami
-                      ? "Rang Panchami Special"
-                      : "Normal Schedule"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Automatic Start</span>
-                  <span
-                    className={`font-bold ${
-                      festivalStatus?.automatic_start_blocked
-                        ? "text-red-400"
-                        : "text-green-400"
-                    }`}
-                  >
-                    {festivalStatus?.automatic_start_blocked ? "BLOCKED" : "ENABLED"}
-                  </span>
-                </div>
-                {festivalStatus?.is_rang_panchami && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Release Time</span>
-                    <span className="font-mono font-bold text-amber-300">07:00 PM IST</span>
-                  </div>
-                )}
-                <p className="text-xs text-muted-foreground pt-1.5 border-t border-border/50 line-clamp-2">
-                  {festivalStatus?.reason || "Standard automatic/manual controls active."}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-4 w-full text-xs flex items-center justify-center gap-1.5 border-border hover:bg-accent"
-              onClick={() => setIsFestivalModalOpen(true)}
-            >
-              <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-              Configure Festival Policy
-            </Button>
           </Card>
         </div>
 
@@ -1027,7 +1110,6 @@ export function WiloSimulation() {
               <h2 className="text-xl font-semibold text-foreground">Recent Actions</h2>
             </div>
             <div className="space-y-3">
-
               <div>
                 <div className="mb-1 flex justify-between text-sm items-center">
                   <span>Tank Level</span>
@@ -1049,12 +1131,18 @@ export function WiloSimulation() {
         </div>
       </div>
 
-      <FestivalPolicyModal
-        isOpen={isFestivalModalOpen}
-        onClose={() => setIsFestivalModalOpen(false)}
+      <WaterCutDialog
+        open={isWaterCutOpen}
+        onOpenChange={setIsWaterCutOpen}
         apiBaseUrl={apiBaseUrl}
-        festivalStatus={festivalStatus}
-        onRefresh={() => void loadDashboardStatus(false)}
+        currentTankLevel={tankLevelPct}
+        onStatusUpdated={setWaterCutStatus}
+      />
+
+      <FestivalPolicyModal
+        open={isFestivalModalOpen}
+        onOpenChange={setIsFestivalModalOpen}
+        onStateChange={() => { void loadDashboardStatus(false); }}
       />
     </div>
   );

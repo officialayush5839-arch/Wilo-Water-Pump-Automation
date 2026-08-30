@@ -118,6 +118,29 @@ ML_CHECK_INTERVAL_MIN    = 15     # Re-run prediction cycle
 ML_ACTIVATION_WINDOW_MIN = 5      # Tolerance around predicted start
 
 # ============================================================
+# CURRENT-BASED TANK STATE CLASSIFICATION (Wilo Pump Load)
+# ============================================================
+
+CURRENT_EMPTY_THRESHOLD        = 11.5   # >= 11.5 A: Tank considered EMPTY / high load
+CURRENT_MID_LOW                = 8.0    # 8.0 A - 10.0 A: Tank considered ~50% MID LEVEL
+CURRENT_MID_HIGH               = 10.0   #
+CURRENT_FULL_THRESHOLD         = 6.5    # <= 6.5 A: Tank considered FULL / high backpressure
+CURRENT_FILTER_WINDOW          = 10     # Rolling median filter sample window
+CURRENT_STARTUP_BLANKING_SEC   = 5.0    # Ignore current classification for 5s on pump startup
+CURRENT_FULL_PERSISTENCE_SEC   = 5.0    # Must persist <= 6.5 A for 5s continuously to trigger FULL stop
+CURRENT_STOP_ON_FULL_ENABLED   = True   # Automatically stop pump when current-based FULL persists
+
+# ============================================================
+# MUNICIPAL WATER CUT & FESTIVAL POLICY MANAGEMENT
+# ============================================================
+
+WATER_CUT_DEFAULT_RESERVE      = 95.0   # Target tank reserve (%) prior to municipal cut
+WATER_CUT_DEFAULT_PREFILL_HOURS = 4.0   # Pre-fill lead time window in hours
+
+FESTIVAL_MODE_DEFAULT          = True   # Festival policy active by default
+FESTIVAL_RELEASE_HOUR          = 19     # 19:00 IST release time for Rang Panchami
+
+# ============================================================
 # LOGGING & PATHS
 # ============================================================
 
@@ -127,6 +150,10 @@ _PROJECT = os.path.join(_BASE, '..', '..')
 LOG_DIR        = os.path.join(_PROJECT, 'logs', 'pump')
 LORA_LOG_DIR   = os.path.join(_PROJECT, 'logs', 'lora')
 DATA_DIR       = os.path.join(_PROJECT, 'data')
+CONFIG_DIR     = os.path.join(_PROJECT, 'config')
+WATER_CUTS_FILE = os.path.join(CONFIG_DIR, 'water_cuts.json')
+FESTIVAL_STATE_FILE = os.path.join(CONFIG_DIR, 'festival_state.json')
+HOLIDAY_CSV_PATH = os.path.join(DATA_DIR, 'raw', 'Holidays_2020_2030.csv')
 CSV_LOG_PATH   = os.path.join(LOG_DIR, 'rpi_pump_log.csv')
 LORA_PACKET_CSV_PATH = os.path.join(LORA_LOG_DIR, 'esp32_pressure_packets.csv')
 SENSOR_CSV_LOG_PATH = os.path.join(LOG_DIR, 'sensor_readings.csv')
@@ -138,3 +165,4 @@ CONTROL_COMMAND_TTL_S = 120
 
 LOOP_INTERVAL_S  = 1    # Main loop cycle
 LOG_INTERVAL_S   = 5    # CSV write interval
+

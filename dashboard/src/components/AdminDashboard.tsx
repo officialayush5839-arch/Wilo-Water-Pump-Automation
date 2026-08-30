@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useNavigate } from "react-router-dom";
 import {
     Settings,
     Power,
@@ -26,12 +27,14 @@ import {
     Moon,
     Sun,
     Zap,
-    TrendingUp
+    TrendingUp,
+    ArrowLeft,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 function AdminDashboard() {
+    const navigate = useNavigate();
     const { toast } = useToast();
 
     // System Override States
@@ -110,10 +113,58 @@ function AdminDashboard() {
     }>>([]);
 
     // Water Cut Management
-    const [waterCuts, setWaterCuts] = useState([
-        { id: 1, area: "Sector A", startTime: "10:00", endTime: "14:00", reason: "Maintenance", status: "active" },
-        { id: 2, area: "Sector B", startTime: "15:00", endTime: "17:00", reason: "Pipe Repair", status: "scheduled" }
-    ]);
+    const [waterCuts, setWaterCuts] = useState<Array<{
+        id: string | number;
+        area: string;
+        startTime: string;
+        endTime: string;
+        reason: string;
+        status: "active" | "scheduled";
+    }>>([]);
+
+    const fetchAdminWaterCuts = async () => {
+        try {
+            const res = await fetch("/api/water-cuts");
+            if (res.ok) {
+                const data = await res.json();
+                if (data.ok && Array.isArray(data.cuts)) {
+                    setWaterCuts(data.cuts.map((c: any) => {
+                        const now = new Date();
+                        const start = new Date(c.start_time);
+                        const end = new Date(c.end_time);
+                        const isActive = now >= start && now <= end;
+                        return {
+                            id: c.id,
+                            area: c.reason || "Municipal Water Cut",
+                            startTime: c.start_time ? c.start_time.split("T")[1]?.slice(0, 5) : "08:00",
+                            endTime: c.end_time ? c.end_time.split("T")[1]?.slice(0, 5) : "18:00",
+                            reason: `Target: ${c.target_reserve_pct}% (${c.pre_fill_hours}h lead)`,
+                            status: isActive ? ("active" as const) : ("scheduled" as const)
+                        };
+                    }));
+                }
+            }
+        } catch (e) {
+            console.error("Failed to load water cuts in admin:", e);
+        }
+    };
+
+    useEffect(() => {
+        fetchAdminWaterCuts();
+    }, []);
+
+    const handleDeleteWaterCut = async (id: string | number) => {
+        try {
+            await fetch(`/api/water-cuts/${id}`, { method: "DELETE" });
+        } catch (e) {
+            console.error("Failed to delete water cut:", e);
+        }
+        setWaterCuts(prev => prev.filter(c => c.id !== id));
+        toast({
+            title: "Water Cut Removed",
+            description: "The municipal water cut event was successfully deleted.",
+        });
+    };
 
     // Water Cut Form State
     const [newWaterCut, setNewWaterCut] = useState({
@@ -351,14 +402,6 @@ function AdminDashboard() {
         } else {
             startSimulation();
         }
-    };
-
-    const handleDeleteWaterCut = (cutId: number) => {
-        setWaterCuts(prev => prev.filter(cut => cut.id !== cutId));
-        toast({
-            title: "Water Cut Deleted",
-            description: "Water cut schedule has been removed successfully"
-        });
     };
 
     // Real-time scheduling functions
@@ -658,6 +701,15 @@ function AdminDashboard() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
+                            <Button
+                                onClick={() => navigate("/")}
+                                variant="secondary"
+                                size="lg"
+                                className="flex items-center gap-2 border-white/30 bg-white/20 text-white hover:bg-white/30"
+                            >
+                                <ArrowLeft className="h-5 w-5" />
+                                Live Dashboard
+                            </Button>
                             <Button
                                 onClick={handleEmergencyStop}
                                 variant={emergencyStop ? "secondary" : "destructive"}
@@ -1280,33 +1332,41 @@ function AdminDashboard() {
                                     Cancel
                                 </Button>
                                 <Button
-                                    onClick={() => {
-                                        // Add new water cut
-                                        const newCut = {
-                                            id: Date.now(),
-                                            ...newWaterCut,
-                                            status: 'scheduled' as const
+                                    onClick={async () => {
+                                        const today = new Date().toISOString().split("T")[0];
+                                        const payload = {
+                                            start_time: `${today}T${newWaterCut.startTime}:00`,
+                                            end_time: `${today}T${newWaterCut.endTime}:00`,
+                                            reason: `${newWaterCut.area} - ${newWaterCut.reason}`,
+                                            target_reserve_pct: 95.0,
+                                            pre_fill_hours: 4.0,
                                         };
-                                        setWaterCuts([...waterCuts, newCut]);
 
-                                        // Reset form and hide it
-                                        setShowWaterCutForm(false);
-
-                                        // Show toast notification
-                                        toast({
-                                            title: "Water Cut Scheduled",
-                                            description: `${newWaterCut.area} scheduled from ${newWaterCut.startTime} to ${newWaterCut.endTime}`,
-                                        });
-
-                                        // Update sensor data to reflect the scheduled cut
-                                        setSensorData(prev => ({
-                                            ...prev,
-                                            flow: {
-                                                ...prev.flow,
-                                                status: "warning",
-                                                lastReading: "Cut scheduled"
+                                        try {
+                                            const res = await fetch("/api/water-cuts", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify(payload),
+                                            });
+                                            if (res.ok) {
+                                                toast({
+                                                    title: "Water Cut Scheduled",
+                                                    description: `${newWaterCut.area} scheduled from ${newWaterCut.startTime} to ${newWaterCut.endTime}`,
+                                                });
+                                                fetchAdminWaterCuts();
+                                            } else {
+                                                const err = await res.json();
+                                                toast({
+                                                    title: "Scheduling Failed",
+                                                    description: err.error || "Failed to save water cut",
+                                                    variant: "destructive",
+                                                });
                                             }
-                                        }));
+                                        } catch (e) {
+                                            console.error("Failed to post water cut:", e);
+                                        }
+
+                                        setShowWaterCutForm(false);
                                     }}
                                 >
                                     Schedule

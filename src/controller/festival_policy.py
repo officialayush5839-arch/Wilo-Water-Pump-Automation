@@ -1,385 +1,370 @@
 """
-Festival / Holiday Aware Pump Control Policy
-=============================================
-Provides deterministic, context-aware festival policy evaluation for pump control.
-On Rang Panchami, automatic pump start is inhibited prior to 19:00 (07:00 PM) IST.
-At 19:00 IST, restriction is released to resume normal automatic control.
-Safety shutdowns (dry-run, overfill, faults) and manual operations are never blocked.
+Festival & Holiday Aware Pump Control Policy Engine
+===================================================
+Authoritative engine for Indian festival detection, holiday calendar management,
+and special pump scheduling rules (e.g., Rang Panchami 07:00 PM IST release policy).
+
+Timezone: Asia/Kolkata (IST)
 """
 
 from __future__ import annotations
 
-import os
-import sys
+import csv
+import json
 import logging
-from datetime import datetime, date, time as dtime, timedelta
-import pandas as pd
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from pytz import timezone as ZoneInfo
-
-_HERE = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, '..', '..'))
-if _PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, _PROJECT_ROOT)
-if _HERE not in sys.path:
-    sys.path.insert(0, _HERE)
-
-import tank_config as CFG
-from runtime_channel import atomic_write_json, read_json
+import os
+from datetime import datetime, time, timedelta
+from typing import Any, Dict, List, Optional, Tuple
+from zoneinfo import ZoneInfo
 
 logger = logging.getLogger('wilo.festival')
 
-# Central timezone configuration for India
-try:
-    IST = ZoneInfo('Asia/Kolkata')
-except Exception:
-    # Fallback to fixed offset UTC+05:30 if system tz database missing
-    from datetime import timezone
-    IST = timezone(timedelta(hours=5, minutes=30))
+# Default IST Timezone
+IST = ZoneInfo('Asia/Kolkata')
 
-HOLIDAY_CSV_PATH = os.path.join(_PROJECT_ROOT, 'data', 'raw', 'Holidays_2020_2030.csv')
-FESTIVAL_STATE_PATH = os.path.join(CFG.LOG_DIR, 'festival_state.json')
-
-# Release time for Rang Panchami automatic start restriction: 19:00 (07:00 PM IST)
-RANG_PANCHAMI_RELEASE_HOUR = 19
-RANG_PANCHAMI_RELEASE_MINUTE = 0
-
-POLICY_NORMAL = 'NORMAL'
-POLICY_RANG_PANCHAMI = 'RANG_PANCHAMI'
+# Default Rang Panchami Dates (2020-2030) — 5th day after Holi (Chaitra Krishna Panchami)
+RANG_PANCHAMI_DATES = {
+    2020: '2020-03-14',
+    2021: '2021-04-02',
+    2022: '2022-03-22',
+    2023: '2023-03-12',
+    2024: '2024-03-30',
+    2025: '2025-03-19',
+    2026: '2026-03-08',
+    2027: '2027-03-27',
+    2028: '2028-03-16',
+    2029: '2029-04-03',
+    2030: '2030-03-24',
+}
 
 
 class FestivalPolicyEngine:
-    """
-    Deterministic rule engine for festival-aware pump control.
-    """
+    """Stateful policy engine evaluating holiday calendars and pump control rules."""
 
-    def __init__(self, csv_path: str = HOLIDAY_CSV_PATH, state_path: str = FESTIVAL_STATE_PATH):
+    def __init__(
+        self,
+        csv_path: Optional[str] = None,
+        state_file: Optional[str] = None,
+    ):
         self.csv_path = csv_path
-        self.state_path = state_path
-        self.holiday_df: pd.DataFrame | None = None
-        self._load_holiday_data()
-        self._ensure_state_file()
+        self.state_file = state_file
 
-    # ── Data Loading & State Management ──────────────────────────────────────────
+        # Runtime State
+        self.mode_enabled: bool = True
+        self.selected_festival: Optional[Dict[str, Any]] = None
+        self.simulated_datetime: Optional[datetime] = None  # In IST
 
-    def _load_holiday_data(self) -> None:
-        """Load and parse holiday data with error handling."""
+        # Holiday Calendar Data: List of dicts {'year': int, 'date': 'YYYY-MM-DD', 'event': str, 'type': str, 'policy': str}
+        self.holidays: List[Dict[str, Any]] = []
+        self._load_csv()
+        self._load_state()
+
+    # ── Persistence ───────────────────────────────────────────
+
+    def _load_state(self) -> None:
+        """Load persistent festival settings from JSON file."""
+        if not self.state_file or not os.path.exists(self.state_file):
+            return
         try:
-            if not os.path.exists(self.csv_path):
-                logger.warning(f"Holiday CSV file not found at {self.csv_path}")
-                self.holiday_df = None
-                return
+            with open(self.state_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    self.mode_enabled = bool(data.get('mode_enabled', True))
+                    self.selected_festival = data.get('selected_festival')
+                    sim_dt = data.get('simulated_datetime')
+                    if sim_dt:
+                        try:
+                            self.simulated_datetime = datetime.fromisoformat(sim_dt)
+                        except ValueError:
+                            self.simulated_datetime = None
+            logger.info("Loaded festival policy state: enabled=%s, selected=%s",
+                        self.mode_enabled, self.selected_festival)
+        except Exception as e:
+            logger.error("Failed to load festival state from %s: %s", self.state_file, e)
 
-            df = pd.read_csv(self.csv_path)
-            # Standardize date column
-            df['parsed_date'] = pd.to_datetime(df['date'], format='%B %d, %Y, %A', errors='coerce')
-            df['iso_date'] = df['parsed_date'].dt.strftime('%Y-%m-%d')
-            if 'control_policy' not in df.columns:
-                df['control_policy'] = POLICY_NORMAL
-            else:
-                df['control_policy'] = df['control_policy'].fillna(POLICY_NORMAL)
-
-            self.holiday_df = df
-            logger.info(f"Loaded {len(df)} festival records into FestivalPolicyEngine")
-        except Exception as exc:
-            logger.error(f"Failed to load holiday data: {exc}", exc_info=True)
-            self.holiday_df = None
-
-    def _ensure_state_file(self) -> None:
-        """Ensure state file exists with default schema."""
-        state = self.read_state()
-        if state is None:
-            initial = {
-                'mode_enabled': False,
-                'selected_festival': None,
-                'selected_date': None,
-                'simulated_date': None,
-                'simulated_time': None,
+    def _save_state(self) -> bool:
+        """Persist current festival settings to disk atomically."""
+        if not self.state_file:
+            return False
+        try:
+            os.makedirs(os.path.dirname(os.path.abspath(self.state_file)), exist_ok=True)
+            temp_file = f"{self.state_file}.tmp"
+            payload = {
+                'mode_enabled': self.mode_enabled,
+                'selected_festival': self.selected_festival,
+                'simulated_datetime': self.simulated_datetime.isoformat() if self.simulated_datetime else None,
                 'updated_at': datetime.now(IST).isoformat(),
             }
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(payload, f, indent=2)
+            if os.name == 'nt' and os.path.exists(self.state_file):
+                os.remove(self.state_file)
+            os.replace(temp_file, self.state_file)
+            return True
+        except Exception as e:
+            logger.error("Failed to save festival state: %s", e)
+            return False
+
+    # ── CSV Loading ───────────────────────────────────────────
+
+    def _load_csv(self) -> None:
+        """Load and parse holiday records, injecting verified Rang Panchami entries."""
+        self.holidays = []
+        parsed_dates = set()
+
+        if self.csv_path and os.path.exists(self.csv_path):
             try:
-                atomic_write_json(self.state_path, initial)
-            except Exception as exc:
-                logger.warning(f"Unable to write initial festival state: {exc}")
+                with open(self.csv_path, 'r', encoding='utf-8') as f:
+                    reader = csv.reader(f)
+                    header = next(reader, None)
+                    for row in reader:
+                        if len(row) < 3:
+                            continue
+                        year_str = row[0].strip()
+                        date_raw = row[1].strip()
+                        event_name = row[2].strip()
+                        event_type = row[3].strip() if len(row) > 3 else "General"
+                        policy = row[4].strip() if len(row) > 4 else "NORMAL"
 
-    def read_state(self) -> dict:
-        """Read saved state safely."""
-        try:
-            state = read_json(self.state_path)
-            if isinstance(state, dict):
-                return state
-        except Exception as exc:
-            logger.warning(f"Error reading festival state: {exc}")
-        return {
-            'mode_enabled': False,
-            'selected_festival': None,
-            'selected_date': None,
-            'simulated_date': None,
-            'simulated_time': None,
-            'updated_at': datetime.now(IST).isoformat(),
-        }
+                        # Parse date string e.g. "April 10, 2020, Friday" or "YYYY-MM-DD"
+                        iso_date = self._parse_csv_date(date_raw, year_str)
+                        if iso_date:
+                            if 'rang panchami' in event_name.lower():
+                                policy = "RANG_PANCHAMI"
+                            self.holidays.append({
+                                'year': int(year_str) if year_str.isdigit() else 2026,
+                                'date': iso_date,
+                                'event': event_name,
+                                'type': event_type,
+                                'policy': policy,
+                            })
+                            parsed_dates.add((iso_date, event_name.lower()))
+            except Exception as e:
+                logger.error("Error reading holidays CSV (%s): %s", self.csv_path, e)
 
-    def save_state(self, updates: dict) -> dict:
-        """Atomically update state."""
-        current = self.read_state()
-        current.update(updates)
-        current['updated_at'] = datetime.now(IST).isoformat()
-        try:
-            atomic_write_json(self.state_path, current)
-        except Exception as exc:
-            logger.error(f"Failed to save festival state: {exc}")
-        return current
+        # Inject verified Rang Panchami entries if not already in CSV
+        for year, rp_date in RANG_PANCHAMI_DATES.items():
+            if (rp_date, 'rang panchami') not in parsed_dates:
+                self.holidays.append({
+                    'year': year,
+                    'date': rp_date,
+                    'event': 'Rang Panchami',
+                    'type': 'Hindu',
+                    'policy': 'RANG_PANCHAMI',
+                })
 
-    # ── Time and Date Resolution ───────────────────────────────────────────────
+        # Sort chronologically
+        self.holidays.sort(key=lambda h: h.get('date', ''))
+        logger.info("FestivalPolicyEngine initialized with %d total holiday records", len(self.holidays))
 
-    def get_current_time(self, now: datetime | None = None) -> datetime:
-        """
-        Returns the current datetime in IST.
-        Supports optional simulation override (simulated_date / simulated_time) for developer testing.
-        """
-        if now is not None:
-            # Ensure timezone awareness
-            if now.tzinfo is None:
-                return now.replace(tzinfo=IST)
-            return now.astimezone(IST)
-
-        state = self.read_state()
-        sim_date_str = state.get('simulated_date')
-        sim_time_str = state.get('simulated_time')
-
-        if sim_date_str:
+    @staticmethod
+    def _parse_csv_date(date_str: str, year_str: str) -> Optional[str]:
+        if not date_str:
+            return None
+        # Try YYYY-MM-DD
+        if len(date_str) == 10 and date_str[4] == '-' and date_str[7] == '-':
+            return date_str
+        # Try "Month DD, YYYY, Day" or "Month DD, YYYY"
+        parts = [p.strip() for p in date_str.split(',') if p.strip()]
+        if len(parts) >= 2:
             try:
-                d = datetime.strptime(sim_date_str, '%Y-%m-%d').date()
-                if sim_time_str:
-                    t = datetime.strptime(sim_time_str, '%H:%M').time()
-                else:
-                    t = datetime.now(IST).time()
-                return datetime.combine(d, t).replace(tzinfo=IST)
-            except Exception as exc:
-                logger.warning(f"Malformed simulated datetime '{sim_date_str} {sim_time_str}': {exc}")
+                date_part = f"{parts[0]}, {parts[1]}"
+                dt = datetime.strptime(date_part, "%B %d, %Y")
+                return dt.strftime("%Y-%m-%d")
+            except ValueError:
+                pass
+        return None
+
+    # ── Time & Timezone Helper ────────────────────────────────
+
+    def get_current_ist_datetime(self, override_now: Optional[datetime] = None) -> datetime:
+        """Return the current datetime in Asia/Kolkata (IST), respecting simulation mode."""
+        if override_now:
+            if override_now.tzinfo is None:
+                return override_now.replace(tzinfo=IST)
+            return override_now.astimezone(IST)
+
+        if self.simulated_datetime:
+            if self.simulated_datetime.tzinfo is None:
+                return self.simulated_datetime.replace(tzinfo=IST)
+            return self.simulated_datetime.astimezone(IST)
 
         return datetime.now(IST)
 
-    # ── Festival Queries ────────────────────────────────────────────────────────
+    # ── Festival Lookups ──────────────────────────────────────
 
-    def get_all_festivals(self) -> list[dict]:
-        """Return list of all parsed festival entries."""
-        if self.holiday_df is None:
-            return []
-        records = []
-        for _, row in self.holiday_df.iterrows():
-            if pd.isna(row.get('iso_date')):
-                continue
-            records.append({
-                'year': int(row['year']),
-                'date_str': str(row['date']),
-                'iso_date': str(row['iso_date']),
-                'event': str(row['event']),
-                'type': str(row.get('type', 'Other')),
-                'control_policy': str(row.get('control_policy', POLICY_NORMAL)),
-            })
-        return records
-
-    def get_festivals_for_date(self, target_date: date | str) -> list[dict]:
-        """Return all festival entries matching a specific date (YYYY-MM-DD)."""
-        if self.holiday_df is None:
-            return []
-        if isinstance(target_date, date):
-            iso_str = target_date.strftime('%Y-%m-%d')
-        else:
-            iso_str = str(target_date)
-
-        matched = self.holiday_df[self.holiday_df['iso_date'] == iso_str]
-        results = []
-        for _, row in matched.iterrows():
-            results.append({
-                'year': int(row['year']),
-                'date_str': str(row['date']),
-                'iso_date': str(row['iso_date']),
-                'event': str(row['event']),
-                'type': str(row.get('type', 'Other')),
-                'control_policy': str(row.get('control_policy', POLICY_NORMAL)),
-            })
-        return results
-
-    def get_today_festival(self, now: datetime | None = None) -> dict | None:
-        """
-        Return the primary festival on today's date (prioritizing RANG_PANCHAMI if multiple).
-        """
-        current_dt = self.get_current_time(now)
-        festivals = self.get_festivals_for_date(current_dt.date())
-        if not festivals:
+    def get_festival_for_date(self, target_date_str: str) -> Optional[Dict[str, Any]]:
+        """Return the holiday record matching YYYY-MM-DD, prioritizing special policies if multiple events occur."""
+        matches = [h for h in self.holidays if h.get('date') == target_date_str]
+        if not matches:
             return None
-        # If Rang Panchami is present on this date, return it
-        for f in festivals:
-            if f.get('control_policy') == POLICY_RANG_PANCHAMI or 'rang panchami' in f.get('event', '').lower():
-                return f
-        return festivals[0]
+        for m in matches:
+            if m.get('policy') == 'RANG_PANCHAMI' or 'rang panchami' in m.get('event', '').lower():
+                return m
+        return matches[0]
 
-    def is_festival_day(self, now: datetime | None = None) -> bool:
-        """Check if today is any festival day."""
-        return self.get_today_festival(now) is not None
+    def get_upcoming_festivals(self, days: int = 60, from_date: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Return upcoming festivals within the given lookahead window."""
+        now_dt = self.get_current_ist_datetime()
+        start_date = from_date or now_dt.strftime('%Y-%m-%d')
+        end_date = (now_dt + timedelta(days=days)).strftime('%Y-%m-%d')
 
-    def is_rang_panchami(self, now: datetime | None = None) -> bool:
+        upcoming = [
+            h for h in self.holidays
+            if start_date <= h.get('date', '') <= end_date
+        ]
+        return sorted(upcoming, key=lambda x: x.get('date', ''))
+
+    # ── Policy Evaluation ─────────────────────────────────────
+
+    def evaluate_policy(self, now: Optional[datetime] = None) -> Dict[str, Any]:
         """
-        Determine if current date is Rang Panchami with strict date validation.
+        Evaluate festival restriction status.
+
+        Rules:
+          - If mode is disabled -> Policy is NORMAL, unblocked.
+          - If selected festival or today's festival has policy RANG_PANCHAMI:
+              - Before 19:00 IST -> Automatic start BLOCKED.
+              - At/after 19:00 IST -> Restriction RELEASED, normal auto allowed.
+          - Other festivals -> Policy is NORMAL.
         """
-        current_dt = self.get_current_time(now)
-        state = self.read_state()
+        now_ist = self.get_current_ist_datetime(now)
+        today_str = now_ist.strftime('%Y-%m-%d')
 
-        # Check if selected festival is Rang Panchami and corresponds to actual/simulated date
-        selected_name = state.get('selected_festival')
-        selected_date = state.get('selected_date')
-        today_iso = current_dt.date().strftime('%Y-%m-%d')
+        # Determine active festival event
+        active_event = self.selected_festival or self.get_festival_for_date(today_str)
+        festival_name = active_event.get('event') if active_event else None
+        festival_date = active_event.get('date') if active_event else today_str
+        policy = active_event.get('policy', 'NORMAL') if active_event else 'NORMAL'
 
-        if selected_name and 'rang panchami' in selected_name.lower():
-            # Validate that selected date matches current date
-            if selected_date == today_iso:
-                return True
-
-        # Check natural calendar match for today's date
-        today_f = self.get_today_festival(now)
-        if today_f:
-            if today_f.get('control_policy') == POLICY_RANG_PANCHAMI or 'rang panchami' in today_f.get('event', '').lower():
-                return True
-
-        return False
-
-    def get_policy(self, now: datetime | None = None) -> str:
-        """
-        Return active policy: RANG_PANCHAMI or NORMAL.
-        """
-        state = self.read_state()
-        if not state.get('mode_enabled', False):
-            return POLICY_NORMAL
-
-        if self.is_rang_panchami(now):
-            return POLICY_RANG_PANCHAMI
-
-        return POLICY_NORMAL
-
-    # ── Policy Enforcement Rules ────────────────────────────────────────────────
-
-    def is_release_time_reached(self, now: datetime | None = None) -> bool:
-        """
-        Check whether 19:00:00 (07:00 PM) IST has arrived.
-        """
-        current_dt = self.get_current_time(now)
-        release_threshold = dtime(RANG_PANCHAMI_RELEASE_HOUR, RANG_PANCHAMI_RELEASE_MINUTE, 0)
-        return current_dt.time() >= release_threshold
-
-    def is_start_blocked(self, now: datetime | None = None) -> bool:
-        """
-        Core decision rule:
-        Returns True IF and ONLY IF:
-          - Festival Mode is enabled
-          - Policy is RANG_PANCHAMI
-          - Current time is before 19:00 IST
-        Returns False in all other cases.
-        """
-        state = self.read_state()
-        if not state.get('mode_enabled', False):
-            return False
-
-        if not self.is_rang_panchami(now):
-            return False
-
-        # On Rang Panchami, start is blocked before 19:00 IST
-        if not self.is_release_time_reached(now):
-            return True
-
-        return False
-
-    def get_status(self, now: datetime | None = None) -> dict:
-        """
-        Returns full status dictionary suitable for backend API and frontend display.
-        """
-        current_dt = self.get_current_time(now)
-        state = self.read_state()
-        mode_enabled = bool(state.get('mode_enabled', False))
-        is_rp = self.is_rang_panchami(now)
-        policy = POLICY_RANG_PANCHAMI if (mode_enabled and is_rp) else POLICY_NORMAL
-        release_reached = self.is_release_time_reached(now)
-        start_blocked = mode_enabled and is_rp and (not release_reached)
-
-        today_fest = self.get_today_festival(now)
-        fest_name = state.get('selected_festival') or (today_fest.get('event') if today_fest else None)
-        fest_date = state.get('selected_date') or (today_fest.get('iso_date') if today_fest else current_dt.date().strftime('%Y-%m-%d'))
-
-        if not mode_enabled:
-            status_text = "INACTIVE"
-            reason = "Festival Mode is OFF — standard automatic/manual control active"
-        elif not is_rp:
-            status_text = "NORMAL_SCHEDULE"
-            reason = f"{fest_name or 'Normal day'} — standard pump scheduling (no festival restriction)"
-        elif start_blocked:
-            status_text = "WAITING_FOR_RELEASE"
-            reason = "Rang Panchami automatic-start restriction active until 07:00 PM IST"
-        else:
-            status_text = "RESTRICTION_RELEASED"
-            reason = "Rang Panchami restriction released (after 07:00 PM IST) — standard automatic control resumed"
-
-        return {
-            'mode_enabled': mode_enabled,
-            'policy': policy,
-            'is_rang_panchami': is_rp,
-            'festival_name': fest_name,
-            'festival_date': fest_date,
-            'restriction_active': start_blocked,
-            'automatic_start_blocked': start_blocked,
-            'release_time': f"{RANG_PANCHAMI_RELEASE_HOUR:02d}:{RANG_PANCHAMI_RELEASE_MINUTE:02d}",
-            'status': status_text,
-            'reason': reason,
-            'current_ist_time': current_dt.strftime('%Y-%m-%d %H:%M:%S'),
-            'simulation': {
-                'simulated_date': state.get('simulated_date'),
-                'simulated_time': state.get('simulated_time'),
-                'is_simulating': bool(state.get('simulated_date')),
+        if not self.mode_enabled:
+            return {
+                'mode_enabled': False,
+                'state': 'DISABLED',
+                'policy': 'NORMAL',
+                'festival_name': festival_name,
+                'festival_date': festival_date,
+                'is_rang_panchami': False,
+                'restriction_active': False,
+                'automatic_start_blocked': False,
+                'release_time': None,
+                'release_time_display': '07:00 PM IST',
+                'current_time_ist': now_ist.strftime('%Y-%m-%d %H:%M:%S IST'),
+                'remaining_minutes': 0,
+                'reason': 'Festival policy mode is turned OFF by operator',
+                'is_simulated': self.simulated_datetime is not None,
             }
+
+        is_rang_panchami = (policy == 'RANG_PANCHAMI') or (festival_name and 'rang panchami' in festival_name.lower())
+
+        if is_rang_panchami:
+            release_time = time(19, 0, 0)  # 19:00:00 IST
+            cur_time = now_ist.time()
+
+            if cur_time < release_time:
+                # Before 7:00 PM IST -> BLOCKED
+                release_dt = datetime.combine(now_ist.date(), release_time, tzinfo=IST)
+                diff_s = (release_dt - now_ist).total_seconds()
+                rem_min = max(0, int(diff_s // 60))
+
+                return {
+                    'mode_enabled': True,
+                    'state': 'RESTRICTION_ACTIVE',
+                    'policy': 'RANG_PANCHAMI',
+                    'festival_name': festival_name or 'Rang Panchami',
+                    'festival_date': festival_date,
+                    'is_rang_panchami': True,
+                    'restriction_active': True,
+                    'automatic_start_blocked': True,
+                    'release_time': '19:00:00',
+                    'release_time_display': '07:00 PM IST',
+                    'current_time_ist': now_ist.strftime('%Y-%m-%d %H:%M:%S IST'),
+                    'remaining_minutes': rem_min,
+                    'reason': f"Rang Panchami special policy — automatic pump starts blocked until 07:00 PM IST ({rem_min}m remaining)",
+                    'is_simulated': self.simulated_datetime is not None,
+                }
+            else:
+                # 7:00 PM IST or later -> RELEASED
+                return {
+                    'mode_enabled': True,
+                    'state': 'RESTRICTION_RELEASED',
+                    'policy': 'RANG_PANCHAMI',
+                    'festival_name': festival_name or 'Rang Panchami',
+                    'festival_date': festival_date,
+                    'is_rang_panchami': True,
+                    'restriction_active': False,
+                    'automatic_start_blocked': False,
+                    'release_time': '19:00:00',
+                    'release_time_display': '07:00 PM IST',
+                    'current_time_ist': now_ist.strftime('%Y-%m-%d %H:%M:%S IST'),
+                    'remaining_minutes': 0,
+                    'reason': 'Rang Panchami 07:00 PM IST time reached — restriction released, normal automation allowed',
+                    'is_simulated': self.simulated_datetime is not None,
+                }
+
+        # Normal Festival or Regular Day
+        return {
+            'mode_enabled': True,
+            'state': 'NORMAL',
+            'policy': 'NORMAL',
+            'festival_name': festival_name,
+            'festival_date': festival_date,
+            'is_rang_panchami': False,
+            'restriction_active': False,
+            'automatic_start_blocked': False,
+            'release_time': None,
+            'release_time_display': 'N/A',
+            'current_time_ist': now_ist.strftime('%Y-%m-%d %H:%M:%S IST'),
+            'remaining_minutes': 0,
+            'reason': f"Standard operation ({festival_name if festival_name else 'Regular Day'})",
+            'is_simulated': self.simulated_datetime is not None,
         }
 
-    # ── State Mutation Methods ──────────────────────────────────────────────────
+    # ── State Mutations & API Helpers ─────────────────────────
 
-    def set_mode(self, enabled: bool) -> dict:
-        """Enable or disable festival mode."""
-        logger.info(f"[FESTIVAL] Festival mode {'ENABLED' if enabled else 'DISABLED'}")
-        return self.save_state({'mode_enabled': bool(enabled)})
+    def set_mode(self, enabled: bool) -> Dict[str, Any]:
+        """Turn Festival Mode ON or OFF."""
+        self.mode_enabled = bool(enabled)
+        self._save_state()
+        logger.info("Festival Mode set to %s", "ON" if self.mode_enabled else "OFF")
+        return self.evaluate_policy()
 
-    def select_festival(self, festival_name: str | None, festival_date: str | None) -> dict:
-        """Set user-selected festival and date (with validation)."""
-        logger.info(f"[FESTIVAL] Selected festival: {festival_name} on {festival_date}")
-        return self.save_state({
-            'selected_festival': festival_name,
-            'selected_date': festival_date,
-        })
+    def select_festival(self, event_name: str, event_date: Optional[str] = None) -> Tuple[bool, Optional[str], Dict[str, Any]]:
+        """Explicitly select an active festival for testing or operational overrides."""
+        if not event_name:
+            return False, "Festival name required", self.evaluate_policy()
 
-    def reset(self) -> dict:
-        """Reset selections and simulations."""
-        logger.info("[FESTIVAL] Festival state reset")
-        return self.save_state({
-            'selected_festival': None,
-            'selected_date': None,
-            'simulated_date': None,
-            'simulated_time': None,
-        })
+        # Find matching holiday or create entry
+        policy = "RANG_PANCHAMI" if "rang panchami" in event_name.lower() else "NORMAL"
+        target_date = event_date or datetime.now(IST).strftime("%Y-%m-%d")
 
-    def set_simulation(self, sim_date: str | None, sim_time: str | None) -> dict:
-        """Set developer/demo simulation date (YYYY-MM-DD) and time (HH:MM)."""
-        logger.info(f"[FESTIVAL] Developer simulation set: date={sim_date}, time={sim_time}")
-        return self.save_state({
-            'simulated_date': sim_date,
-            'simulated_time': sim_time,
-        })
+        self.selected_festival = {
+            'event': event_name.strip(),
+            'date': target_date,
+            'type': 'Hindu' if policy == 'RANG_PANCHAMI' else 'General',
+            'policy': policy,
+        }
+        self.mode_enabled = True
+        self._save_state()
+        logger.info("Selected festival override: %s (%s)", event_name, target_date)
+        return True, None, self.evaluate_policy()
 
+    def reset_festival(self) -> Dict[str, Any]:
+        """Clear manual festival selection and simulation overrides."""
+        self.selected_festival = None
+        self.simulated_datetime = None
+        self._save_state()
+        logger.info("Festival state reset to live defaults")
+        return self.evaluate_policy()
 
-# Singleton instance for system-wide use
-_festival_engine_instance: FestivalPolicyEngine | None = None
-
-def get_festival_policy_engine() -> FestivalPolicyEngine:
-    global _festival_engine_instance
-    if _festival_engine_instance is None:
-        _festival_engine_instance = FestivalPolicyEngine()
-    return _festival_engine_instance
+    def simulate_datetime(self, date_str: str, time_str: str) -> Tuple[bool, Optional[str], Dict[str, Any]]:
+        """Simulate a specific IST date and time for QA verification."""
+        try:
+            full_str = f"{date_str.strip()} {time_str.strip()}"
+            sim_dt = datetime.strptime(full_str, "%Y-%m-%d %H:%M")
+            self.simulated_datetime = sim_dt.replace(tzinfo=IST)
+            self._save_state()
+            logger.info("Simulated IST datetime set to: %s", self.simulated_datetime)
+            return True, None, self.evaluate_policy()
+        except ValueError as e:
+            return False, f"Invalid date/time format (expected YYYY-MM-DD and HH:MM): {e}", self.evaluate_policy()

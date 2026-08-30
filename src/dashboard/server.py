@@ -8,11 +8,10 @@ Usage: python3 server.py [--port 5050] [--fresh]
 
 import serial
 import serial.tools.list_ports
-import re, csv, threading, queue, time, os, json, argparse, sys, traceback, logging
-from datetime import datetime, timedelta
+import re, csv, threading, queue, time, os, json, argparse, sys, traceback
+from datetime import datetime
 from flask import Flask, Response, jsonify, request
 
-logger = logging.getLogger('wilo.dashboard')
 app = Flask(__name__)
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'pressure_log.csv')
@@ -209,16 +208,31 @@ def _telemetry_from_runtime(runtime_status):
     }
 
 
-def _load_festival_engine():
+def _get_water_cut_manager():
     try:
-        from festival_policy import get_festival_policy_engine
-        return get_festival_policy_engine(), None
-    except Exception:
-        try:
-            from src.controller.festival_policy import get_festival_policy_engine
-            return get_festival_policy_engine(), None
-        except Exception as exc:
-            return None, exc
+        import tank_config as CFG
+        from water_cut_manager import WaterCutManager
+
+        return WaterCutManager(
+            cuts_file_path=CFG.WATER_CUTS_FILE,
+            default_reserve_pct=getattr(CFG, 'WATER_CUT_DEFAULT_RESERVE', 95.0),
+            default_prefill_hours=getattr(CFG, 'WATER_CUT_DEFAULT_PREFILL_HOURS', 4.0),
+        )
+    except Exception as exc:
+        return None
+
+
+def _get_festival_engine():
+    try:
+        import tank_config as CFG
+        from festival_policy import FestivalPolicyEngine
+
+        return FestivalPolicyEngine(
+            csv_path=getattr(CFG, 'HOLIDAY_CSV_PATH', None),
+            state_file=getattr(CFG, 'FESTIVAL_STATE_FILE', None),
+        )
+    except Exception as exc:
+        return None
 
 
 def _dashboard_status_payload():
@@ -232,14 +246,45 @@ def _dashboard_status_payload():
     runtime_payload["ml_prediction"] = runtime_payload.get("ml_prediction") or prediction
     runtime_payload["system_mode"] = system_mode
 
-    festival_engine, _ = _load_festival_engine()
-    festival_status = None
-    if runtime_status and runtime_status.get("festival"):
-        festival_status = runtime_status.get("festival")
-    elif festival_engine:
-        festival_status = festival_engine.get_status()
+    wc_mgr = _get_water_cut_manager()
+    water_cut_status = (runtime_payload.get('water_cut')) or (wc_mgr.get_status() if wc_mgr else {})
+    runtime_payload["water_cut"] = water_cut_status
 
-    # DO NOT overwrite the true hardware relay state reported by pump_controller.py!
+    fest_eng = _get_festival_engine()
+    fest_status = (runtime_payload.get('festival_policy')) or (fest_eng.evaluate_policy() if fest_eng else {})
+    runtime_payload["festival_policy"] = fest_status
+
+    cur_class = runtime_payload.get('current_classification')
+    if not cur_class:
+        cur_amps = telemetry.get('mains_current') or runtime_payload.get('current_amps')
+        relay_on = bool(runtime_payload.get('pump_relay_on'))
+        if not relay_on:
+            cur_class = {
+                'raw_amps': cur_amps,
+                'filtered_amps': None,
+                'state': 'UNKNOWN',
+                'full_persisted': False,
+                'full_persistence_seconds': 0.0,
+                'startup_blanking': False,
+                'status_detail': 'Pump is OFF',
+            }
+        else:
+            cur_class = {
+                'raw_amps': cur_amps,
+                'filtered_amps': cur_amps,
+                'state': 'FULL' if (cur_amps is not None and cur_amps <= 6.5) else (
+                    'EMPTY' if (cur_amps is not None and cur_amps >= 11.5) else (
+                        'MID' if (cur_amps is not None and 8.0 <= cur_amps <= 10.0) else 'MID'
+                    )
+                ) if cur_amps is not None and cur_amps >= 1.5 else 'UNKNOWN',
+                'full_persisted': False,
+                'full_persistence_seconds': 0.0,
+                'startup_blanking': False,
+                'status_detail': 'Live classification',
+            }
+    runtime_payload["current_classification"] = cur_class
+    runtime_payload["current_tank_state"] = cur_class.get('state', 'UNKNOWN')
+
     return {
         "ok": True,
         "manual_override_available": pump_status.get("available", False),
@@ -247,10 +292,12 @@ def _dashboard_status_payload():
         "pump": pump_status,
         "telemetry": telemetry,
         "runtime": runtime_payload,
+        "water_cut": water_cut_status,
+        "festival_policy": fest_status,
+        "current_classification": cur_class,
         "runtime_error": str(runtime_error) if runtime_error else None,
         "auto_control": auto_control,
         "system_mode": system_mode,
-        "festival": festival_status,
         "timestamp": datetime.now().isoformat(),
     }
 
@@ -494,224 +541,224 @@ def pump_clear_override():
         return _json_error("failed to clear override", 500, detail=str(exc))
 
 
-# ── Festival Policy Endpoints ─────────────────────────────────────────────────
+# ── Water Cut REST Endpoints ───────────────────────────────────────────────────
 
-@app.route('/api/festivals', methods=['GET'])
-def get_festivals():
-    """List all available holidays and festivals from the dataset."""
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
+@app.route('/api/water-cuts', methods=['GET', 'POST', 'OPTIONS'])
+def handle_water_cuts():
+    if request.method == 'OPTIONS':
+        return ('', 204)
+
+    mgr = _get_water_cut_manager()
+    if not mgr:
+        return _json_error("Water cut manager unavailable", 500)
+
+    if request.method == 'GET':
+        return jsonify({
+            "ok": True,
+            "cuts": mgr.get_all_cuts(),
+            "status": mgr.get_status(),
+        })
+
+    # POST: create water cut
+    data = request.get_json(silent=True) or {}
+    ok, err, created = mgr.add_cut(data)
+    if not ok:
+        return _json_error(f"Failed to create water cut: {err}", 400)
+
     return jsonify({
         "ok": True,
-        "festivals": festival_engine.get_all_festivals()
+        "cut": created,
+        "status": mgr.get_status(),
+        "message": "Water cut scheduled successfully",
+    }), 201
+
+
+@app.route('/api/water-cuts/<cut_id>', methods=['PUT', 'DELETE', 'OPTIONS'])
+def handle_single_water_cut(cut_id: str):
+    if request.method == 'OPTIONS':
+        return ('', 204)
+
+    mgr = _get_water_cut_manager()
+    if not mgr:
+        return _json_error("Water cut manager unavailable", 500)
+
+    if request.method == 'DELETE':
+        ok, err = mgr.delete_cut(cut_id)
+        if not ok:
+            return _json_error(f"Failed to delete water cut: {err}", 404)
+        return jsonify({
+            "ok": True,
+            "status": mgr.get_status(),
+            "message": "Water cut deleted successfully",
+        })
+
+    # PUT: update water cut
+    data = request.get_json(silent=True) or {}
+    ok, err, updated = mgr.update_cut(cut_id, data)
+    if not ok:
+        return _json_error(f"Failed to update water cut: {err}", 400)
+
+    return jsonify({
+        "ok": True,
+        "cut": updated,
+        "status": mgr.get_status(),
+        "message": "Water cut updated successfully",
     })
 
 
-@app.route('/api/festivals/today', methods=['GET'])
-def get_today_festival():
-    """Return festival occurring on current date (IST)."""
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
-    today_f = festival_engine.get_today_festival()
+# ── Festival & Holiday Policy REST Endpoints ────────────────────────────────────
+
+@app.route('/api/festival/status', methods=['GET', 'OPTIONS'])
+def handle_festival_status():
+    if request.method == 'OPTIONS':
+        return ('', 204)
+    engine = _get_festival_engine()
+    if not engine:
+        return _json_error("Festival policy engine unavailable", 500)
     return jsonify({
         "ok": True,
-        "today": today_f,
-        "is_festival_day": today_f is not None,
-    })
-
-
-@app.route('/api/festivals/upcoming', methods=['GET'])
-def get_upcoming_festivals():
-    """Return upcoming festivals within N days (default 30)."""
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
-    try:
-        days = int(request.args.get('days', 30))
-    except ValueError:
-        days = 30
-    current_dt = festival_engine.get_current_time()
-    upcoming = []
-    for day_offset in range(max(1, days)):
-        check_date = current_dt.date() + timedelta(days=day_offset)
-        matches = festival_engine.get_festivals_for_date(check_date)
-        for m in matches:
-            upcoming.append(m)
-    return jsonify({
-        "ok": True,
-        "upcoming": upcoming,
-        "count": len(upcoming),
-    })
-
-
-@app.route('/api/festival/status', methods=['GET'])
-def get_festival_status():
-    """Get current festival policy status, including whether start is blocked."""
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
-    return jsonify({
-        "ok": True,
-        "festival": festival_engine.get_status()
+        "status": engine.evaluate_policy(),
+        "mode_enabled": engine.mode_enabled,
+        "selected_festival": engine.selected_festival,
+        "simulated_datetime": engine.simulated_datetime.isoformat() if engine.simulated_datetime else None,
     })
 
 
 @app.route('/api/festival/mode', methods=['POST', 'OPTIONS'])
-def set_festival_mode():
-    """Enable or disable Festival Mode."""
+def handle_festival_mode():
     if request.method == 'OPTIONS':
         return ('', 204)
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
+    engine = _get_festival_engine()
+    if not engine:
+        return _json_error("Festival policy engine unavailable", 500)
+
     data = request.get_json(silent=True) or {}
-    if 'enabled' not in data:
-        return _json_error("Missing required field 'enabled' (boolean)", 400)
-    enabled = bool(data['enabled'])
-    new_state = festival_engine.set_mode(enabled)
+    if 'enabled' not in data and 'mode' not in data:
+        return _json_error("Missing 'enabled' (boolean) or 'mode' ('on'/'off') in payload", 400)
 
-    # Notify controller via control channel
-    try:
-        import tank_config as CFG
-        from runtime_channel import atomic_write_json
-        command = {
-            'action': 'festival_mode',
-            'issued_at': datetime.now().isoformat(),
-            'source': 'dashboard-ui',
-            'metadata': {'enabled': enabled},
-        }
-        atomic_write_json(CFG.CONTROL_FILE, command)
-    except Exception as exc:
-        logger.warning(f"Could not forward festival_mode to controller: {exc}")
+    if 'enabled' in data:
+        enabled = bool(data['enabled'])
+    else:
+        enabled = str(data.get('mode', '')).strip().lower() in ('on', 'true', '1', 'enable', 'enabled')
 
-    status = festival_engine.get_status()
+    status = engine.set_mode(enabled)
     return jsonify({
         "ok": True,
-        "mode_enabled": enabled,
-        "festival": status,
-        "message": f"Festival mode {'enabled' if enabled else 'disabled'}"
+        "mode_enabled": engine.mode_enabled,
+        "status": status,
+        "message": f"Festival Policy Mode turned {'ON' if engine.mode_enabled else 'OFF'}",
     })
 
 
 @app.route('/api/festival/select', methods=['POST', 'OPTIONS'])
-def select_festival():
-    """Select a specific festival and date."""
+def handle_festival_select():
     if request.method == 'OPTIONS':
         return ('', 204)
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
+    engine = _get_festival_engine()
+    if not engine:
+        return _json_error("Festival policy engine unavailable", 500)
+
     data = request.get_json(silent=True) or {}
-    festival_name = data.get('festival_name')
-    festival_date = data.get('festival_date')
+    event_name = data.get('event') or data.get('festival_name')
+    event_date = data.get('date') or data.get('festival_date')
 
-    if not festival_name or not festival_date:
-        return _json_error("Both 'festival_name' and 'festival_date' (YYYY-MM-DD) are required", 400)
+    if not event_name:
+        return _json_error("Missing 'event' or 'festival_name' in payload", 400)
 
-    try:
-        datetime.strptime(festival_date, '%Y-%m-%d')
-    except ValueError:
-        return _json_error("Invalid date format for 'festival_date', expected YYYY-MM-DD", 400)
+    ok, err, status = engine.select_festival(event_name, event_date)
+    if not ok:
+        return _json_error(err or "Failed to select festival", 400)
 
-    festival_engine.select_festival(festival_name, festival_date)
-
-    try:
-        import tank_config as CFG
-        from runtime_channel import atomic_write_json
-        command = {
-            'action': 'festival_select',
-            'issued_at': datetime.now().isoformat(),
-            'source': 'dashboard-ui',
-            'metadata': {'festival_name': festival_name, 'festival_date': festival_date},
-        }
-        atomic_write_json(CFG.CONTROL_FILE, command)
-    except Exception as exc:
-        logger.warning(f"Could not forward festival_select to controller: {exc}")
-
-    status = festival_engine.get_status()
     return jsonify({
         "ok": True,
-        "festival": status,
-        "message": f"Selected festival '{festival_name}' on {festival_date}"
+        "selected_festival": engine.selected_festival,
+        "status": status,
+        "message": f"Selected festival: {event_name}",
     })
 
 
 @app.route('/api/festival/reset', methods=['POST', 'OPTIONS'])
-def reset_festival():
-    """Reset festival selection and simulation fixtures."""
+def handle_festival_reset():
     if request.method == 'OPTIONS':
         return ('', 204)
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
-    festival_engine.reset()
+    engine = _get_festival_engine()
+    if not engine:
+        return _json_error("Festival policy engine unavailable", 500)
 
-    try:
-        import tank_config as CFG
-        from runtime_channel import atomic_write_json
-        command = {
-            'action': 'festival_reset',
-            'issued_at': datetime.now().isoformat(),
-            'source': 'dashboard-ui',
-            'metadata': {},
-        }
-        atomic_write_json(CFG.CONTROL_FILE, command)
-    except Exception as exc:
-        logger.warning(f"Could not forward festival_reset to controller: {exc}")
-
-    status = festival_engine.get_status()
+    status = engine.reset_festival()
     return jsonify({
         "ok": True,
-        "festival": status,
-        "message": "Festival settings and simulation state reset"
+        "status": status,
+        "message": "Festival selection and simulation overrides reset to defaults",
     })
 
 
 @app.route('/api/festival/simulate', methods=['POST', 'OPTIONS'])
-def simulate_festival():
-    """Set or clear developer simulation fixture (date YYYY-MM-DD, time HH:MM)."""
+def handle_festival_simulate():
     if request.method == 'OPTIONS':
         return ('', 204)
-    festival_engine, err = _load_festival_engine()
-    if festival_engine is None:
-        return _json_error("Festival policy engine unavailable", 503, detail=str(err))
+    engine = _get_festival_engine()
+    if not engine:
+        return _json_error("Festival policy engine unavailable", 500)
+
     data = request.get_json(silent=True) or {}
-    sim_date = data.get('date')
-    sim_time = data.get('time')
+    date_str = data.get('date')
+    time_str = data.get('time')
 
-    if sim_date:
-        try:
-            datetime.strptime(sim_date, '%Y-%m-%d')
-        except ValueError:
-            return _json_error("Invalid date format for 'date', expected YYYY-MM-DD", 400)
-    if sim_time:
-        try:
-            datetime.strptime(sim_time, '%H:%M')
-        except ValueError:
-            return _json_error("Invalid time format for 'time', expected HH:MM", 400)
+    if not date_str or not time_str:
+        return _json_error("Both 'date' (YYYY-MM-DD) and 'time' (HH:MM) are required", 400)
 
-    festival_engine.set_simulation(sim_date, sim_time)
+    ok, err, status = engine.simulate_datetime(date_str, time_str)
+    if not ok:
+        return _json_error(err or "Failed to set simulation datetime", 400)
 
-    try:
-        import tank_config as CFG
-        from runtime_channel import atomic_write_json
-        command = {
-            'action': 'festival_simulate',
-            'issued_at': datetime.now().isoformat(),
-            'source': 'dashboard-ui',
-            'metadata': {'date': sim_date, 'time': sim_time},
-        }
-        atomic_write_json(CFG.CONTROL_FILE, command)
-    except Exception as exc:
-        logger.warning(f"Could not forward festival_simulate to controller: {exc}")
-
-    status = festival_engine.get_status()
     return jsonify({
         "ok": True,
-        "festival": status,
-        "message": f"Simulation set to date={sim_date}, time={sim_time}" if sim_date else "Simulation cleared"
+        "simulated_datetime": engine.simulated_datetime.isoformat() if engine.simulated_datetime else None,
+        "status": status,
+        "message": f"Simulated datetime set to {date_str} {time_str} IST",
+    })
+
+
+@app.route('/api/festivals/today', methods=['GET', 'OPTIONS'])
+def handle_festivals_today():
+    if request.method == 'OPTIONS':
+        return ('', 204)
+    engine = _get_festival_engine()
+    if not engine:
+        return _json_error("Festival policy engine unavailable", 500)
+
+    now_ist = engine.get_current_ist_datetime()
+    today_str = now_ist.strftime('%Y-%m-%d')
+    fest = engine.get_festival_for_date(today_str)
+    return jsonify({
+        "ok": True,
+        "today_date": today_str,
+        "festival": fest,
+        "is_festival_today": fest is not None,
+    })
+
+
+@app.route('/api/festivals/upcoming', methods=['GET', 'OPTIONS'])
+def handle_festivals_upcoming():
+    if request.method == 'OPTIONS':
+        return ('', 204)
+    engine = _get_festival_engine()
+    if not engine:
+        return _json_error("Festival policy engine unavailable", 500)
+
+    try:
+        days = int(request.args.get('days', 90))
+    except ValueError:
+        days = 90
+
+    from_date = request.args.get('from_date')
+    upcoming = engine.get_upcoming_festivals(days=days, from_date=from_date)
+    return jsonify({
+        "ok": True,
+        "count": len(upcoming),
+        "days": days,
+        "festivals": upcoming,
     })
 
 
@@ -725,5 +772,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     SERIAL_PORT = args.serial_port
     start_reader(fresh=args.fresh)
-    print(f"\n  Dashboard -> http://localhost:{args.port}\n")
+    print(f"\n  Dashboard → http://localhost:{args.port}\n")
     app.run(host='0.0.0.0', port=args.port, threaded=True)

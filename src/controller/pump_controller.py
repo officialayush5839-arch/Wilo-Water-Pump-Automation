@@ -4,7 +4,8 @@ Wilo Water Pump Controller — Main Service
 ===========================================
 Runs on Raspberry Pi. Receives LoRa data from ESP32 (upper tank pressure),
 reads local current/voltage sensors (main tank estimation),
-and controls the pump relay using hybrid logic.
+and controls the pump relay using hybrid logic with Municipal Water Cut
+and Current-Based Hydraulic State Classification.
 
 Usage:
     python3 pump_controller.py                # normal operation
@@ -29,9 +30,11 @@ sys.path.insert(0, _HERE)
 
 import tank_config as CFG
 from pump_logic import HybridPumpLogic, PumpDecision
-from festival_policy import get_festival_policy_engine
 from data_logger import DataLogger
 from runtime_channel import atomic_write_json, read_json, remove_file
+from current_classifier import CurrentClassifier
+from water_cut_manager import WaterCutManager
+from festival_policy import FestivalPolicyEngine
 
 # ── Logging setup ────────────────────────────────────────────
 
@@ -94,7 +97,7 @@ def parse_lora_packet(raw_str):
             'pkt':          int(data.get('pkt', -1)),
         }
     except (json.JSONDecodeError, ValueError, TypeError) as e:
-        logger.warning(f"Packet parse error: {e}  raw='{raw_str[:80]}'")
+        logger.warning("Packet parse error: %s  raw='%s'", e, raw_str[:80])
         return None
 
 
@@ -113,7 +116,9 @@ class PumpController:
         self.sensor = None
         self.csv    = None
         self.logic  = None
-        self.festival_policy = None
+        self.current_classifier = None
+        self.water_cut_manager  = None
+        self.festival_engine    = None
 
         # ── Latest data ──
         self.last_packet = None
@@ -121,12 +126,15 @@ class PumpController:
         self.last_decision = None
         self.last_rssi = None
         self.last_snr = None
+        self.last_current_classification = None
+        self.last_water_cut_status = None
+        self.last_festival_status = None
 
     def initialize(self):
         logger.info("=" * 60)
         logger.info("  WILO WATER PUMP CONTROLLER")
-        logger.info(f"  Mode: {'DRY-RUN (no GPIO)' if self.dry_run else 'LIVE'}")
-        logger.info(f"  Time: {datetime.now()}")
+        logger.info("  Mode: %s", 'DRY-RUN (no GPIO)' if self.dry_run else 'LIVE')
+        logger.info("  Time: %s", datetime.now())
         logger.info("=" * 60)
 
         # ── 1. LoRa receiver ──
@@ -141,25 +149,29 @@ class PumpController:
             logger.info("LoRa receiver initialised — listening on 433 MHz")
         except Exception as e:
             if self.dry_run:
-                logger.warning(f"LoRa init skipped (dry-run): {e}")
+                logger.warning("LoRa init skipped (dry-run): %s", e)
                 self.lora = None
             else:
-                logger.critical(f"LoRa init FAILED: {e}")
+                logger.critical("LoRa init FAILED: %s", e)
                 raise
 
         # ── 2. Relay controller ──
         if not self.dry_run:
-            import RPi.GPIO as GPIO
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setwarnings(False)
-            from relay_control import RelayController
-            self.relay = RelayController(
-                pump_pin=CFG.RELAY_PUMP_PIN, valve_pin=CFG.RELAY_VALVE_PIN,
-                active_low=CFG.RELAY_ACTIVE_LOW,
-                btn_on_pin=CFG.BUTTON_FORCE_ON, btn_off_pin=CFG.BUTTON_FORCE_OFF,
-                led_pin=CFG.LED_STATUS_PIN, debounce_ms=CFG.OVERRIDE_DEBOUNCE_MS
-            )
-            self.relay.initialize()
+            try:
+                import RPi.GPIO as GPIO
+                GPIO.setmode(GPIO.BCM)
+                GPIO.setwarnings(False)
+                from relay_control import RelayController
+                self.relay = RelayController(
+                    pump_pin=CFG.RELAY_PUMP_PIN, valve_pin=CFG.RELAY_VALVE_PIN,
+                    active_low=CFG.RELAY_ACTIVE_LOW,
+                    btn_on_pin=CFG.BUTTON_FORCE_ON, btn_off_pin=CFG.BUTTON_FORCE_OFF,
+                    led_pin=CFG.LED_STATUS_PIN, debounce_ms=CFG.OVERRIDE_DEBOUNCE_MS
+                )
+                self.relay.initialize()
+            except ImportError:
+                logger.warning("RPi.GPIO not installed -> falling back to dry-run relay")
+                self.relay = None
         else:
             logger.info("Relay control SKIPPED (dry-run)")
 
@@ -179,14 +191,32 @@ class PumpController:
         self.csv = DataLogger(CFG.CSV_LOG_PATH, CFG.LOG_INTERVAL_S)
         self.csv.initialize()
 
-        # ── 5. Festival policy & Hybrid pump logic ──
-        try:
-            self.festival_policy = get_festival_policy_engine()
-            logger.info("Festival policy engine initialised ✓")
-        except Exception as e:
-            logger.warning(f"Festival policy init failed: {e}")
-            self.festival_policy = None
+        # ── 5. Water Cut Manager ──
+        self.water_cut_manager = WaterCutManager(
+            cuts_file_path=CFG.WATER_CUTS_FILE,
+            default_reserve_pct=CFG.WATER_CUT_DEFAULT_RESERVE,
+            default_prefill_hours=CFG.WATER_CUT_DEFAULT_PREFILL_HOURS
+        )
 
+        # ── 6. Current Classifier ──
+        self.current_classifier = CurrentClassifier(
+            empty_threshold=CFG.CURRENT_EMPTY_THRESHOLD,
+            mid_low=CFG.CURRENT_MID_LOW,
+            mid_high=CFG.CURRENT_MID_HIGH,
+            full_threshold=CFG.CURRENT_FULL_THRESHOLD,
+            dry_run_threshold=CFG.PUMP_DRY_RUN_CURRENT_A,
+            filter_window=CFG.CURRENT_FILTER_WINDOW,
+            startup_blanking_sec=CFG.CURRENT_STARTUP_BLANKING_SEC,
+            full_persistence_sec=CFG.CURRENT_FULL_PERSISTENCE_SEC
+        )
+
+        # ── 7. Festival Policy Engine ──
+        self.festival_engine = FestivalPolicyEngine(
+            csv_path=CFG.HOLIDAY_CSV_PATH,
+            state_file=CFG.FESTIVAL_STATE_FILE
+        )
+
+        # ── 8. Hybrid pump logic ──
         self.logic = HybridPumpLogic(
             critical_low=CFG.UPPER_CRITICAL_LOW, low=CFG.UPPER_LOW,
             high=CFG.UPPER_HIGH, critical_high=CFG.UPPER_CRITICAL_HIGH,
@@ -197,11 +227,10 @@ class PumpController:
             voltage_guard_enabled=CFG.POWER_VOLTAGE_PROTECTION,
             min_voltage_ac=CFG.MIN_MAINS_VOLTAGE_AC,
             override_timeout_min=CFG.OVERRIDE_TIMEOUT_MIN,
-            ml_enabled=CFG.ML_ENABLED, ml_window_min=CFG.ML_ACTIVATION_WINDOW_MIN,
-            festival_policy=self.festival_policy
+            ml_enabled=CFG.ML_ENABLED, ml_window_min=CFG.ML_ACTIVATION_WINDOW_MIN
         )
 
-        # ── 6. Try loading ML prediction ──
+        # ── 8. Try loading ML prediction ──
         self._update_ml_prediction()
 
         logger.info("All subsystems initialised ✓")
@@ -222,13 +251,13 @@ class PumpController:
                 'duration':   result['duration'],
             })
         except Exception as e:
-            logger.warning(f"ML prediction unavailable: {e}")
+            logger.warning("ML prediction unavailable: %s", e)
 
     def _consume_control_command(self):
         try:
             command = read_json(CFG.CONTROL_FILE)
         except Exception as e:
-            logger.warning(f"Control command read failed: {e}")
+            logger.warning("Control command read failed: %s", e)
             return
 
         if not command:
@@ -265,46 +294,33 @@ class PumpController:
             self.logic.set_override(None)
             self.logic.set_manual_mode(False)
             logger.info("Control command accepted: override CLEAR — also disabled manual mode")
-        elif action == 'festival_mode':
-            enabled = bool(command.get('metadata', {}).get('enabled', False))
-            if self.festival_policy:
-                self.festival_policy.set_mode(enabled)
-            logger.info(f"Control command accepted: festival_mode {'ON' if enabled else 'OFF'}")
-        elif action == 'festival_select':
-            meta = command.get('metadata', {})
-            fest_name = meta.get('festival_name')
-            fest_date = meta.get('festival_date')
-            if self.festival_policy:
-                self.festival_policy.select_festival(fest_name, fest_date)
-            logger.info(f"Control command accepted: festival_select {fest_name} {fest_date}")
-        elif action == 'festival_reset':
-            if self.festival_policy:
-                self.festival_policy.reset()
-            logger.info("Control command accepted: festival_reset")
-        elif action == 'festival_simulate':
-            meta = command.get('metadata', {})
-            s_date = meta.get('date')
-            s_time = meta.get('time')
-            if self.festival_policy:
-                self.festival_policy.set_simulation(s_date, s_time)
-            logger.info(f"Control command accepted: festival_simulate {s_date} {s_time}")
         else:
             logger.warning("Unknown control command: %s", action)
 
     def _write_runtime_status(self, decision, current_a, voltage_v):
         packet = self.last_packet or {}
-        festival_status = self.festival_policy.get_status() if self.festival_policy else None
+        cur_class = self.last_current_classification or {}
+        water_cut = self.last_water_cut_status or {}
+        fest_status = self.last_festival_status or {}
+
+        host_name = os.uname().nodename if hasattr(os, 'uname') else 'wilo-host'
+
         payload = {
             'connected': True,
             'controller_mode': 'dry-run' if self.dry_run else 'live',
             'current_amps': current_a,
+            'current_filtered_a': cur_class.get('filtered_amps'),
+            'current_tank_state': cur_class.get('state', 'UNKNOWN'),
+            'current_classification': cur_class,
+            'water_cut': water_cut,
+            'festival_policy': fest_status,
             'decision': {
                 'action': decision.action if decision else None,
                 'reason': decision.reason if decision else None,
                 'state': decision.state.value if decision else None,
                 'ts': decision.ts.isoformat() if decision else None,
             },
-            'host': os.uname().nodename if hasattr(os, 'uname') else 'wilo-host',
+            'host': host_name,
             'last_lora_ts': self.logic.last_lora_ts.isoformat() if self.logic and self.logic.last_lora_ts else None,
             'lora_age_s': (
                 round((datetime.now() - self.logic.last_lora_ts).total_seconds(), 1)
@@ -316,7 +332,6 @@ class PumpController:
             'ml_prediction': self.logic.ml_prediction if self.logic else None,
             'override': self.logic.override if self.logic else None,
             'system_mode': 'manual' if self.logic and self.logic.manual_mode else 'auto',
-            'festival': festival_status,
             'pressure_kpa': packet.get('pressure_kpa'),
             'pump_relay_on': self.relay.pump_on if self.relay else False,
             'sensor_status': packet.get('status'),
@@ -329,7 +344,7 @@ class PumpController:
         try:
             atomic_write_json(CFG.STATUS_FILE, payload)
         except Exception as e:
-            logger.debug(f"Runtime status write failed: {e}")
+            logger.debug("Runtime status write failed: %s", e)
 
     # ── Main loop ─────────────────────────────────────────────
 
@@ -361,7 +376,7 @@ class PumpController:
                             if pkt_data['status'] == 'fault':
                                 self.logic.signal_lora_fault()
                                 self.upper_pct = None
-                                logger.debug(f"LoRa #{pkt_data['pkt']}  SENSOR FAULT  RSSI={rssi}")
+                                logger.debug("LoRa #%s  SENSOR FAULT  RSSI=%s", pkt_data['pkt'], rssi)
                             else:
                                 upper_pct = pressure_to_level_pct(pkt_data['pressure_kpa'])
                                 if upper_pct is None:
@@ -376,18 +391,39 @@ class PumpController:
                                     self.logic.signal_lora_ok()
                                     self.upper_pct = upper_pct
                                     logger.debug(
-                                        f"LoRa #{pkt_data['pkt']}  "
-                                        f"{pkt_data['pressure_kpa']:.2f}kPa → "
-                                        f"{self.upper_pct:.1f}%  "
-                                        f"RSSI={rssi}  SNR={snr:.1f}"
+                                        "LoRa #%s  %.2fkPa → %.1f%%  RSSI=%s  SNR=%.1f",
+                                        pkt_data['pkt'], pkt_data['pressure_kpa'],
+                                        self.upper_pct, rssi, snr
                                     )
                     except Exception as e:
-                        logger.error(f"LoRa read error: {e}")
+                        logger.error("LoRa read error: %s", e)
 
                 # ── Read current/voltage ──
                 cv = self.sensor.read_all()
                 current_a = cv['current_amps']
                 voltage_v = cv['voltage_ac']
+
+                # ── Update Current Classifier ──
+                pump_is_on = self.relay.pump_on if self.relay else False
+                if self.current_classifier:
+                    cur_class = self.current_classifier.update(current_a, pump_is_on=pump_is_on)
+                    self.last_current_classification = cur_class
+                else:
+                    cur_class = None
+
+                # ── Update Water Cut Status ──
+                if self.water_cut_manager:
+                    water_cut_status = self.water_cut_manager.get_status()
+                    self.last_water_cut_status = water_cut_status
+                else:
+                    water_cut_status = None
+
+                # ── Update Festival Policy Status ──
+                if self.festival_engine:
+                    festival_status = self.festival_engine.evaluate_policy()
+                    self.last_festival_status = festival_status
+                else:
+                    festival_status = None
 
                 # ── Manual override buttons ──
                 if self.relay:
@@ -396,12 +432,14 @@ class PumpController:
                         self.logic.set_override(btn)
 
                 # ── Decide ──
-                pump_is_on = self.relay.pump_on if self.relay else False
                 decision = self.logic.decide(
                     upper_pct=self.upper_pct,
                     pump_is_on=pump_is_on,
                     current_amps=current_a,
-                    voltage_ac=voltage_v
+                    voltage_ac=voltage_v,
+                    current_classification=cur_class,
+                    water_cut_status=water_cut_status,
+                    festival_status=festival_status
                 )
                 self.last_decision = decision
 
@@ -409,11 +447,11 @@ class PumpController:
                 if decision.action == 'ON' and not pump_is_on:
                     if self.relay:
                         self.relay.pump_start()
-                    logger.info(f"▶ PUMP ON  — {decision.reason}")
+                    logger.info("▶ PUMP ON  — %s", decision.reason)
                 elif decision.action == 'OFF' and pump_is_on:
                     if self.relay:
                         self.relay.pump_stop()
-                    logger.info(f"⏹ PUMP OFF — {decision.reason}")
+                    logger.info("⏹ PUMP OFF — %s", decision.reason)
 
                 # ── Log (every cycle) ──
                 p = self.last_packet or {}
@@ -440,11 +478,12 @@ class PumpController:
                 if cycle % 10 == 0:
                     level_str = f"{self.upper_pct:.1f}%" if self.upper_pct is not None else "?"
                     pump_str  = "ON" if (self.relay and self.relay.pump_on) else "OFF"
-                    curr_str  = f"{current_a:.2f}A" if current_a else "N/A"
+                    curr_str  = f"{current_a:.2f}A" if current_a is not None else "N/A"
+                    cur_state = cur_class.get('state', 'UNKNOWN') if cur_class else 'UNKNOWN'
+                    wc_state  = water_cut_status.get('state', 'NORMAL') if water_cut_status else 'NORMAL'
                     logger.info(
-                        f"[cycle {cycle}]  upper={level_str}  "
-                        f"pump={pump_str}  I={curr_str}  "
-                        f"state={decision.state.value}"
+                        "[cycle %d] upper=%s pump=%s I=%s state=%s [hydraulic=%s, water_cut=%s]",
+                        cycle, level_str, pump_str, curr_str, decision.state.value, cur_state, wc_state
                     )
 
                 time.sleep(CFG.LOOP_INTERVAL_S)
@@ -452,7 +491,7 @@ class PumpController:
             except KeyboardInterrupt:
                 break
             except Exception as e:
-                logger.error(f"Loop error: {e}", exc_info=True)
+                logger.error("Loop error: %s", e, exc_info=True)
                 # Safety: stop pump on unexpected error
                 if self.relay and self.relay.pump_on:
                     self.relay.emergency_stop()
@@ -497,7 +536,7 @@ def main():
         ctrl.initialize()
         ctrl.run()
     except Exception as e:
-        logger.critical(f"Fatal error: {e}", exc_info=True)
+        logger.critical("Fatal error: %s", e, exc_info=True)
     finally:
         ctrl.shutdown()
 
