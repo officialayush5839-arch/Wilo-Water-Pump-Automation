@@ -19,26 +19,36 @@ import logging
 from enum import Enum
 from datetime import datetime, timedelta
 
+try:
+    from festival_policy import get_festival_policy_engine, FestivalPolicyEngine
+except ImportError:
+    try:
+        from src.controller.festival_policy import get_festival_policy_engine, FestivalPolicyEngine
+    except ImportError:
+        get_festival_policy_engine = None
+        FestivalPolicyEngine = None
+
 logger = logging.getLogger('wilo.logic')
 
 
 # ── Pump state enum ──────────────────────────────────────────
 
 class PumpState(Enum):
-    OFF                = 'OFF'
-    ON_EMERGENCY       = 'ON_EMERGENCY'
-    ON_THRESHOLD       = 'ON_THRESHOLD'
-    ON_ML_SCHEDULED    = 'ON_ML_SCHEDULED'
-    ON_MANUAL          = 'ON_MANUAL'
-    OFF_EMERGENCY      = 'OFF_EMERGENCY'
-    OFF_SAFETY         = 'OFF_SAFETY'
-    OFF_MANUAL         = 'OFF_MANUAL'
-    OFF_SENSOR_FAULT   = 'OFF_SENSOR_FAULT'
-    OFF_POWER_RESTORE  = 'OFF_POWER_RESTORE'
-    OFF_DRY_RUN        = 'OFF_DRY_RUN'
-    OFF_MAX_RUN        = 'OFF_MAX_RUN'
-    OFF_LORA_TIMEOUT   = 'OFF_LORA_TIMEOUT'
-    OFF_UNDERVOLTAGE   = 'OFF_UNDERVOLTAGE'
+    OFF                 = 'OFF'
+    ON_EMERGENCY        = 'ON_EMERGENCY'
+    ON_THRESHOLD        = 'ON_THRESHOLD'
+    ON_ML_SCHEDULED     = 'ON_ML_SCHEDULED'
+    ON_MANUAL           = 'ON_MANUAL'
+    OFF_EMERGENCY       = 'OFF_EMERGENCY'
+    OFF_SAFETY          = 'OFF_SAFETY'
+    OFF_MANUAL          = 'OFF_MANUAL'
+    OFF_SENSOR_FAULT    = 'OFF_SENSOR_FAULT'
+    OFF_POWER_RESTORE   = 'OFF_POWER_RESTORE'
+    OFF_DRY_RUN         = 'OFF_DRY_RUN'
+    OFF_MAX_RUN         = 'OFF_MAX_RUN'
+    OFF_LORA_TIMEOUT    = 'OFF_LORA_TIMEOUT'
+    OFF_UNDERVOLTAGE    = 'OFF_UNDERVOLTAGE'
+    OFF_FESTIVAL_POLICY = 'OFF_FESTIVAL_POLICY'
 
 
 class PumpDecision:
@@ -66,7 +76,8 @@ class HybridPumpLogic:
                  require_valid_lora_before_start,
                  voltage_guard_enabled, min_voltage_ac,
                  override_timeout_min,
-                 ml_enabled, ml_window_min):
+                 ml_enabled, ml_window_min,
+                 festival_policy=None):
         # Thresholds
         self.crit_low  = critical_low
         self.low       = low
@@ -90,6 +101,18 @@ class HybridPumpLogic:
         self.ml_enabled    = ml_enabled
         self.ml_window     = timedelta(minutes=ml_window_min)
 
+        # Festival Policy
+        if festival_policy is not None:
+            self.festival_policy = festival_policy
+        elif get_festival_policy_engine is not None:
+            try:
+                self.festival_policy = get_festival_policy_engine()
+            except Exception as e:
+                logger.warning(f"Unable to load festival policy engine: {e}")
+                self.festival_policy = None
+        else:
+            self.festival_policy = None
+
         # State
         self.current_state    = PumpState.OFF
         self.pump_start_time  = None
@@ -103,6 +126,22 @@ class HybridPumpLogic:
         self.manual_mode      = False       # True = automation frozen, only manual override works
 
     # ── External updates ─────────────────────────────────────
+
+    def set_festival_policy(self, policy):
+        """Inject or update festival policy engine."""
+        self.festival_policy = policy
+
+    def _is_start_blocked(self, now) -> tuple[bool, str]:
+        """Check if automatic pump start is currently blocked by festival policy."""
+        if self.festival_policy:
+            try:
+                if self.festival_policy.is_start_blocked(now):
+                    status = self.festival_policy.get_status(now)
+                    reason = status.get('reason', "Rang Panchami automatic-start restriction active until 07:00 PM (Festival Policy)")
+                    return True, reason
+            except Exception as exc:
+                logger.warning(f"Error checking festival policy: {exc}")
+        return False, ""
 
     def signal_lora_ok(self):
         """Call when a clean (non-fault) LoRa packet is received."""
@@ -136,16 +175,22 @@ class HybridPumpLogic:
 
     # ── Main decision ────────────────────────────────────────
 
-    def decide(self, upper_pct, pump_is_on, current_amps=None, voltage_ac=None) -> PumpDecision:
+    def decide(self, upper_pct, pump_is_on, current_amps=None, voltage_ac=None, now=None) -> PumpDecision:
         """
         Args:
             upper_pct:   Upper tank level 0-100 (None if unknown)
             pump_is_on:  Current relay state
             current_amps: Measured pump current (None if ADC unavailable)
+            voltage_ac:  Measured mains voltage (None if unavailable)
+            now:         Optional datetime (defaults to festival engine IST time or now)
         Returns:
             PumpDecision with .action in {'ON','OFF','HOLD'}
         """
-        now = datetime.now()
+        if now is None:
+            if self.festival_policy:
+                now = self.festival_policy.get_current_time()
+            else:
+                now = datetime.now()
 
         # ── P0  Manual mode — freeze all automation ──────────
         # When manual mode is active, only explicit override ON/OFF commands
@@ -184,6 +229,12 @@ class HybridPumpLogic:
             elif self.override == 'OFF':
                 return self._off(PumpState.OFF_MANUAL, "Manual override OFF")
 
+        # ── Safety checks that MUST shut down or prevent unsafe starts ──
+        # Emergency overfill check (always shuts off pump regardless of any festival)
+        if upper_pct is not None and upper_pct >= self.crit_high:
+            return self._off(PumpState.OFF_EMERGENCY,
+                f"Upper tank CRITICAL HIGH {upper_pct:.1f}% ≥ {self.crit_high}%")
+
         if self.require_valid_lora_before_start:
             if self.last_lora_ts is None:
                 return self._off(PumpState.OFF_LORA_TIMEOUT,
@@ -192,34 +243,21 @@ class HybridPumpLogic:
                 return self._off(PumpState.OFF_LORA_TIMEOUT,
                     f"LoRa data stale ({(now - self.last_lora_ts).total_seconds():.0f}s old)")
 
-        # ── P2  Emergency thresholds ─────────────────────────
-        if upper_pct is not None:
-            if upper_pct >= self.crit_high:
-                return self._off(PumpState.OFF_EMERGENCY,
-                    f"Upper tank CRITICAL HIGH {upper_pct:.1f}% ≥ {self.crit_high}%")
-            if upper_pct <= self.crit_low:
-                return self._on(PumpState.ON_EMERGENCY, now,
-                    f"Upper tank CRITICAL LOW {upper_pct:.1f}% ≤ {self.crit_low}%")
-
-        # ── P3  Safety guards ────────────────────────────────
-        # LoRa timeout
+        # Safety guards (LoRa timeout, sensor fault, max run, dry run, undervoltage)
         if self.last_lora_ts and (now - self.last_lora_ts) > self.lora_timeout:
             return self._off(PumpState.OFF_LORA_TIMEOUT,
                 f"No LoRa data for {(now - self.last_lora_ts).total_seconds():.0f}s")
 
-        # Sensor fault (3+ consecutive)
         if self.consec_faults >= 3:
             return self._off(PumpState.OFF_SENSOR_FAULT,
                 f"{self.consec_faults} consecutive sensor faults")
 
-        # Max continuous run
         if pump_is_on and self.pump_start_time:
             run_time = now - self.pump_start_time
             if run_time > self.max_run:
                 return self._off(PumpState.OFF_MAX_RUN,
                     f"Max run exceeded ({run_time.total_seconds()/60:.0f}min)")
 
-        # Dry-run protection
         if (self.dry_run_on and pump_is_on
                 and current_amps is not None
                 and current_amps < self.dry_run_a):
@@ -231,6 +269,19 @@ class HybridPumpLogic:
                 and voltage_ac < self.min_voltage_ac):
             return self._off(PumpState.OFF_UNDERVOLTAGE,
                 f"Undervoltage detected: {voltage_ac:.1f}V < {self.min_voltage_ac:.1f}V")
+
+        # ── Festival Policy Automatic Start Inhibition Check ──
+        # If festival policy is active (e.g. Rang Panchami before 19:00 IST),
+        # AUTOMATIC PUMP START IS BLOCKED even if tank is empty / critical low / ML recommends start.
+        start_blocked, block_reason = self._is_start_blocked(now)
+
+        # ── P3  Emergency low threshold ─────────────────────────
+        if upper_pct is not None and upper_pct <= self.crit_low:
+            if not pump_is_on and start_blocked:
+                logger.info(f"[FESTIVAL] Upper tank critical low ({upper_pct:.1f}%), but automatic start blocked: {block_reason}")
+                return PumpDecision('HOLD', PumpState.OFF_FESTIVAL_POLICY, block_reason)
+            return self._on(PumpState.ON_EMERGENCY, now,
+                f"Upper tank CRITICAL LOW {upper_pct:.1f}% ≤ {self.crit_low}%")
 
         # ── P4  ML prediction ────────────────────────────────
         if self.ml_enabled and self.ml_prediction:
@@ -248,15 +299,14 @@ class HybridPumpLogic:
                     if run_min >= pred_d:
                         return self._off(PumpState.OFF,
                             f"ML schedule complete ({run_min:.0f}/{pred_d:.0f}min)")
-                # SAFETY CHECK: Cancel AI schedule if tank is already full
+                # Cancel AI schedule if tank is already full
                 if upper_pct is not None and upper_pct >= self.high:
                     return self._off(PumpState.OFF,
                         f"ML schedule skipped: tank already full ({upper_pct:.1f}% >= {self.high}%)")
 
-                # SAFETY CHECK: Cancel AI schedule if tank is already full
-                if upper_pct is not None and upper_pct >= self.high:
-                    return self._off(PumpState.OFF,
-                        f"ML schedule skipped: tank already full ({upper_pct:.1f}% >= {self.high}%)")
+                if not pump_is_on and start_blocked:
+                    logger.info(f"[FESTIVAL] ML recommended pump start at {pred_h:.2f}h, but automatic start blocked: {block_reason}")
+                    return PumpDecision('HOLD', PumpState.OFF_FESTIVAL_POLICY, block_reason)
 
                 return self._on(PumpState.ON_ML_SCHEDULED, now,
                     f"ML schedule: {pred_h:.2f}h for {pred_d:.0f}min")
@@ -264,6 +314,9 @@ class HybridPumpLogic:
         # ── P5  Normal threshold hysteresis ──────────────────
         if upper_pct is not None:
             if not pump_is_on and upper_pct <= self.low:
+                if start_blocked:
+                    logger.info(f"[FESTIVAL] Upper tank low ({upper_pct:.1f}%), but automatic start blocked: {block_reason}")
+                    return PumpDecision('HOLD', PumpState.OFF_FESTIVAL_POLICY, block_reason)
                 return self._on(PumpState.ON_THRESHOLD, now,
                     f"Upper tank {upper_pct:.1f}% ≤ {self.low}%")
             if pump_is_on and upper_pct >= self.high:
@@ -271,6 +324,8 @@ class HybridPumpLogic:
                     f"Upper tank {upper_pct:.1f}% ≥ {self.high}%")
 
         # ── Default: hold current state ──────────────────────
+        if start_blocked and not pump_is_on:
+            return PumpDecision('HOLD', PumpState.OFF_FESTIVAL_POLICY, block_reason)
         return PumpDecision('HOLD', self.current_state, "No trigger — holding")
 
     # ── Internal helpers ─────────────────────────────────────

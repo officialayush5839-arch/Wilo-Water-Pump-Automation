@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { SystemDashboard } from "./SystemDashboard";
 import { Card } from "@/components/ui/card";
@@ -19,10 +20,12 @@ import {
   Power,
   Settings,
   ShieldAlert,
+  Sparkles,
   Zap,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { FestivalPolicyModal, type FestivalStatus } from "./FestivalPolicyModal";
 
 type PumpMode = "STANDBY" | "RUNNING";
 
@@ -83,6 +86,7 @@ interface DashboardStatusPayload {
     upper_pct?: number | null;
     lora_age_s?: number | null;
   };
+  festival?: FestivalStatus | null;
   timestamp?: string;
 }
 
@@ -139,6 +143,8 @@ export function WiloSimulation() {
   const [pressureHistory, setPressureHistory] = useState<PressurePoint[]>([]);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isCommandPending, setIsCommandPending] = useState(false);
+  const [isFestivalModalOpen, setIsFestivalModalOpen] = useState(false);
+  const [festivalStatus, setFestivalStatus] = useState<FestivalStatus | null>(null);
   const [systemStatus, setSystemStatus] = useState({
     pumpStatus: "STANDBY",
     aiConfidence: "Auto",
@@ -222,6 +228,9 @@ export function WiloSimulation() {
     });
     setBackendReachable(true);
     setBackendError(null);
+    if (payload.festival !== undefined) {
+      setFestivalStatus(payload.festival);
+    }
     setManualOverrideEnabled(available);
     setPumpMeta(payload.pump ?? null);
     setPumpMode(relayOn ? "RUNNING" : "STANDBY");
@@ -516,15 +525,35 @@ export function WiloSimulation() {
       <div className="container mx-auto max-w-7xl px-4 py-4">
         <Card className="mb-6 border-0 bg-gradient-primary p-6 text-white shadow-xl">
           <div className="relative">
-            <Button
-              onClick={() => navigate("/admin")}
-              variant="secondary"
-              size="sm"
-              className="absolute right-0 top-0 flex items-center gap-2 border-white/30 bg-white/20 text-white hover:bg-white/30"
-            >
-              <Settings className="h-4 w-4" />
-              Admin
-            </Button>
+            <div className="absolute right-0 top-0 flex flex-col items-end gap-2 z-20">
+              <Button
+                onClick={() => navigate("/admin")}
+                variant="secondary"
+                size="sm"
+                className="flex items-center gap-2 border-white/30 bg-white/20 text-white hover:bg-white/30"
+              >
+                <Settings className="h-4 w-4" />
+                Admin
+              </Button>
+              <Button
+                onClick={() => setIsFestivalModalOpen(true)}
+                variant="secondary"
+                size="sm"
+                className="flex items-center gap-1.5 border-white/30 bg-white/20 text-white hover:bg-white/30 text-xs px-2.5 py-1.5 shadow-sm backdrop-blur-sm"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                Holiday / Festival Policy
+                <span
+                  className={`ml-1 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                    festivalStatus?.mode_enabled
+                      ? "bg-amber-400 text-amber-950"
+                      : "bg-white/20 text-white/80"
+                  }`}
+                >
+                  {festivalStatus?.mode_enabled ? "ON" : "OFF"}
+                </span>
+              </Button>
+            </div>
             <div className="text-center">
               <div className="mb-3 flex items-center justify-center gap-3">
                 <h1 className="text-3xl font-bold">Wilo AI Water Transfer System</h1>
@@ -577,7 +606,36 @@ export function WiloSimulation() {
           </div>
         </Card>
 
-        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {festivalStatus?.mode_enabled && festivalStatus?.is_rang_panchami && festivalStatus?.automatic_start_blocked && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-amber-500/50 bg-amber-500/15 p-4 text-amber-200 shadow-lg backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-amber-500/20 p-2 text-amber-400">
+                <ShieldAlert className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-bold text-base text-white">RANG PANCHAMI — AUTOMATIC START RESTRICTION ACTIVE</h4>
+                  <span className="rounded bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white animate-pulse">
+                    BLOCKED
+                  </span>
+                </div>
+                <p className="text-xs text-amber-200/90 mt-0.5">
+                  Automatic pump start is inhibited until 07:00 PM IST (Release at 19:00 IST). Safety shutdowns & manual operations remain fully active.
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setIsFestivalModalOpen(true)}
+              variant="outline"
+              size="sm"
+              className="border-amber-400/50 bg-amber-500/20 text-white hover:bg-amber-500/30 text-xs shrink-0"
+            >
+              View Policy Details
+            </Button>
+          </div>
+        )}
+
+        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
           <Card className="border-border bg-card p-6">
             <div className="mb-4 flex items-center gap-3">
               <Activity className="h-6 w-6 text-primary" />
@@ -689,6 +747,77 @@ export function WiloSimulation() {
                 {backendReachable ? "Backend connected" : backendError ?? "Backend offline"}
               </p>
             </div>
+          </Card>
+
+          <Card className="border-border bg-card p-6 flex flex-col justify-between">
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="h-6 w-6 text-amber-400" />
+                  <h3 className="text-lg font-semibold">Festival Policy</h3>
+                </div>
+                <Badge
+                  variant={
+                    festivalStatus?.mode_enabled
+                      ? festivalStatus.automatic_start_blocked
+                        ? "destructive"
+                        : "default"
+                      : "secondary"
+                  }
+                  className="text-xs"
+                >
+                  {festivalStatus?.mode_enabled ? (festivalStatus.automatic_start_blocked ? "BLOCKED" : "ACTIVE") : "OFF"}
+                </Badge>
+              </div>
+              <div className="space-y-2.5 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Festival</span>
+                  <span className="font-semibold text-foreground truncate max-w-[140px] text-right">
+                    {festivalStatus?.mode_enabled
+                      ? festivalStatus.festival_name || "Holiday"
+                      : "Standard Day"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Policy Rule</span>
+                  <span className="font-semibold text-foreground">
+                    {festivalStatus?.mode_enabled && festivalStatus.is_rang_panchami
+                      ? "Rang Panchami Special"
+                      : "Normal Schedule"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Automatic Start</span>
+                  <span
+                    className={`font-bold ${
+                      festivalStatus?.automatic_start_blocked
+                        ? "text-red-400"
+                        : "text-green-400"
+                    }`}
+                  >
+                    {festivalStatus?.automatic_start_blocked ? "BLOCKED" : "ENABLED"}
+                  </span>
+                </div>
+                {festivalStatus?.is_rang_panchami && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Release Time</span>
+                    <span className="font-mono font-bold text-amber-300">07:00 PM IST</span>
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground pt-1.5 border-t border-border/50 line-clamp-2">
+                  {festivalStatus?.reason || "Standard automatic/manual controls active."}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4 w-full text-xs flex items-center justify-center gap-1.5 border-border hover:bg-accent"
+              onClick={() => setIsFestivalModalOpen(true)}
+            >
+              <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+              Configure Festival Policy
+            </Button>
           </Card>
         </div>
 
@@ -919,6 +1048,14 @@ export function WiloSimulation() {
           </Card>
         </div>
       </div>
+
+      <FestivalPolicyModal
+        isOpen={isFestivalModalOpen}
+        onClose={() => setIsFestivalModalOpen(false)}
+        apiBaseUrl={apiBaseUrl}
+        festivalStatus={festivalStatus}
+        onRefresh={() => void loadDashboardStatus(false)}
+      />
     </div>
   );
 }

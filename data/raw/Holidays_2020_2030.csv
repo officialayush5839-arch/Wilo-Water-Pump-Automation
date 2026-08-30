@@ -1,1153 +1,1164 @@
-year,date,event,type
-2020,"April 1, 2020, Wednesday",Bank's Holiday,Govt
-2020,"April 10, 2020, Friday",Good Friday,Christian
-2020,"April 12, 2020, Sunday",Easter,Christian
-2020,"April 13, 2020, Monday",Solar New Year,Hindu
-2020,"April 13, 2020, Monday",Baisakhi,Sikh
-2020,"April 14, 2020, Tuesday",Ambedkar Jayanti,Govt
-2020,"April 18, 2020, Saturday",Vallabhacharya Jayanti,Hindu
-2020,"April 2, 2020, Thursday",Rama Navami,Hindu
-2020,"April 22, 2020, Wednesday",Earth Day,Modern
-2020,"April 28, 2020, Tuesday",Shankaracharya Jayanti,Hindu
-2020,"April 28, 2020, Tuesday",Surdas Jayanti,Hindu
-2020,"April 6, 2020, Monday",Mahavir Swami Jayanti,Hindu
-2020,"August 11, 2020, Tuesday",Janmashtami *Smarta,Hindu
-2020,"August 12, 2020, Wednesday",Janmashtami *ISKCON,Hindu
-2020,"August 15, 2020, Saturday",Independence Day,Govt
-2020,"August 2, 2020, Sunday",Friendship Day,Modern
-2020,"August 20, 2020, Thursday",Al-Hijra,Islamic
-2020,"August 20, 2020, Thursday",Islamic New Year,Islamic
-2020,"August 22, 2020, Saturday",Ganesh Chaturthi,Hindu
-2020,"August 29, 2020, Saturday",Day of Ashura,Islamic
-2020,"August 29, 2020, Saturday",Muharram,Islamic
-2020,"August 3, 2020, Monday",Raksha Bandhan,Hindu
-2020,"August 3, 2020, Monday",Rakhi,Hindu
-2020,"August 31, 2020, Monday",Onam,Hindu
-2020,"December 1, 2020, Tuesday",World AIDS Day,Modern
-2020,"December 21, 2020, Monday",Shortest Day of Year,Hindu
-2020,"December 25, 2020, Friday",Merry Christmas,Christian
-2020,"February 14, 2020, Friday",Valentine's Day,Modern
-2020,"February 18, 2020, Tuesday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2020,"February 19, 2020, Wednesday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2020,"February 21, 2020, Friday",Maha Shivaratri,Hindu
-2020,"February 25, 2020, Tuesday",Ramakrishna Jayanti,Hindu
-2020,"February 4, 2020, Tuesday",World Cancer Day,Modern
-2020,"February 9, 2020, Sunday",Guru Ravidas Jayanti,Hindu
-2020,"January 1, 2020, Wednesday",English New Year,Christian
-2020,"January 12, 2020, Sunday",Swami Vivekananda Jayanti,Govt
-2020,"January 12, 2020, Sunday",National Youth Day,Modern
-2020,"January 14, 2020, Tuesday",Lohri,Sikh
-2020,"January 15, 2020, Wednesday",Makara Sankranti,Hindu
-2020,"January 15, 2020, Wednesday",Pongal,Hindu
-2020,"January 17, 2020, Friday",Vivekananda Jayanti *Samvat,Hindu
-2020,"January 2, 2020, Thursday",Guru Gobind Singh Jayanti,Hindu
-2020,"January 23, 2020, Thursday",Subhas Chandra Bose Jayanti,Govt
-2020,"January 26, 2020, Sunday",Republic Day,Govt
-2020,"January 29, 2020, Wednesday",Vasant Panchami,Hindu
-2020,"January 30, 2020, Thursday",Gandhi Punyatithi,Govt
-2020,"January 6, 2020, Monday",Tailang Swami Jayanti,Hindu
-2020,"July 27, 2020, Monday",Tulsidas Jayanti,Hindu
-2020,"July 31, 2020, Friday",Eid al-Adha,Islamic
-2020,"July 31, 2020, Friday",Bakrid,Islamic
-2020,"July 5, 2020, Sunday",Guru Purnima,Hindu
-2020,"June 21, 2020, Sunday",Longest Day of Year,Hindu
-2020,"June 21, 2020, Sunday",Father's Day,Modern
-2020,"June 21, 2020, Sunday",International Yoga Day,Modern
-2020,"June 23, 2020, Tuesday",Jagannath Rathyatra,Hindu
-2020,"June 5, 2020, Friday",Kabirdas Jayanti,Hindu
-2020,"June 5, 2020, Friday",World Environment Day,Modern
-2020,"March 10, 2020, Tuesday",Holi,Hindu
-2020,"March 12, 2020, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2020,"March 20, 2020, Friday",Vernal Equinox,Hindu
-2020,"March 20, 2020, Friday",Parsi New Year,Hindu
-2020,"March 23, 2020, Monday",Shaheed Diwas,Govt
-2020,"March 25, 2020, Wednesday",Ugadi,Hindu
-2020,"March 25, 2020, Wednesday",Gudi Padwa,Hindu
-2020,"March 25, 2020, Wednesday",Jhulelal Jayanti,Hindu
-2020,"March 8, 2020, Sunday",Hazarat Ali's Birthday,Islamic
-2020,"March 8, 2020, Sunday",International Women's Day,Modern
-2020,"March 9, 2020, Monday",Chhoti Holi,Hindu
-2020,"March 9, 2020, Monday",Holika Dahan,Hindu
-2020,"March 9, 2020, Monday",Chaitanya Mahaprabhu Jayanti,Hindu
-2020,"May 1, 2020, Friday",International Workers' Day,Modern
-2020,"May 10, 2020, Sunday",Mother's Day,Modern
-2020,"May 22, 2020, Friday",Jamat Ul-Vida,Islamic
-2020,"May 24, 2020, Sunday",Eid al-Fitr,Islamic
-2020,"May 24, 2020, Sunday",Ramadan,Islamic
-2020,"May 25, 2020, Monday",Maharana Pratap Jayanti,Hindu
-2020,"May 3, 2020, Sunday",World Laughter Day,Modern
-2020,"May 31, 2020, Sunday",World No Tobacco Day,Modern
-2020,"May 7, 2020, Thursday",Buddha Purnima,Hindu
-2020,"May 7, 2020, Thursday",Rabindranath Tagore Jayanti,Govt
-2020,"November 14, 2020, Saturday",Lakshmi Puja,Hindu
-2020,"November 14, 2020, Saturday",Narak Chaturdashi,Hindu
-2020,"November 14, 2020, Saturday",Diwali,Hindu
-2020,"November 14, 2020, Saturday",Nehru Jayanti,Govt
-2020,"November 14, 2020, Saturday",Children's Day,Modern
-2020,"November 15, 2020, Sunday",Govardhan Puja,Hindu
-2020,"November 16, 2020, Monday",Bhaiya Dooj,Hindu
-2020,"November 20, 2020, Friday",Chhath Puja,Hindu
-2020,"November 30, 2020, Monday",Guru Nanak Jayanti,Hindu
-2020,"November 4, 2020, Wednesday",Karwa Chauth,Hindu
-2020,"October 17, 2020, Saturday",Maharaja Agrasen Jayanti,Hindu
-2020,"October 2, 2020, Friday",Gandhi Jayanti,Govt
-2020,"October 24, 2020, Saturday",Durga Ashtami,Hindu
-2020,"October 24, 2020, Saturday",Maha Navami,Hindu
-2020,"October 25, 2020, Sunday",Dussehra,Hindu
-2020,"October 26, 2020, Monday",Madhvacharya Jayanti,Hindu
-2020,"October 29, 2020, Thursday",Milad un-Nabi,Islamic
-2020,"October 29, 2020, Thursday",Eid-e-Milad,Islamic
-2020,"October 31, 2020, Saturday",Valmiki Jayanti,Hindu
-2020,"October 31, 2020, Saturday",Meerabai Jayanti,Hindu
-2020,"September 14, 2020, Monday",Hindi Diwas,Modern
-2020,"September 15, 2020, Tuesday",Visvesvaraya Jayanti,Govt
-2020,"September 15, 2020, Tuesday",Engineer's Day,Modern
-2020,"September 22, 2020, Tuesday",Autumnal Equinox,Hindu
-2020,"September 5, 2020, Saturday",Teachers' Day,Modern
-2021,"April 1, 2021, Thursday",Bank's Holiday,Govt
-2021,"April 13, 2021, Tuesday",Ugadi,Hindu
-2021,"April 13, 2021, Tuesday",Gudi Padwa,Hindu
-2021,"April 13, 2021, Tuesday",Jhulelal Jayanti,Hindu
-2021,"April 14, 2021, Wednesday",Solar New Year,Hindu
-2021,"April 14, 2021, Wednesday",Ambedkar Jayanti,Govt
-2021,"April 14, 2021, Wednesday",Baisakhi,Sikh
-2021,"April 2, 2021, Friday",Good Friday,Christian
-2021,"April 21, 2021, Wednesday",Rama Navami,Hindu
-2021,"April 22, 2021, Thursday",Earth Day,Modern
-2021,"April 25, 2021, Sunday",Mahavir Swami Jayanti,Hindu
-2021,"April 4, 2021, Sunday",Easter,Christian
-2021,"August 1, 2021, Sunday",Friendship Day,Modern
-2021,"August 10, 2021, Tuesday",Al-Hijra,Islamic
-2021,"August 10, 2021, Tuesday",Islamic New Year,Islamic
-2021,"August 15, 2021, Sunday",Tulsidas Jayanti,Hindu
-2021,"August 15, 2021, Sunday",Independence Day,Govt
-2021,"August 19, 2021, Thursday",Day of Ashura,Islamic
-2021,"August 19, 2021, Thursday",Muharram,Islamic
-2021,"August 21, 2021, Saturday",Onam,Hindu
-2021,"August 22, 2021, Sunday",Raksha Bandhan,Hindu
-2021,"August 22, 2021, Sunday",Rakhi,Hindu
-2021,"August 30, 2021, Monday",Krishna Janmashtami,Hindu
-2021,"December 1, 2021, Wednesday",World AIDS Day,Modern
-2021,"December 21, 2021, Tuesday",Shortest Day of Year,Hindu
-2021,"December 25, 2021, Saturday",Merry Christmas,Christian
-2021,"February 14, 2021, Sunday",Valentine's Day,Modern
-2021,"February 16, 2021, Tuesday",Vasant Panchami,Hindu
-2021,"February 19, 2021, Friday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2021,"February 25, 2021, Thursday",Hazarat Ali's Birthday,Islamic
-2021,"February 27, 2021, Saturday",Guru Ravidas Jayanti,Hindu
-2021,"February 4, 2021, Thursday",Vivekananda Jayanti *Samvat,Hindu
-2021,"February 4, 2021, Thursday",World Cancer Day,Modern
-2021,"January 1, 2021, Friday",English New Year,Christian
-2021,"January 12, 2021, Tuesday",Swami Vivekananda Jayanti,Govt
-2021,"January 12, 2021, Tuesday",National Youth Day,Modern
-2021,"January 13, 2021, Wednesday",Lohri,Sikh
-2021,"January 14, 2021, Thursday",Makara Sankranti,Hindu
-2021,"January 14, 2021, Thursday",Pongal,Hindu
-2021,"January 20, 2021, Wednesday",Guru Gobind Singh Jayanti,Hindu
-2021,"January 23, 2021, Saturday",Subhas Chandra Bose Jayanti,Govt
-2021,"January 24, 2021, Sunday",Tailang Swami Jayanti,Hindu
-2021,"January 26, 2021, Tuesday",Republic Day,Govt
-2021,"January 30, 2021, Saturday",Gandhi Punyatithi,Govt
-2021,"July 12, 2021, Monday",Jagannath Rathyatra,Hindu
-2021,"July 20, 2021, Tuesday",Eid al-Adha,Islamic
-2021,"July 20, 2021, Tuesday",Bakrid,Islamic
-2021,"July 24, 2021, Saturday",Guru Purnima,Hindu
-2021,"June 13, 2021, Sunday",Maharana Pratap Jayanti,Hindu
-2021,"June 20, 2021, Sunday",Father's Day,Modern
-2021,"June 21, 2021, Monday",Longest Day of Year,Hindu
-2021,"June 21, 2021, Monday",International Yoga Day,Modern
-2021,"June 24, 2021, Thursday",Kabirdas Jayanti,Hindu
-2021,"June 5, 2021, Saturday",World Environment Day,Modern
-2021,"March 11, 2021, Thursday",Maha Shivaratri,Hindu
-2021,"March 15, 2021, Monday",Ramakrishna Jayanti,Hindu
-2021,"March 20, 2021, Saturday",Vernal Equinox,Hindu
-2021,"March 20, 2021, Saturday",Parsi New Year,Hindu
-2021,"March 23, 2021, Tuesday",Shaheed Diwas,Govt
-2021,"March 28, 2021, Sunday",Chhoti Holi,Hindu
-2021,"March 28, 2021, Sunday",Holika Dahan,Hindu
-2021,"March 28, 2021, Sunday",Chaitanya Mahaprabhu Jayanti,Hindu
-2021,"March 29, 2021, Monday",Holi,Hindu
-2021,"March 31, 2021, Wednesday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2021,"March 8, 2021, Monday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2021,"March 8, 2021, Monday",International Women's Day,Modern
-2021,"May 1, 2021, Saturday",International Workers' Day,Modern
-2021,"May 13, 2021, Thursday",Eid al-Fitr,Islamic
-2021,"May 13, 2021, Thursday",Ramadan,Islamic
-2021,"May 17, 2021, Monday",Shankaracharya Jayanti,Hindu
-2021,"May 17, 2021, Monday",Surdas Jayanti,Hindu
-2021,"May 2, 2021, Sunday",World Laughter Day,Modern
-2021,"May 26, 2021, Wednesday",Buddha Purnima,Hindu
-2021,"May 31, 2021, Monday",World No Tobacco Day,Modern
-2021,"May 7, 2021, Friday",Vallabhacharya Jayanti,Hindu
-2021,"May 7, 2021, Friday",Rabindranath Tagore Jayanti,Govt
-2021,"May 7, 2021, Friday",Jamat Ul-Vida,Islamic
-2021,"May 9, 2021, Sunday",Mother's Day,Modern
-2021,"November 10, 2021, Wednesday",Chhath Puja,Hindu
-2021,"November 14, 2021, Sunday",Nehru Jayanti,Govt
-2021,"November 14, 2021, Sunday",Children's Day,Modern
-2021,"November 19, 2021, Friday",Guru Nanak Jayanti,Hindu
-2021,"November 4, 2021, Thursday",Lakshmi Puja,Hindu
-2021,"November 4, 2021, Thursday",Narak Chaturdashi,Hindu
-2021,"November 4, 2021, Thursday",Diwali,Hindu
-2021,"November 5, 2021, Friday",Govardhan Puja,Hindu
-2021,"November 6, 2021, Saturday",Bhaiya Dooj,Hindu
-2021,"October 13, 2021, Wednesday",Durga Ashtami,Hindu
-2021,"October 14, 2021, Thursday",Maha Navami,Hindu
-2021,"October 15, 2021, Friday",Dussehra,Hindu
-2021,"October 15, 2021, Friday",Madhvacharya Jayanti,Hindu
-2021,"October 19, 2021, Tuesday",Milad un-Nabi,Islamic
-2021,"October 19, 2021, Tuesday",Eid-e-Milad,Islamic
-2021,"October 2, 2021, Saturday",Gandhi Jayanti,Govt
-2021,"October 20, 2021, Wednesday",Valmiki Jayanti,Hindu
-2021,"October 20, 2021, Wednesday",Meerabai Jayanti,Hindu
-2021,"October 24, 2021, Sunday",Karwa Chauth,Hindu
-2021,"October 7, 2021, Thursday",Maharaja Agrasen Jayanti,Hindu
-2021,"September 10, 2021, Friday",Ganesh Chaturthi,Hindu
-2021,"September 14, 2021, Tuesday",Hindi Diwas,Modern
-2021,"September 15, 2021, Wednesday",Visvesvaraya Jayanti,Govt
-2021,"September 15, 2021, Wednesday",Engineer's Day,Modern
-2021,"September 23, 2021, Thursday",Autumnal Equinox,Hindu
-2021,"September 5, 2021, Sunday",Teachers' Day,Modern
-2022,"April 1, 2022, Friday",Bank's Holiday,Govt
-2022,"April 10, 2022, Sunday",Rama Navami,Hindu
-2022,"April 14, 2022, Thursday",Mahavir Swami Jayanti,Hindu
-2022,"April 14, 2022, Thursday",Solar New Year,Hindu
-2022,"April 14, 2022, Thursday",Ambedkar Jayanti,Govt
-2022,"April 14, 2022, Thursday",Baisakhi,Sikh
-2022,"April 15, 2022, Friday",Good Friday,Christian
-2022,"April 17, 2022, Sunday",Easter,Christian
-2022,"April 2, 2022, Saturday",Ugadi,Hindu
-2022,"April 2, 2022, Saturday",Gudi Padwa,Hindu
-2022,"April 2, 2022, Saturday",Jhulelal Jayanti,Hindu
-2022,"April 22, 2022, Friday",Earth Day,Modern
-2022,"April 26, 2022, Tuesday",Vallabhacharya Jayanti,Hindu
-2022,"April 29, 2022, Friday",Jamat Ul-Vida,Islamic
-2022,"August 11, 2022, Thursday",Raksha Bandhan,Hindu
-2022,"August 11, 2022, Thursday",Rakhi,Hindu
-2022,"August 15, 2022, Monday",Independence Day,Govt
-2022,"August 18, 2022, Thursday",Janmashtami *Smarta,Hindu
-2022,"August 19, 2022, Friday",Janmashtami *ISKCON,Hindu
-2022,"August 31, 2022, Wednesday",Ganesh Chaturthi,Hindu
-2022,"August 4, 2022, Thursday",Tulsidas Jayanti,Hindu
-2022,"August 7, 2022, Sunday",Friendship Day,Modern
-2022,"August 8, 2022, Monday",Day of Ashura,Islamic
-2022,"August 8, 2022, Monday",Muharram,Islamic
-2022,"December 1, 2022, Thursday",World AIDS Day,Modern
-2022,"December 22, 2022, Thursday",Shortest Day of Year,Hindu
-2022,"December 25, 2022, Sunday",Merry Christmas,Christian
-2022,"December 29, 2022, Thursday",Guru Gobind Singh Jayanti,Hindu
-2022,"February 14, 2022, Monday",Valentine's Day,Modern
-2022,"February 15, 2022, Tuesday",Hazarat Ali's Birthday,Islamic
-2022,"February 16, 2022, Wednesday",Guru Ravidas Jayanti,Hindu
-2022,"February 19, 2022, Saturday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2022,"February 26, 2022, Saturday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2022,"February 4, 2022, Friday",World Cancer Day,Modern
-2022,"February 5, 2022, Saturday",Vasant Panchami,Hindu
-2022,"January 1, 2022, Saturday",English New Year,Christian
-2022,"January 12, 2022, Wednesday",Swami Vivekananda Jayanti,Govt
-2022,"January 12, 2022, Wednesday",National Youth Day,Modern
-2022,"January 13, 2022, Thursday",Tailang Swami Jayanti,Hindu
-2022,"January 13, 2022, Thursday",Lohri,Sikh
-2022,"January 14, 2022, Friday",Makara Sankranti,Hindu
-2022,"January 14, 2022, Friday",Pongal,Hindu
-2022,"January 23, 2022, Sunday",Subhas Chandra Bose Jayanti,Govt
-2022,"January 25, 2022, Tuesday",Vivekananda Jayanti *Samvat,Hindu
-2022,"January 26, 2022, Wednesday",Republic Day,Govt
-2022,"January 30, 2022, Sunday",Gandhi Punyatithi,Govt
-2022,"January 9, 2022, Sunday",Guru Gobind Singh Jayanti,Hindu
-2022,"July 1, 2022, Friday",Jagannath Rathyatra,Hindu
-2022,"July 10, 2022, Sunday",Eid al-Adha,Islamic
-2022,"July 10, 2022, Sunday",Bakrid,Islamic
-2022,"July 13, 2022, Wednesday",Guru Purnima,Hindu
-2022,"July 30, 2022, Saturday",Al-Hijra,Islamic
-2022,"July 30, 2022, Saturday",Islamic New Year,Islamic
-2022,"June 14, 2022, Tuesday",Kabirdas Jayanti,Hindu
-2022,"June 19, 2022, Sunday",Father's Day,Modern
-2022,"June 2, 2022, Thursday",Maharana Pratap Jayanti,Hindu
-2022,"June 21, 2022, Tuesday",Longest Day of Year,Hindu
-2022,"June 21, 2022, Tuesday",International Yoga Day,Modern
-2022,"June 5, 2022, Sunday",World Environment Day,Modern
-2022,"March 1, 2022, Tuesday",Maha Shivaratri,Hindu
-2022,"March 17, 2022, Thursday",Chhoti Holi,Hindu
-2022,"March 17, 2022, Thursday",Holika Dahan,Hindu
-2022,"March 18, 2022, Friday",Chaitanya Mahaprabhu Jayanti,Hindu
-2022,"March 18, 2022, Friday",Holi,Hindu
-2022,"March 20, 2022, Sunday",Vernal Equinox,Hindu
-2022,"March 20, 2022, Sunday",Parsi New Year,Hindu
-2022,"March 21, 2022, Monday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2022,"March 23, 2022, Wednesday",Shaheed Diwas,Govt
-2022,"March 4, 2022, Friday",Ramakrishna Jayanti,Hindu
-2022,"March 8, 2022, Tuesday",International Women's Day,Modern
-2022,"May 1, 2022, Sunday",World Laughter Day,Modern
-2022,"May 1, 2022, Sunday",International Workers' Day,Modern
-2022,"May 16, 2022, Monday",Buddha Purnima,Hindu
-2022,"May 3, 2022, Tuesday",Eid al-Fitr,Islamic
-2022,"May 3, 2022, Tuesday",Ramadan,Islamic
-2022,"May 31, 2022, Tuesday",World No Tobacco Day,Modern
-2022,"May 6, 2022, Friday",Shankaracharya Jayanti,Hindu
-2022,"May 6, 2022, Friday",Surdas Jayanti,Hindu
-2022,"May 7, 2022, Saturday",Rabindranath Tagore Jayanti,Govt
-2022,"May 8, 2022, Sunday",Mother's Day,Modern
-2022,"November 14, 2022, Monday",Nehru Jayanti,Govt
-2022,"November 14, 2022, Monday",Children's Day,Modern
-2022,"November 8, 2022, Tuesday",Guru Nanak Jayanti,Hindu
-2022,"October 13, 2022, Thursday",Karwa Chauth,Hindu
-2022,"October 2, 2022, Sunday",Gandhi Jayanti,Govt
-2022,"October 24, 2022, Monday",Lakshmi Puja,Hindu
-2022,"October 24, 2022, Monday",Narak Chaturdashi,Hindu
-2022,"October 24, 2022, Monday",Diwali,Hindu
-2022,"October 26, 2022, Wednesday",Govardhan Puja,Hindu
-2022,"October 26, 2022, Wednesday",Bhaiya Dooj,Hindu
-2022,"October 3, 2022, Monday",Durga Ashtami,Hindu
-2022,"October 30, 2022, Sunday",Chhath Puja,Hindu
-2022,"October 4, 2022, Tuesday",Maha Navami,Hindu
-2022,"October 5, 2022, Wednesday",Dussehra,Hindu
-2022,"October 5, 2022, Wednesday",Madhvacharya Jayanti,Hindu
-2022,"October 8, 2022, Saturday",Milad un-Nabi,Islamic
-2022,"October 8, 2022, Saturday",Eid-e-Milad,Islamic
-2022,"October 9, 2022, Sunday",Valmiki Jayanti,Hindu
-2022,"October 9, 2022, Sunday",Meerabai Jayanti,Hindu
-2022,"September 14, 2022, Wednesday",Hindi Diwas,Modern
-2022,"September 15, 2022, Thursday",Visvesvaraya Jayanti,Govt
-2022,"September 15, 2022, Thursday",Engineer's Day,Modern
-2022,"September 23, 2022, Friday",Autumnal Equinox,Hindu
-2022,"September 26, 2022, Monday",Maharaja Agrasen Jayanti,Hindu
-2022,"September 5, 2022, Monday",Teachers' Day,Modern
-2022,"September 8, 2022, Thursday",Onam,Hindu
-2023,"April 1, 2023, Saturday",Bank's Holiday,Govt
-2023,"April 14, 2023, Friday",Solar New Year,Hindu
-2023,"April 14, 2023, Friday",Ambedkar Jayanti,Govt
-2023,"April 14, 2023, Friday",Baisakhi,Sikh
-2023,"April 16, 2023, Sunday",Vallabhacharya Jayanti,Hindu
-2023,"April 21, 2023, Friday",Jamat Ul-Vida,Islamic
-2023,"April 22, 2023, Saturday",Eid al-Fitr,Islamic
-2023,"April 22, 2023, Saturday",Ramadan,Islamic
-2023,"April 22, 2023, Saturday",Earth Day,Modern
-2023,"April 25, 2023, Tuesday",Shankaracharya Jayanti,Hindu
-2023,"April 25, 2023, Tuesday",Surdas Jayanti,Hindu
-2023,"April 4, 2023, Tuesday",Mahavir Swami Jayanti,Hindu
-2023,"April 7, 2023, Friday",Good Friday,Christian
-2023,"April 9, 2023, Sunday",Easter,Christian
-2023,"August 15, 2023, Tuesday",Independence Day,Govt
-2023,"August 23, 2023, Wednesday",Tulsidas Jayanti,Hindu
-2023,"August 29, 2023, Tuesday",Onam,Hindu
-2023,"August 30, 2023, Wednesday",Raksha Bandhan,Hindu
-2023,"August 30, 2023, Wednesday",Rakhi,Hindu
-2023,"August 6, 2023, Sunday",Friendship Day,Modern
-2023,"December 1, 2023, Friday",World AIDS Day,Modern
-2023,"December 22, 2023, Friday",Shortest Day of Year,Hindu
-2023,"December 25, 2023, Monday",Merry Christmas,Christian
-2023,"February 14, 2023, Tuesday",Valentine's Day,Modern
-2023,"February 15, 2023, Wednesday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2023,"February 18, 2023, Saturday",Maha Shivaratri,Hindu
-2023,"February 19, 2023, Sunday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2023,"February 21, 2023, Tuesday",Ramakrishna Jayanti,Hindu
-2023,"February 4, 2023, Saturday",Hazarat Ali's Birthday,Islamic
-2023,"February 4, 2023, Saturday",World Cancer Day,Modern
-2023,"February 5, 2023, Sunday",Guru Ravidas Jayanti,Hindu
-2023,"January 1, 2023, Sunday",English New Year,Christian
-2023,"January 12, 2023, Thursday",Swami Vivekananda Jayanti,Govt
-2023,"January 12, 2023, Thursday",National Youth Day,Modern
-2023,"January 14, 2023, Saturday",Vivekananda Jayanti *Samvat,Hindu
-2023,"January 14, 2023, Saturday",Lohri,Sikh
-2023,"January 15, 2023, Sunday",Makara Sankranti,Hindu
-2023,"January 15, 2023, Sunday",Pongal,Hindu
-2023,"January 2, 2023, Monday",Tailang Swami Jayanti,Hindu
-2023,"January 23, 2023, Monday",Subhas Chandra Bose Jayanti,Govt
-2023,"January 26, 2023, Thursday",Vasant Panchami,Hindu
-2023,"January 26, 2023, Thursday",Republic Day,Govt
-2023,"January 30, 2023, Monday",Gandhi Punyatithi,Govt
-2023,"July 19, 2023, Wednesday",Al-Hijra,Islamic
-2023,"July 19, 2023, Wednesday",Islamic New Year,Islamic
-2023,"July 28, 2023, Friday",Day of Ashura,Islamic
-2023,"July 28, 2023, Friday",Muharram,Islamic
-2023,"July 3, 2023, Monday",Guru Purnima,Hindu
-2023,"June 18, 2023, Sunday",Father's Day,Modern
-2023,"June 20, 2023, Tuesday",Jagannath Rathyatra,Hindu
-2023,"June 21, 2023, Wednesday",Longest Day of Year,Hindu
-2023,"June 21, 2023, Wednesday",International Yoga Day,Modern
-2023,"June 29, 2023, Thursday",Eid al-Adha,Islamic
-2023,"June 29, 2023, Thursday",Bakrid,Islamic
-2023,"June 4, 2023, Sunday",Kabirdas Jayanti,Hindu
-2023,"June 5, 2023, Monday",World Environment Day,Modern
-2023,"March 10, 2023, Friday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2023,"March 21, 2023, Tuesday",Vernal Equinox,Hindu
-2023,"March 21, 2023, Tuesday",Parsi New Year,Hindu
-2023,"March 22, 2023, Wednesday",Ugadi,Hindu
-2023,"March 22, 2023, Wednesday",Gudi Padwa,Hindu
-2023,"March 22, 2023, Wednesday",Jhulelal Jayanti,Hindu
-2023,"March 23, 2023, Thursday",Shaheed Diwas,Govt
-2023,"March 30, 2023, Thursday",Rama Navami,Hindu
-2023,"March 7, 2023, Tuesday",Chhoti Holi,Hindu
-2023,"March 7, 2023, Tuesday",Holika Dahan,Hindu
-2023,"March 7, 2023, Tuesday",Chaitanya Mahaprabhu Jayanti,Hindu
-2023,"March 8, 2023, Wednesday",Holi,Hindu
-2023,"March 8, 2023, Wednesday",International Women's Day,Modern
-2023,"May 1, 2023, Monday",International Workers' Day,Modern
-2023,"May 14, 2023, Sunday",Mother's Day,Modern
-2023,"May 22, 2023, Monday",Maharana Pratap Jayanti,Hindu
-2023,"May 31, 2023, Wednesday",World No Tobacco Day,Modern
-2023,"May 5, 2023, Friday",Buddha Purnima,Hindu
-2023,"May 7, 2023, Sunday",Rabindranath Tagore Jayanti,Govt
-2023,"May 7, 2023, Sunday",World Laughter Day,Modern
-2023,"November 1, 2023, Wednesday",Karwa Chauth,Hindu
-2023,"November 12, 2023, Sunday",Lakshmi Puja,Hindu
-2023,"November 12, 2023, Sunday",Narak Chaturdashi,Hindu
-2023,"November 12, 2023, Sunday",Diwali,Hindu
-2023,"November 14, 2023, Tuesday",Govardhan Puja,Hindu
-2023,"November 14, 2023, Tuesday",Bhaiya Dooj,Hindu
-2023,"November 14, 2023, Tuesday",Nehru Jayanti,Govt
-2023,"November 14, 2023, Tuesday",Children's Day,Modern
-2023,"November 19, 2023, Sunday",Chhath Puja,Hindu
-2023,"November 27, 2023, Monday",Guru Nanak Jayanti,Hindu
-2023,"October 15, 2023, Sunday",Maharaja Agrasen Jayanti,Hindu
-2023,"October 2, 2023, Monday",Gandhi Jayanti,Govt
-2023,"October 22, 2023, Sunday",Durga Ashtami,Hindu
-2023,"October 23, 2023, Monday",Maha Navami,Hindu
-2023,"October 24, 2023, Tuesday",Dussehra,Hindu
-2023,"October 24, 2023, Tuesday",Madhvacharya Jayanti,Hindu
-2023,"October 28, 2023, Saturday",Valmiki Jayanti,Hindu
-2023,"October 28, 2023, Saturday",Meerabai Jayanti,Hindu
-2023,"September 14, 2023, Thursday",Hindi Diwas,Modern
-2023,"September 15, 2023, Friday",Visvesvaraya Jayanti,Govt
-2023,"September 15, 2023, Friday",Engineer's Day,Modern
-2023,"September 19, 2023, Tuesday",Ganesh Chaturthi,Hindu
-2023,"September 23, 2023, Saturday",Autumnal Equinox,Hindu
-2023,"September 27, 2023, Wednesday",Milad un-Nabi,Islamic
-2023,"September 27, 2023, Wednesday",Eid-e-Milad,Islamic
-2023,"September 5, 2023, Tuesday",Teachers' Day,Modern
-2023,"September 6, 2023, Wednesday",Janmashtami *Smarta,Hindu
-2023,"September 7, 2023, Thursday",Janmashtami *ISKCON,Hindu
-2024,"April 1, 2024, Monday",Bank's Holiday,Govt
-2024,"April 10, 2024, Wednesday",Eid al-Fitr,Islamic
-2024,"April 10, 2024, Wednesday",Ramadan,Islamic
-2024,"April 13, 2024, Saturday",Solar New Year,Hindu
-2024,"April 13, 2024, Saturday",Baisakhi,Sikh
-2024,"April 14, 2024, Sunday",Ambedkar Jayanti,Govt
-2024,"April 17, 2024, Wednesday",Rama Navami,Hindu
-2024,"April 21, 2024, Sunday",Mahavir Swami Jayanti,Hindu
-2024,"April 22, 2024, Monday",Earth Day,Modern
-2024,"April 5, 2024, Friday",Jamat Ul-Vida,Islamic
-2024,"April 9, 2024, Tuesday",Ugadi,Hindu
-2024,"April 9, 2024, Tuesday",Gudi Padwa,Hindu
-2024,"April 9, 2024, Tuesday",Jhulelal Jayanti,Hindu
-2024,"August 11, 2024, Sunday",Tulsidas Jayanti,Hindu
-2024,"August 15, 2024, Thursday",Independence Day,Govt
-2024,"August 19, 2024, Monday",Raksha Bandhan,Hindu
-2024,"August 19, 2024, Monday",Rakhi,Hindu
-2024,"August 26, 2024, Monday",Krishna Janmashtami,Hindu
-2024,"August 4, 2024, Sunday",Friendship Day,Modern
-2024,"December 1, 2024, Sunday",World AIDS Day,Modern
-2024,"December 21, 2024, Saturday",Shortest Day of Year,Hindu
-2024,"December 25, 2024, Wednesday",Merry Christmas,Christian
-2024,"February 14, 2024, Wednesday",Vasant Panchami,Hindu
-2024,"February 14, 2024, Wednesday",Valentine's Day,Modern
-2024,"February 19, 2024, Monday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2024,"February 2, 2024, Friday",Vivekananda Jayanti *Samvat,Hindu
-2024,"February 24, 2024, Saturday",Guru Ravidas Jayanti,Hindu
-2024,"February 4, 2024, Sunday",World Cancer Day,Modern
-2024,"January 1, 2024, Monday",English New Year,Christian
-2024,"January 12, 2024, Friday",Swami Vivekananda Jayanti,Govt
-2024,"January 12, 2024, Friday",National Youth Day,Modern
-2024,"January 14, 2024, Sunday",Lohri,Sikh
-2024,"January 15, 2024, Monday",Makara Sankranti,Hindu
-2024,"January 15, 2024, Monday",Pongal,Hindu
-2024,"January 17, 2024, Wednesday",Guru Gobind Singh Jayanti,Hindu
-2024,"January 21, 2024, Sunday",Tailang Swami Jayanti,Hindu
-2024,"January 23, 2024, Tuesday",Subhas Chandra Bose Jayanti,Govt
-2024,"January 24, 2024, Wednesday",Hazarat Ali's Birthday,Islamic
-2024,"January 26, 2024, Friday",Republic Day,Govt
-2024,"January 30, 2024, Tuesday",Gandhi Punyatithi,Govt
-2024,"July 17, 2024, Wednesday",Day of Ashura,Islamic
-2024,"July 17, 2024, Wednesday",Muharram,Islamic
-2024,"July 21, 2024, Sunday",Guru Purnima,Hindu
-2024,"July 7, 2024, Sunday",Jagannath Rathyatra,Hindu
-2024,"July 8, 2024, Monday",Al-Hijra,Islamic
-2024,"July 8, 2024, Monday",Islamic New Year,Islamic
-2024,"June 16, 2024, Sunday",Father's Day,Modern
-2024,"June 17, 2024, Monday",Eid al-Adha,Islamic
-2024,"June 17, 2024, Monday",Bakrid,Islamic
-2024,"June 21, 2024, Friday",Longest Day of Year,Hindu
-2024,"June 21, 2024, Friday",International Yoga Day,Modern
-2024,"June 22, 2024, Saturday",Kabirdas Jayanti,Hindu
-2024,"June 5, 2024, Wednesday",World Environment Day,Modern
-2024,"June 9, 2024, Sunday",Maharana Pratap Jayanti,Hindu
-2024,"March 12, 2024, Tuesday",Ramakrishna Jayanti,Hindu
-2024,"March 20, 2024, Wednesday",Vernal Equinox,Hindu
-2024,"March 20, 2024, Wednesday",Parsi New Year,Hindu
-2024,"March 23, 2024, Saturday",Shaheed Diwas,Govt
-2024,"March 24, 2024, Sunday",Chhoti Holi,Hindu
-2024,"March 24, 2024, Sunday",Holika Dahan,Hindu
-2024,"March 25, 2024, Monday",Chaitanya Mahaprabhu Jayanti,Hindu
-2024,"March 25, 2024, Monday",Holi,Hindu
-2024,"March 28, 2024, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2024,"March 29, 2024, Friday",Good Friday,Christian
-2024,"March 31, 2024, Sunday",Easter,Christian
-2024,"March 5, 2024, Tuesday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2024,"March 8, 2024, Friday",Maha Shivaratri,Hindu
-2024,"March 8, 2024, Friday",International Women's Day,Modern
-2024,"May 1, 2024, Wednesday",International Workers' Day,Modern
-2024,"May 12, 2024, Sunday",Shankaracharya Jayanti,Hindu
-2024,"May 12, 2024, Sunday",Surdas Jayanti,Hindu
-2024,"May 12, 2024, Sunday",Mother's Day,Modern
-2024,"May 23, 2024, Thursday",Buddha Purnima,Hindu
-2024,"May 31, 2024, Friday",World No Tobacco Day,Modern
-2024,"May 4, 2024, Saturday",Vallabhacharya Jayanti,Hindu
-2024,"May 5, 2024, Sunday",World Laughter Day,Modern
-2024,"May 7, 2024, Tuesday",Rabindranath Tagore Jayanti,Govt
-2024,"November 1, 2024, Friday",Lakshmi Puja,Hindu
-2024,"November 1, 2024, Friday",Diwali,Hindu
-2024,"November 14, 2024, Thursday",Nehru Jayanti,Govt
-2024,"November 14, 2024, Thursday",Children's Day,Modern
-2024,"November 15, 2024, Friday",Guru Nanak Jayanti,Hindu
-2024,"November 2, 2024, Saturday",Govardhan Puja,Hindu
-2024,"November 3, 2024, Sunday",Bhaiya Dooj,Hindu
-2024,"November 7, 2024, Thursday",Chhath Puja,Hindu
-2024,"October 11, 2024, Friday",Durga Ashtami,Hindu
-2024,"October 11, 2024, Friday",Maha Navami,Hindu
-2024,"October 12, 2024, Saturday",Dussehra,Hindu
-2024,"October 13, 2024, Sunday",Madhvacharya Jayanti,Hindu
-2024,"October 17, 2024, Thursday",Valmiki Jayanti,Hindu
-2024,"October 17, 2024, Thursday",Meerabai Jayanti,Hindu
-2024,"October 2, 2024, Wednesday",Gandhi Jayanti,Govt
-2024,"October 20, 2024, Sunday",Karwa Chauth,Hindu
-2024,"October 3, 2024, Thursday",Maharaja Agrasen Jayanti,Hindu
-2024,"October 31, 2024, Thursday",Narak Chaturdashi,Hindu
-2024,"September 14, 2024, Saturday",Hindi Diwas,Modern
-2024,"September 15, 2024, Sunday",Onam,Hindu
-2024,"September 15, 2024, Sunday",Visvesvaraya Jayanti,Govt
-2024,"September 15, 2024, Sunday",Engineer's Day,Modern
-2024,"September 16, 2024, Monday",Milad un-Nabi,Islamic
-2024,"September 16, 2024, Monday",Eid-e-Milad,Islamic
-2024,"September 22, 2024, Sunday",Autumnal Equinox,Hindu
-2024,"September 5, 2024, Thursday",Teachers' Day,Modern
-2024,"September 7, 2024, Saturday",Ganesh Chaturthi,Hindu
-2025,"April 1, 2025, Tuesday",Bank's Holiday,Govt
-2025,"April 10, 2025, Thursday",Mahavir Swami Jayanti,Hindu
-2025,"April 14, 2025, Monday",Solar New Year,Hindu
-2025,"April 14, 2025, Monday",Ambedkar Jayanti,Govt
-2025,"April 14, 2025, Monday",Baisakhi,Sikh
-2025,"April 18, 2025, Friday",Good Friday,Christian
-2025,"April 20, 2025, Sunday",Easter,Christian
-2025,"April 22, 2025, Tuesday",Earth Day,Modern
-2025,"April 24, 2025, Thursday",Vallabhacharya Jayanti,Hindu
-2025,"April 6, 2025, Sunday",Rama Navami,Hindu
-2025,"August 15, 2025, Friday",Janmashtami *Smarta,Hindu
-2025,"August 15, 2025, Friday",Independence Day,Govt
-2025,"August 16, 2025, Saturday",Janmashtami *ISKCON,Hindu
-2025,"August 27, 2025, Wednesday",Ganesh Chaturthi,Hindu
-2025,"August 3, 2025, Sunday",Friendship Day,Modern
-2025,"August 9, 2025, Saturday",Raksha Bandhan,Hindu
-2025,"August 9, 2025, Saturday",Rakhi,Hindu
-2025,"December 1, 2025, Monday",World AIDS Day,Modern
-2025,"December 21, 2025, Sunday",Shortest Day of Year,Hindu
-2025,"December 25, 2025, Thursday",Merry Christmas,Christian
-2025,"December 27, 2025, Saturday",Guru Gobind Singh Jayanti,Hindu
-2025,"December 30, 2025, Tuesday",Tailang Swami Jayanti,Hindu
-2025,"February 12, 2025, Wednesday",Guru Ravidas Jayanti,Hindu
-2025,"February 14, 2025, Friday",Valentine's Day,Modern
-2025,"February 19, 2025, Wednesday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2025,"February 2, 2025, Sunday",Vasant Panchami,Hindu
-2025,"February 23, 2025, Sunday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2025,"February 26, 2025, Wednesday",Maha Shivaratri,Hindu
-2025,"February 4, 2025, Tuesday",World Cancer Day,Modern
-2025,"January 1, 2025, Wednesday",English New Year,Christian
-2025,"January 10, 2025, Friday",Tailang Swami Jayanti,Hindu
-2025,"January 12, 2025, Sunday",Swami Vivekananda Jayanti,Govt
-2025,"January 12, 2025, Sunday",National Youth Day,Modern
-2025,"January 13, 2025, Monday",Hazarat Ali's Birthday,Islamic
-2025,"January 13, 2025, Monday",Lohri,Sikh
-2025,"January 14, 2025, Tuesday",Makara Sankranti,Hindu
-2025,"January 14, 2025, Tuesday",Pongal,Hindu
-2025,"January 21, 2025, Tuesday",Vivekananda Jayanti *Samvat,Hindu
-2025,"January 23, 2025, Thursday",Subhas Chandra Bose Jayanti,Govt
-2025,"January 26, 2025, Sunday",Republic Day,Govt
-2025,"January 30, 2025, Thursday",Gandhi Punyatithi,Govt
-2025,"January 6, 2025, Monday",Guru Gobind Singh Jayanti,Hindu
-2025,"July 10, 2025, Thursday",Guru Purnima,Hindu
-2025,"July 31, 2025, Thursday",Tulsidas Jayanti,Hindu
-2025,"July 6, 2025, Sunday",Day of Ashura,Islamic
-2025,"July 6, 2025, Sunday",Muharram,Islamic
-2025,"June 11, 2025, Wednesday",Kabirdas Jayanti,Hindu
-2025,"June 15, 2025, Sunday",Father's Day,Modern
-2025,"June 21, 2025, Saturday",Longest Day of Year,Hindu
-2025,"June 21, 2025, Saturday",International Yoga Day,Modern
-2025,"June 27, 2025, Friday",Jagannath Rathyatra,Hindu
-2025,"June 27, 2025, Friday",Al-Hijra,Islamic
-2025,"June 27, 2025, Friday",Islamic New Year,Islamic
-2025,"June 5, 2025, Thursday",World Environment Day,Modern
-2025,"June 7, 2025, Saturday",Eid al-Adha,Islamic
-2025,"June 7, 2025, Saturday",Bakrid,Islamic
-2025,"March 1, 2025, Saturday",Ramakrishna Jayanti,Hindu
-2025,"March 13, 2025, Thursday",Chhoti Holi,Hindu
-2025,"March 13, 2025, Thursday",Holika Dahan,Hindu
-2025,"March 14, 2025, Friday",Chaitanya Mahaprabhu Jayanti,Hindu
-2025,"March 14, 2025, Friday",Holi,Hindu
-2025,"March 17, 2025, Monday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2025,"March 20, 2025, Thursday",Vernal Equinox,Hindu
-2025,"March 20, 2025, Thursday",Parsi New Year,Hindu
-2025,"March 23, 2025, Sunday",Shaheed Diwas,Govt
-2025,"March 28, 2025, Friday",Jamat Ul-Vida,Islamic
-2025,"March 30, 2025, Sunday",Ugadi,Hindu
-2025,"March 30, 2025, Sunday",Gudi Padwa,Hindu
-2025,"March 30, 2025, Sunday",Jhulelal Jayanti,Hindu
-2025,"March 31, 2025, Monday",Eid al-Fitr,Islamic
-2025,"March 31, 2025, Monday",Ramadan,Islamic
-2025,"March 8, 2025, Saturday",International Women's Day,Modern
-2025,"May 1, 2025, Thursday",International Workers' Day,Modern
-2025,"May 11, 2025, Sunday",Mother's Day,Modern
-2025,"May 12, 2025, Monday",Buddha Purnima,Hindu
-2025,"May 2, 2025, Friday",Shankaracharya Jayanti,Hindu
-2025,"May 2, 2025, Friday",Surdas Jayanti,Hindu
-2025,"May 29, 2025, Thursday",Maharana Pratap Jayanti,Hindu
-2025,"May 31, 2025, Saturday",World No Tobacco Day,Modern
-2025,"May 4, 2025, Sunday",World Laughter Day,Modern
-2025,"May 7, 2025, Wednesday",Rabindranath Tagore Jayanti,Govt
-2025,"November 14, 2025, Friday",Nehru Jayanti,Govt
-2025,"November 14, 2025, Friday",Children's Day,Modern
-2025,"November 5, 2025, Wednesday",Guru Nanak Jayanti,Hindu
-2025,"October 1, 2025, Wednesday",Maha Navami,Hindu
-2025,"October 10, 2025, Friday",Karwa Chauth,Hindu
-2025,"October 2, 2025, Thursday",Dussehra,Hindu
-2025,"October 2, 2025, Thursday",Madhvacharya Jayanti,Hindu
-2025,"October 2, 2025, Thursday",Gandhi Jayanti,Govt
-2025,"October 20, 2025, Monday",Lakshmi Puja,Hindu
-2025,"October 20, 2025, Monday",Narak Chaturdashi,Hindu
-2025,"October 20, 2025, Monday",Diwali,Hindu
-2025,"October 22, 2025, Wednesday",Govardhan Puja,Hindu
-2025,"October 23, 2025, Thursday",Bhaiya Dooj,Hindu
-2025,"October 27, 2025, Monday",Chhath Puja,Hindu
-2025,"October 7, 2025, Tuesday",Valmiki Jayanti,Hindu
-2025,"October 7, 2025, Tuesday",Meerabai Jayanti,Hindu
-2025,"September 14, 2025, Sunday",Hindi Diwas,Modern
-2025,"September 15, 2025, Monday",Visvesvaraya Jayanti,Govt
-2025,"September 15, 2025, Monday",Engineer's Day,Modern
-2025,"September 22, 2025, Monday",Maharaja Agrasen Jayanti,Hindu
-2025,"September 22, 2025, Monday",Autumnal Equinox,Hindu
-2025,"September 30, 2025, Tuesday",Durga Ashtami,Hindu
-2025,"September 5, 2025, Friday",Onam,Hindu
-2025,"September 5, 2025, Friday",Milad un-Nabi,Islamic
-2025,"September 5, 2025, Friday",Eid-e-Milad,Islamic
-2025,"September 5, 2025, Friday",Teachers' Day,Modern
-2026,"April 1, 2026, Wednesday",Bank's Holiday,Govt
-2026,"April 13, 2026, Monday",Vallabhacharya Jayanti,Hindu
-2026,"April 14, 2026, Tuesday",Solar New Year,Hindu
-2026,"April 14, 2026, Tuesday",Ambedkar Jayanti,Govt
-2026,"April 14, 2026, Tuesday",Baisakhi,Sikh
-2026,"April 21, 2026, Tuesday",Shankaracharya Jayanti,Hindu
-2026,"April 21, 2026, Tuesday",Surdas Jayanti,Hindu
-2026,"April 22, 2026, Wednesday",Earth Day,Modern
-2026,"April 3, 2026, Friday",Good Friday,Christian
-2026,"April 5, 2026, Sunday",Easter,Christian
-2026,"August 15, 2026, Saturday",Independence Day,Govt
-2026,"August 19, 2026, Wednesday",Tulsidas Jayanti,Hindu
-2026,"August 2, 2026, Sunday",Friendship Day,Modern
-2026,"August 26, 2026, Wednesday",Onam,Hindu
-2026,"August 26, 2026, Wednesday",Milad un-Nabi,Islamic
-2026,"August 26, 2026, Wednesday",Eid-e-Milad,Islamic
-2026,"August 28, 2026, Friday",Raksha Bandhan,Hindu
-2026,"August 28, 2026, Friday",Rakhi,Hindu
-2026,"December 1, 2026, Tuesday",World AIDS Day,Modern
-2026,"December 22, 2026, Tuesday",Shortest Day of Year,Hindu
-2026,"December 23, 2026, Wednesday",Hazarat Ali's Birthday,Islamic
-2026,"December 25, 2026, Friday",Merry Christmas,Christian
-2026,"February 1, 2026, Sunday",Guru Ravidas Jayanti,Hindu
-2026,"February 12, 2026, Thursday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2026,"February 14, 2026, Saturday",Valentine's Day,Modern
-2026,"February 15, 2026, Sunday",Maha Shivaratri,Hindu
-2026,"February 19, 2026, Thursday",Ramakrishna Jayanti,Hindu
-2026,"February 19, 2026, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2026,"February 4, 2026, Wednesday",World Cancer Day,Modern
-2026,"January 1, 2026, Thursday",English New Year,Christian
-2026,"January 12, 2026, Monday",Swami Vivekananda Jayanti,Govt
-2026,"January 12, 2026, Monday",National Youth Day,Modern
-2026,"January 13, 2026, Tuesday",Lohri,Sikh
-2026,"January 14, 2026, Wednesday",Makara Sankranti,Hindu
-2026,"January 14, 2026, Wednesday",Pongal,Hindu
-2026,"January 2, 2026, Friday",Hazarat Ali's Birthday,Islamic
-2026,"January 23, 2026, Friday",Vasant Panchami,Hindu
-2026,"January 23, 2026, Friday",Subhas Chandra Bose Jayanti,Govt
-2026,"January 26, 2026, Monday",Republic Day,Govt
-2026,"January 30, 2026, Friday",Gandhi Punyatithi,Govt
-2026,"January 9, 2026, Friday",Vivekananda Jayanti *Samvat,Hindu
-2026,"July 16, 2026, Thursday",Jagannath Rathyatra,Hindu
-2026,"July 29, 2026, Wednesday",Guru Purnima,Hindu
-2026,"June 17, 2026, Wednesday",Maharana Pratap Jayanti,Hindu
-2026,"June 17, 2026, Wednesday",Al-Hijra,Islamic
-2026,"June 17, 2026, Wednesday",Islamic New Year,Islamic
-2026,"June 21, 2026, Sunday",Longest Day of Year,Hindu
-2026,"June 21, 2026, Sunday",Father's Day,Modern
-2026,"June 21, 2026, Sunday",International Yoga Day,Modern
-2026,"June 26, 2026, Friday",Day of Ashura,Islamic
-2026,"June 26, 2026, Friday",Muharram,Islamic
-2026,"June 29, 2026, Monday",Kabirdas Jayanti,Hindu
-2026,"June 5, 2026, Friday",World Environment Day,Modern
-2026,"March 19, 2026, Thursday",Ugadi,Hindu
-2026,"March 19, 2026, Thursday",Gudi Padwa,Hindu
-2026,"March 20, 2026, Friday",Jhulelal Jayanti,Hindu
-2026,"March 20, 2026, Friday",Vernal Equinox,Hindu
-2026,"March 20, 2026, Friday",Jamat Ul-Vida,Islamic
-2026,"March 20, 2026, Friday",Eid al-Fitr,Islamic
-2026,"March 20, 2026, Friday",Ramadan,Islamic
-2026,"March 20, 2026, Friday",Parsi New Year,Hindu
-2026,"March 23, 2026, Monday",Shaheed Diwas,Govt
-2026,"March 26, 2026, Thursday",Rama Navami *Smarta,Hindu
-2026,"March 27, 2026, Friday",Rama Navami *ISKCON,Hindu
-2026,"March 3, 2026, Tuesday",Chhoti Holi,Hindu
-2026,"March 3, 2026, Tuesday",Holika Dahan,Hindu
-2026,"March 3, 2026, Tuesday",Chaitanya Mahaprabhu Jayanti,Hindu
-2026,"March 31, 2026, Tuesday",Mahavir Swami Jayanti,Hindu
-2026,"March 4, 2026, Wednesday",Holi,Hindu
-2026,"March 6, 2026, Friday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2026,"March 8, 2026, Sunday",International Women's Day,Modern
-2026,"May 1, 2026, Friday",Buddha Purnima,Hindu
-2026,"May 1, 2026, Friday",International Workers' Day,Modern
-2026,"May 10, 2026, Sunday",Mother's Day,Modern
-2026,"May 27, 2026, Wednesday",Eid al-Adha,Islamic
-2026,"May 27, 2026, Wednesday",Bakrid,Islamic
-2026,"May 3, 2026, Sunday",World Laughter Day,Modern
-2026,"May 31, 2026, Sunday",World No Tobacco Day,Modern
-2026,"May 7, 2026, Thursday",Rabindranath Tagore Jayanti,Govt
-2026,"November 10, 2026, Tuesday",Govardhan Puja,Hindu
-2026,"November 11, 2026, Wednesday",Bhaiya Dooj,Hindu
-2026,"November 14, 2026, Saturday",Nehru Jayanti,Govt
-2026,"November 14, 2026, Saturday",Children's Day,Modern
-2026,"November 15, 2026, Sunday",Chhath Puja,Hindu
-2026,"November 24, 2026, Tuesday",Guru Nanak Jayanti,Hindu
-2026,"November 8, 2026, Sunday",Lakshmi Puja,Hindu
-2026,"November 8, 2026, Sunday",Narak Chaturdashi,Hindu
-2026,"November 8, 2026, Sunday",Diwali,Hindu
-2026,"October 11, 2026, Sunday",Maharaja Agrasen Jayanti,Hindu
-2026,"October 19, 2026, Monday",Durga Ashtami,Hindu
-2026,"October 19, 2026, Monday",Maha Navami,Hindu
-2026,"October 2, 2026, Friday",Gandhi Jayanti,Govt
-2026,"October 20, 2026, Tuesday",Dussehra,Hindu
-2026,"October 21, 2026, Wednesday",Madhvacharya Jayanti,Hindu
-2026,"October 26, 2026, Monday",Valmiki Jayanti,Hindu
-2026,"October 26, 2026, Monday",Meerabai Jayanti,Hindu
-2026,"October 29, 2026, Thursday",Karwa Chauth,Hindu
-2026,"September 14, 2026, Monday",Ganesh Chaturthi,Hindu
-2026,"September 14, 2026, Monday",Hindi Diwas,Modern
-2026,"September 15, 2026, Tuesday",Visvesvaraya Jayanti,Govt
-2026,"September 15, 2026, Tuesday",Engineer's Day,Modern
-2026,"September 23, 2026, Wednesday",Autumnal Equinox,Hindu
-2026,"September 4, 2026, Friday",Krishna Janmashtami,Hindu
-2026,"September 5, 2026, Saturday",Teachers' Day,Modern
-2027,"April 1, 2027, Thursday",Bank's Holiday,Govt
-2027,"April 14, 2027, Wednesday",Solar New Year,Hindu
-2027,"April 14, 2027, Wednesday",Ambedkar Jayanti,Govt
-2027,"April 14, 2027, Wednesday",Baisakhi,Sikh
-2027,"April 15, 2027, Thursday",Rama Navami,Hindu
-2027,"April 19, 2027, Monday",Mahavir Swami Jayanti,Hindu
-2027,"April 22, 2027, Thursday",Earth Day,Modern
-2027,"April 7, 2027, Wednesday",Ugadi,Hindu
-2027,"April 7, 2027, Wednesday",Gudi Padwa,Hindu
-2027,"April 8, 2027, Thursday",Jhulelal Jayanti,Hindu
-2027,"August 1, 2027, Sunday",Friendship Day,Modern
-2027,"August 15, 2027, Sunday",Independence Day,Govt
-2027,"August 15, 2027, Sunday",Milad un-Nabi,Islamic
-2027,"August 15, 2027, Sunday",Eid-e-Milad,Islamic
-2027,"August 17, 2027, Tuesday",Raksha Bandhan,Hindu
-2027,"August 17, 2027, Tuesday",Rakhi,Hindu
-2027,"August 25, 2027, Wednesday",Krishna Janmashtami,Hindu
-2027,"August 8, 2027, Sunday",Tulsidas Jayanti,Hindu
-2027,"December 1, 2027, Wednesday",World AIDS Day,Modern
-2027,"December 12, 2027, Sunday",Hazarat Ali's Birthday,Islamic
-2027,"December 22, 2027, Wednesday",Shortest Day of Year,Hindu
-2027,"December 25, 2027, Saturday",Merry Christmas,Christian
-2027,"February 11, 2027, Thursday",Vasant Panchami,Hindu
-2027,"February 14, 2027, Sunday",Valentine's Day,Modern
-2027,"February 19, 2027, Friday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2027,"February 20, 2027, Saturday",Guru Ravidas Jayanti,Hindu
-2027,"February 4, 2027, Thursday",World Cancer Day,Modern
-2027,"January 1, 2027, Friday",English New Year,Christian
-2027,"January 12, 2027, Tuesday",Swami Vivekananda Jayanti,Govt
-2027,"January 12, 2027, Tuesday",National Youth Day,Modern
-2027,"January 14, 2027, Thursday",Lohri,Sikh
-2027,"January 15, 2027, Friday",Guru Gobind Singh Jayanti,Hindu
-2027,"January 15, 2027, Friday",Makara Sankranti,Hindu
-2027,"January 15, 2027, Friday",Pongal,Hindu
-2027,"January 19, 2027, Tuesday",Tailang Swami Jayanti,Hindu
-2027,"January 23, 2027, Saturday",Subhas Chandra Bose Jayanti,Govt
-2027,"January 26, 2027, Tuesday",Republic Day,Govt
-2027,"January 28, 2027, Thursday",Vivekananda Jayanti *Samvat,Hindu
-2027,"January 30, 2027, Saturday",Gandhi Punyatithi,Govt
-2027,"July 18, 2027, Sunday",Guru Purnima,Hindu
-2027,"July 5, 2027, Monday",Jagannath Rathyatra,Hindu
-2027,"June 15, 2027, Tuesday",Day of Ashura,Islamic
-2027,"June 15, 2027, Tuesday",Muharram,Islamic
-2027,"June 18, 2027, Friday",Kabirdas Jayanti,Hindu
-2027,"June 20, 2027, Sunday",Father's Day,Modern
-2027,"June 21, 2027, Monday",Longest Day of Year,Hindu
-2027,"June 21, 2027, Monday",International Yoga Day,Modern
-2027,"June 5, 2027, Saturday",World Environment Day,Modern
-2027,"June 6, 2027, Sunday",Al-Hijra,Islamic
-2027,"June 6, 2027, Sunday",Islamic New Year,Islamic
-2027,"June 7, 2027, Monday",Maharana Pratap Jayanti,Hindu
-2027,"March 10, 2027, Wednesday",Ramakrishna Jayanti,Hindu
-2027,"March 10, 2027, Wednesday",Eid al-Fitr,Islamic
-2027,"March 10, 2027, Wednesday",Ramadan,Islamic
-2027,"March 2, 2027, Tuesday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2027,"March 21, 2027, Sunday",Chhoti Holi,Hindu
-2027,"March 21, 2027, Sunday",Holika Dahan,Hindu
-2027,"March 21, 2027, Sunday",Vernal Equinox,Hindu
-2027,"March 21, 2027, Sunday",Parsi New Year,Hindu
-2027,"March 22, 2027, Monday",Chaitanya Mahaprabhu Jayanti,Hindu
-2027,"March 22, 2027, Monday",Holi,Hindu
-2027,"March 23, 2027, Tuesday",Shaheed Diwas,Govt
-2027,"March 25, 2027, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2027,"March 26, 2027, Friday",Good Friday,Christian
-2027,"March 28, 2027, Sunday",Easter,Christian
-2027,"March 5, 2027, Friday",Jamat Ul-Vida,Islamic
-2027,"March 6, 2027, Saturday",Maha Shivaratri,Hindu
-2027,"March 8, 2027, Monday",International Women's Day,Modern
-2027,"May 1, 2027, Saturday",International Workers' Day,Modern
-2027,"May 10, 2027, Monday",Shankaracharya Jayanti,Hindu
-2027,"May 10, 2027, Monday",Surdas Jayanti,Hindu
-2027,"May 17, 2027, Monday",Eid al-Adha,Islamic
-2027,"May 17, 2027, Monday",Bakrid,Islamic
-2027,"May 2, 2027, Sunday",Vallabhacharya Jayanti,Hindu
-2027,"May 2, 2027, Sunday",World Laughter Day,Modern
-2027,"May 20, 2027, Thursday",Buddha Purnima,Hindu
-2027,"May 31, 2027, Monday",World No Tobacco Day,Modern
-2027,"May 7, 2027, Friday",Rabindranath Tagore Jayanti,Govt
-2027,"May 9, 2027, Sunday",Mother's Day,Modern
-2027,"November 14, 2027, Sunday",Guru Nanak Jayanti,Hindu
-2027,"November 14, 2027, Sunday",Nehru Jayanti,Govt
-2027,"November 14, 2027, Sunday",Children's Day,Modern
-2027,"November 4, 2027, Thursday",Chhath Puja,Hindu
-2027,"October 10, 2027, Sunday",Madhvacharya Jayanti,Hindu
-2027,"October 15, 2027, Friday",Valmiki Jayanti,Hindu
-2027,"October 15, 2027, Friday",Meerabai Jayanti,Hindu
-2027,"October 18, 2027, Monday",Karwa Chauth,Hindu
-2027,"October 2, 2027, Saturday",Gandhi Jayanti,Govt
-2027,"October 28, 2027, Thursday",Narak Chaturdashi,Hindu
-2027,"October 29, 2027, Friday",Lakshmi Puja,Hindu
-2027,"October 29, 2027, Friday",Diwali,Hindu
-2027,"October 30, 2027, Saturday",Govardhan Puja,Hindu
-2027,"October 31, 2027, Sunday",Bhaiya Dooj,Hindu
-2027,"October 7, 2027, Thursday",Durga Ashtami,Hindu
-2027,"October 8, 2027, Friday",Maha Navami,Hindu
-2027,"October 9, 2027, Saturday",Dussehra,Hindu
-2027,"September 12, 2027, Sunday",Onam,Hindu
-2027,"September 14, 2027, Tuesday",Hindi Diwas,Modern
-2027,"September 15, 2027, Wednesday",Visvesvaraya Jayanti,Govt
-2027,"September 15, 2027, Wednesday",Engineer's Day,Modern
-2027,"September 23, 2027, Thursday",Autumnal Equinox,Hindu
-2027,"September 30, 2027, Thursday",Maharaja Agrasen Jayanti,Hindu
-2027,"September 4, 2027, Saturday",Ganesh Chaturthi,Hindu
-2027,"September 5, 2027, Sunday",Teachers' Day,Modern
-2028,"April 1, 2028, Saturday",Bank's Holiday,Govt
-2028,"April 13, 2028, Thursday",Solar New Year,Hindu
-2028,"April 13, 2028, Thursday",Baisakhi,Sikh
-2028,"April 14, 2028, Friday",Ambedkar Jayanti,Govt
-2028,"April 14, 2028, Friday",Good Friday,Christian
-2028,"April 16, 2028, Sunday",Easter,Christian
-2028,"April 20, 2028, Thursday",Vallabhacharya Jayanti,Hindu
-2028,"April 22, 2028, Saturday",Earth Day,Modern
-2028,"April 29, 2028, Saturday",Shankaracharya Jayanti,Hindu
-2028,"April 29, 2028, Saturday",Surdas Jayanti,Hindu
-2028,"April 3, 2028, Monday",Rama Navami *Smarta,Hindu
-2028,"April 4, 2028, Tuesday",Rama Navami *ISKCON,Hindu
-2028,"April 7, 2028, Friday",Mahavir Swami Jayanti,Hindu
-2028,"August 13, 2028, Sunday",Krishna Janmashtami,Hindu
-2028,"August 15, 2028, Tuesday",Independence Day,Govt
-2028,"August 23, 2028, Wednesday",Ganesh Chaturthi,Hindu
-2028,"August 3, 2028, Thursday",Milad un-Nabi,Islamic
-2028,"August 3, 2028, Thursday",Eid-e-Milad,Islamic
-2028,"August 5, 2028, Saturday",Raksha Bandhan,Hindu
-2028,"August 5, 2028, Saturday",Rakhi,Hindu
-2028,"August 6, 2028, Sunday",Friendship Day,Modern
-2028,"December 1, 2028, Friday",World AIDS Day,Modern
-2028,"December 21, 2028, Thursday",Shortest Day of Year,Hindu
-2028,"December 23, 2028, Saturday",Guru Gobind Singh Jayanti,Hindu
-2028,"December 25, 2028, Monday",Merry Christmas,Christian
-2028,"December 27, 2028, Wednesday",Tailang Swami Jayanti,Hindu
-2028,"February 10, 2028, Thursday",Guru Ravidas Jayanti,Hindu
-2028,"February 14, 2028, Monday",Valentine's Day,Modern
-2028,"February 19, 2028, Saturday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2028,"February 19, 2028, Saturday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2028,"February 23, 2028, Wednesday",Maha Shivaratri,Hindu
-2028,"February 25, 2028, Friday",Jamat Ul-Vida,Islamic
-2028,"February 27, 2028, Sunday",Ramakrishna Jayanti,Hindu
-2028,"February 27, 2028, Sunday",Eid al-Fitr,Islamic
-2028,"February 27, 2028, Sunday",Ramadan,Islamic
-2028,"February 4, 2028, Friday",World Cancer Day,Modern
-2028,"January 1, 2028, Saturday",English New Year,Christian
-2028,"January 12, 2028, Wednesday",Swami Vivekananda Jayanti,Govt
-2028,"January 12, 2028, Wednesday",National Youth Day,Modern
-2028,"January 14, 2028, Friday",Lohri,Sikh
-2028,"January 15, 2028, Saturday",Makara Sankranti,Hindu
-2028,"January 15, 2028, Saturday",Pongal,Hindu
-2028,"January 18, 2028, Tuesday",Vivekananda Jayanti *Samvat,Hindu
-2028,"January 23, 2028, Sunday",Subhas Chandra Bose Jayanti,Govt
-2028,"January 26, 2028, Wednesday",Republic Day,Govt
-2028,"January 30, 2028, Sunday",Gandhi Punyatithi,Govt
-2028,"January 31, 2028, Monday",Vasant Panchami,Hindu
-2028,"January 4, 2028, Tuesday",Guru Gobind Singh Jayanti,Hindu
-2028,"January 8, 2028, Saturday",Tailang Swami Jayanti,Hindu
-2028,"July 28, 2028, Friday",Tulsidas Jayanti,Hindu
-2028,"July 6, 2028, Thursday",Guru Purnima,Hindu
-2028,"June 18, 2028, Sunday",Father's Day,Modern
-2028,"June 21, 2028, Wednesday",Longest Day of Year,Hindu
-2028,"June 21, 2028, Wednesday",International Yoga Day,Modern
-2028,"June 24, 2028, Saturday",Jagannath Rathyatra,Hindu
-2028,"June 3, 2028, Saturday",Day of Ashura,Islamic
-2028,"June 3, 2028, Saturday",Muharram,Islamic
-2028,"June 5, 2028, Monday",World Environment Day,Modern
-2028,"June 7, 2028, Wednesday",Kabirdas Jayanti,Hindu
-2028,"March 10, 2028, Friday",Chhoti Holi,Hindu
-2028,"March 10, 2028, Friday",Holika Dahan,Hindu
-2028,"March 10, 2028, Friday",Chaitanya Mahaprabhu Jayanti,Hindu
-2028,"March 11, 2028, Saturday",Holi,Hindu
-2028,"March 13, 2028, Monday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2028,"March 20, 2028, Monday",Vernal Equinox,Hindu
-2028,"March 20, 2028, Monday",Parsi New Year,Hindu
-2028,"March 23, 2028, Thursday",Shaheed Diwas,Govt
-2028,"March 27, 2028, Monday",Ugadi,Hindu
-2028,"March 27, 2028, Monday",Gudi Padwa,Hindu
-2028,"March 27, 2028, Monday",Jhulelal Jayanti,Hindu
-2028,"March 8, 2028, Wednesday",International Women's Day,Modern
-2028,"May 1, 2028, Monday",International Workers' Day,Modern
-2028,"May 14, 2028, Sunday",Mother's Day,Modern
-2028,"May 25, 2028, Thursday",Al-Hijra,Islamic
-2028,"May 25, 2028, Thursday",Islamic New Year,Islamic
-2028,"May 27, 2028, Saturday",Maharana Pratap Jayanti,Hindu
-2028,"May 31, 2028, Wednesday",World No Tobacco Day,Modern
-2028,"May 5, 2028, Friday",Eid al-Adha,Islamic
-2028,"May 5, 2028, Friday",Bakrid,Islamic
-2028,"May 7, 2028, Sunday",Rabindranath Tagore Jayanti,Govt
-2028,"May 7, 2028, Sunday",World Laughter Day,Modern
-2028,"May 8, 2028, Monday",Buddha Purnima,Hindu
-2028,"November 14, 2028, Tuesday",Nehru Jayanti,Govt
-2028,"November 14, 2028, Tuesday",Children's Day,Modern
-2028,"November 2, 2028, Thursday",Guru Nanak Jayanti,Hindu
-2028,"November 30, 2028, Thursday",Hazarat Ali's Birthday,Islamic
-2028,"October 17, 2028, Tuesday",Lakshmi Puja,Hindu
-2028,"October 17, 2028, Tuesday",Narak Chaturdashi,Hindu
-2028,"October 17, 2028, Tuesday",Diwali,Hindu
-2028,"October 18, 2028, Wednesday",Govardhan Puja,Hindu
-2028,"October 19, 2028, Thursday",Bhaiya Dooj,Hindu
-2028,"October 2, 2028, Monday",Gandhi Jayanti,Govt
-2028,"October 23, 2028, Monday",Chhath Puja,Hindu
-2028,"October 3, 2028, Tuesday",Valmiki Jayanti,Hindu
-2028,"October 3, 2028, Tuesday",Meerabai Jayanti,Hindu
-2028,"October 7, 2028, Saturday",Karwa Chauth,Hindu
-2028,"September 1, 2028, Friday",Onam,Hindu
-2028,"September 14, 2028, Thursday",Hindi Diwas,Modern
-2028,"September 15, 2028, Friday",Visvesvaraya Jayanti,Govt
-2028,"September 15, 2028, Friday",Engineer's Day,Modern
-2028,"September 19, 2028, Tuesday",Maharaja Agrasen Jayanti,Hindu
-2028,"September 22, 2028, Friday",Autumnal Equinox,Hindu
-2028,"September 26, 2028, Tuesday",Durga Ashtami,Hindu
-2028,"September 26, 2028, Tuesday",Maha Navami,Hindu
-2028,"September 27, 2028, Wednesday",Dussehra,Hindu
-2028,"September 28, 2028, Thursday",Madhvacharya Jayanti,Hindu
-2028,"September 5, 2028, Tuesday",Teachers' Day,Modern
-2029,"April 1, 2029, Sunday",Bank's Holiday,Govt
-2029,"April 1, 2029, Sunday",Easter,Christian
-2029,"April 14, 2029, Saturday",Ugadi,Hindu
-2029,"April 14, 2029, Saturday",Gudi Padwa,Hindu
-2029,"April 14, 2029, Saturday",Solar New Year,Hindu
-2029,"April 14, 2029, Saturday",Ambedkar Jayanti,Govt
-2029,"April 14, 2029, Saturday",Baisakhi,Sikh
-2029,"April 15, 2029, Sunday",Jhulelal Jayanti,Hindu
-2029,"April 22, 2029, Sunday",Earth Day,Modern
-2029,"April 23, 2029, Monday",Rama Navami,Hindu
-2029,"April 24, 2029, Tuesday",Eid al-Adha,Islamic
-2029,"April 24, 2029, Tuesday",Bakrid,Islamic
-2029,"April 26, 2029, Thursday",Mahavir Swami Jayanti,Hindu
-2029,"August 15, 2029, Wednesday",Independence Day,Govt
-2029,"August 16, 2029, Thursday",Tulsidas Jayanti,Hindu
-2029,"August 22, 2029, Wednesday",Onam,Hindu
-2029,"August 23, 2029, Thursday",Raksha Bandhan,Hindu
-2029,"August 23, 2029, Thursday",Rakhi,Hindu
-2029,"August 5, 2029, Sunday",Friendship Day,Modern
-2029,"December 1, 2029, Saturday",World AIDS Day,Modern
-2029,"December 21, 2029, Friday",Shortest Day of Year,Hindu
-2029,"December 25, 2029, Tuesday",Merry Christmas,Christian
-2029,"February 11, 2029, Sunday",Maha Shivaratri,Hindu
-2029,"February 14, 2029, Wednesday",Valentine's Day,Modern
-2029,"February 15, 2029, Thursday",Ramakrishna Jayanti,Hindu
-2029,"February 15, 2029, Thursday",Eid al-Fitr,Islamic
-2029,"February 15, 2029, Thursday",Ramadan,Islamic
-2029,"February 19, 2029, Monday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2029,"February 28, 2029, Wednesday",Chhoti Holi,Hindu
-2029,"February 28, 2029, Wednesday",Holika Dahan,Hindu
-2029,"February 28, 2029, Wednesday",Chaitanya Mahaprabhu Jayanti,Hindu
-2029,"February 4, 2029, Sunday",World Cancer Day,Modern
-2029,"February 8, 2029, Thursday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2029,"February 9, 2029, Friday",Jamat Ul-Vida,Islamic
-2029,"January 1, 2029, Monday",English New Year,Christian
-2029,"January 12, 2029, Friday",Swami Vivekananda Jayanti,Govt
-2029,"January 12, 2029, Friday",National Youth Day,Modern
-2029,"January 13, 2029, Saturday",Lohri,Sikh
-2029,"January 14, 2029, Sunday",Makara Sankranti,Hindu
-2029,"January 14, 2029, Sunday",Pongal,Hindu
-2029,"January 19, 2029, Friday",Vasant Panchami,Hindu
-2029,"January 23, 2029, Tuesday",Subhas Chandra Bose Jayanti,Govt
-2029,"January 26, 2029, Friday",Republic Day,Govt
-2029,"January 30, 2029, Tuesday",Guru Ravidas Jayanti,Hindu
-2029,"January 30, 2029, Tuesday",Gandhi Punyatithi,Govt
-2029,"January 7, 2029, Sunday",Vivekananda Jayanti *Samvat,Hindu
-2029,"July 13, 2029, Friday",Jagannath Rathyatra,Hindu
-2029,"July 24, 2029, Tuesday",Milad un-Nabi,Islamic
-2029,"July 24, 2029, Tuesday",Eid-e-Milad,Islamic
-2029,"July 25, 2029, Wednesday",Guru Purnima,Hindu
-2029,"June 15, 2029, Friday",Maharana Pratap Jayanti,Hindu
-2029,"June 17, 2029, Sunday",Father's Day,Modern
-2029,"June 21, 2029, Thursday",Longest Day of Year,Hindu
-2029,"June 21, 2029, Thursday",International Yoga Day,Modern
-2029,"June 26, 2029, Tuesday",Kabirdas Jayanti,Hindu
-2029,"June 5, 2029, Tuesday",World Environment Day,Modern
-2029,"March 1, 2029, Thursday",Holi,Hindu
-2029,"March 20, 2029, Tuesday",Vernal Equinox,Hindu
-2029,"March 20, 2029, Tuesday",Parsi New Year,Hindu
-2029,"March 23, 2029, Friday",Shaheed Diwas,Govt
-2029,"March 3, 2029, Saturday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2029,"March 30, 2029, Friday",Good Friday,Christian
-2029,"March 8, 2029, Thursday",International Women's Day,Modern
-2029,"May 1, 2029, Tuesday",International Workers' Day,Modern
-2029,"May 13, 2029, Sunday",Mother's Day,Modern
-2029,"May 15, 2029, Tuesday",Al-Hijra,Islamic
-2029,"May 15, 2029, Tuesday",Islamic New Year,Islamic
-2029,"May 18, 2029, Friday",Shankaracharya Jayanti,Hindu
-2029,"May 18, 2029, Friday",Surdas Jayanti,Hindu
-2029,"May 24, 2029, Thursday",Day of Ashura,Islamic
-2029,"May 24, 2029, Thursday",Muharram,Islamic
-2029,"May 27, 2029, Sunday",Buddha Purnima,Hindu
-2029,"May 31, 2029, Thursday",World No Tobacco Day,Modern
-2029,"May 6, 2029, Sunday",World Laughter Day,Modern
-2029,"May 7, 2029, Monday",Rabindranath Tagore Jayanti,Govt
-2029,"May 9, 2029, Wednesday",Vallabhacharya Jayanti,Hindu
-2029,"November 11, 2029, Sunday",Chhath Puja,Hindu
-2029,"November 14, 2029, Wednesday",Nehru Jayanti,Govt
-2029,"November 14, 2029, Wednesday",Children's Day,Modern
-2029,"November 20, 2029, Tuesday",Hazarat Ali's Birthday,Islamic
-2029,"November 21, 2029, Wednesday",Guru Nanak Jayanti,Hindu
-2029,"November 5, 2029, Monday",Lakshmi Puja,Hindu
-2029,"November 5, 2029, Monday",Narak Chaturdashi,Hindu
-2029,"November 5, 2029, Monday",Diwali,Hindu
-2029,"November 6, 2029, Tuesday",Govardhan Puja,Hindu
-2029,"November 7, 2029, Wednesday",Bhaiya Dooj,Hindu
-2029,"October 14, 2029, Sunday",Durga Ashtami,Hindu
-2029,"October 15, 2029, Monday",Maha Navami,Hindu
-2029,"October 16, 2029, Tuesday",Dussehra,Hindu
-2029,"October 16, 2029, Tuesday",Madhvacharya Jayanti,Hindu
-2029,"October 2, 2029, Tuesday",Gandhi Jayanti,Govt
-2029,"October 22, 2029, Monday",Valmiki Jayanti,Hindu
-2029,"October 22, 2029, Monday",Meerabai Jayanti,Hindu
-2029,"October 26, 2029, Friday",Karwa Chauth,Hindu
-2029,"October 8, 2029, Monday",Maharaja Agrasen Jayanti,Hindu
-2029,"September 1, 2029, Saturday",Krishna Janmashtami,Hindu
-2029,"September 11, 2029, Tuesday",Ganesh Chaturthi,Hindu
-2029,"September 14, 2029, Friday",Hindi Diwas,Modern
-2029,"September 15, 2029, Saturday",Visvesvaraya Jayanti,Govt
-2029,"September 15, 2029, Saturday",Engineer's Day,Modern
-2029,"September 22, 2029, Saturday",Autumnal Equinox,Hindu
-2029,"September 5, 2029, Wednesday",Teachers' Day,Modern
-2030,"April 1, 2030, Monday",Bank's Holiday,Govt
-2030,"April 12, 2030, Friday",Rama Navami,Hindu
-2030,"April 14, 2030, Sunday",Solar New Year,Hindu
-2030,"April 14, 2030, Sunday",Ambedkar Jayanti,Govt
-2030,"April 14, 2030, Sunday",Eid al-Adha,Islamic
-2030,"April 14, 2030, Sunday",Bakrid,Islamic
-2030,"April 14, 2030, Sunday",Baisakhi,Sikh
-2030,"April 16, 2030, Tuesday",Mahavir Swami Jayanti,Hindu
-2030,"April 19, 2030, Friday",Good Friday,Christian
-2030,"April 21, 2030, Sunday",Easter,Christian
-2030,"April 22, 2030, Monday",Earth Day,Modern
-2030,"April 28, 2030, Sunday",Vallabhacharya Jayanti,Hindu
-2030,"April 3, 2030, Wednesday",Ugadi,Hindu
-2030,"April 3, 2030, Wednesday",Gudi Padwa,Hindu
-2030,"April 4, 2030, Thursday",Jhulelal Jayanti,Hindu
-2030,"August 13, 2030, Tuesday",Raksha Bandhan,Hindu
-2030,"August 13, 2030, Tuesday",Rakhi,Hindu
-2030,"August 15, 2030, Thursday",Independence Day,Govt
-2030,"August 21, 2030, Wednesday",Krishna Janmashtami,Hindu
-2030,"August 4, 2030, Sunday",Friendship Day,Modern
-2030,"August 6, 2030, Tuesday",Tulsidas Jayanti,Hindu
-2030,"December 1, 2030, Sunday",World AIDS Day,Modern
-2030,"December 22, 2030, Sunday",Shortest Day of Year,Hindu
-2030,"December 25, 2030, Wednesday",Merry Christmas,Christian
-2030,"December 30, 2030, Monday",Guru Gobind Singh Jayanti,Hindu
-2030,"February 1, 2030, Friday",Jamat Ul-Vida,Islamic
-2030,"February 14, 2030, Thursday",Valentine's Day,Modern
-2030,"February 18, 2030, Monday",Guru Ravidas Jayanti,Hindu
-2030,"February 19, 2030, Tuesday",Chhatrapati Shivaji Maharaj Jayanti,Govt
-2030,"February 27, 2030, Wednesday",Maharishi Dayanand Saraswati Jayanti,Hindu
-2030,"February 4, 2030, Monday",World Cancer Day,Modern
-2030,"February 5, 2030, Tuesday",Eid al-Fitr,Islamic
-2030,"February 5, 2030, Tuesday",Ramadan,Islamic
-2030,"February 7, 2030, Thursday",Vasant Panchami,Hindu
-2030,"January 1, 2030, Tuesday",English New Year,Christian
-2030,"January 10, 2030, Thursday",Guru Gobind Singh Jayanti,Hindu
-2030,"January 12, 2030, Saturday",Swami Vivekananda Jayanti,Govt
-2030,"January 12, 2030, Saturday",National Youth Day,Modern
-2030,"January 13, 2030, Sunday",Lohri,Sikh
-2030,"January 14, 2030, Monday",Makara Sankranti,Hindu
-2030,"January 14, 2030, Monday",Pongal,Hindu
-2030,"January 15, 2030, Tuesday",Tailang Swami Jayanti,Hindu
-2030,"January 23, 2030, Wednesday",Subhas Chandra Bose Jayanti,Govt
-2030,"January 26, 2030, Saturday",Vivekananda Jayanti *Samvat,Hindu
-2030,"January 26, 2030, Saturday",Republic Day,Govt
-2030,"January 30, 2030, Wednesday",Gandhi Punyatithi,Govt
-2030,"July 13, 2030, Saturday",Milad un-Nabi,Islamic
-2030,"July 13, 2030, Saturday",Eid-e-Milad,Islamic
-2030,"July 15, 2030, Monday",Guru Purnima,Hindu
-2030,"July 2, 2030, Tuesday",Jagannath Rathyatra,Hindu
-2030,"June 15, 2030, Saturday",Kabirdas Jayanti,Hindu
-2030,"June 16, 2030, Sunday",Father's Day,Modern
-2030,"June 21, 2030, Friday",Longest Day of Year,Hindu
-2030,"June 21, 2030, Friday",International Yoga Day,Modern
-2030,"June 4, 2030, Tuesday",Maharana Pratap Jayanti,Hindu
-2030,"June 5, 2030, Wednesday",World Environment Day,Modern
-2030,"March 19, 2030, Tuesday",Chhoti Holi,Hindu
-2030,"March 19, 2030, Tuesday",Holika Dahan,Hindu
-2030,"March 19, 2030, Tuesday",Chaitanya Mahaprabhu Jayanti,Hindu
-2030,"March 2, 2030, Saturday",Maha Shivaratri,Hindu
-2030,"March 20, 2030, Wednesday",Holi,Hindu
-2030,"March 20, 2030, Wednesday",Vernal Equinox,Hindu
-2030,"March 20, 2030, Wednesday",Parsi New Year,Hindu
-2030,"March 22, 2030, Friday",Chhatrapati Shivaji Maharaj Jayanti,Hindu
-2030,"March 23, 2030, Saturday",Shaheed Diwas,Govt
-2030,"March 6, 2030, Wednesday",Ramakrishna Jayanti,Hindu
-2030,"March 8, 2030, Friday",International Women's Day,Modern
-2030,"May 1, 2030, Wednesday",International Workers' Day,Modern
-2030,"May 12, 2030, Sunday",Mother's Day,Modern
-2030,"May 13, 2030, Monday",Day of Ashura,Islamic
-2030,"May 13, 2030, Monday",Muharram,Islamic
-2030,"May 17, 2030, Friday",Buddha Purnima,Hindu
-2030,"May 31, 2030, Friday",World No Tobacco Day,Modern
-2030,"May 4, 2030, Saturday",Al-Hijra,Islamic
-2030,"May 4, 2030, Saturday",Islamic New Year,Islamic
-2030,"May 5, 2030, Sunday",World Laughter Day,Modern
-2030,"May 7, 2030, Tuesday",Rabindranath Tagore Jayanti,Govt
-2030,"May 8, 2030, Wednesday",Shankaracharya Jayanti,Hindu
-2030,"May 8, 2030, Wednesday",Surdas Jayanti,Hindu
-2030,"November 1, 2030, Friday",Chhath Puja,Hindu
-2030,"November 10, 2030, Sunday",Guru Nanak Jayanti,Hindu
-2030,"November 14, 2030, Thursday",Nehru Jayanti,Govt
-2030,"November 14, 2030, Thursday",Children's Day,Modern
-2030,"November 9, 2030, Saturday",Hazarat Ali's Birthday,Islamic
-2030,"October 11, 2030, Friday",Valmiki Jayanti,Hindu
-2030,"October 11, 2030, Friday",Meerabai Jayanti,Hindu
-2030,"October 15, 2030, Tuesday",Karwa Chauth,Hindu
-2030,"October 2, 2030, Wednesday",Gandhi Jayanti,Govt
-2030,"October 26, 2030, Saturday",Lakshmi Puja,Hindu
-2030,"October 26, 2030, Saturday",Narak Chaturdashi,Hindu
-2030,"October 26, 2030, Saturday",Diwali,Hindu
-2030,"October 27, 2030, Sunday",Govardhan Puja,Hindu
-2030,"October 28, 2030, Monday",Bhaiya Dooj,Hindu
-2030,"October 4, 2030, Friday",Durga Ashtami,Hindu
-2030,"October 5, 2030, Saturday",Maha Navami,Hindu
-2030,"October 6, 2030, Sunday",Dussehra,Hindu
-2030,"October 6, 2030, Sunday",Madhvacharya Jayanti,Hindu
-2030,"September 1, 2030, Sunday",Ganesh Chaturthi,Hindu
-2030,"September 14, 2030, Saturday",Hindi Diwas,Modern
-2030,"September 15, 2030, Sunday",Visvesvaraya Jayanti,Govt
-2030,"September 15, 2030, Sunday",Engineer's Day,Modern
-2030,"September 23, 2030, Monday",Autumnal Equinox,Hindu
-2030,"September 28, 2030, Saturday",Maharaja Agrasen Jayanti,Hindu
-2030,"September 5, 2030, Thursday",Teachers' Day,Modern
-2030,"September 9, 2030, Monday",Onam,Hindu
+year,date,event,type,control_policy
+2020,"January 1, 2020, Wednesday",English New Year,Christian,NORMAL
+2020,"January 2, 2020, Thursday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2020,"January 6, 2020, Monday",Tailang Swami Jayanti,Hindu,NORMAL
+2020,"January 12, 2020, Sunday",Swami Vivekananda Jayanti,Govt,NORMAL
+2020,"January 12, 2020, Sunday",National Youth Day,Modern,NORMAL
+2020,"January 14, 2020, Tuesday",Lohri,Sikh,NORMAL
+2020,"January 15, 2020, Wednesday",Pongal,Hindu,NORMAL
+2020,"January 15, 2020, Wednesday",Makara Sankranti,Hindu,NORMAL
+2020,"January 17, 2020, Friday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2020,"January 23, 2020, Thursday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2020,"January 26, 2020, Sunday",Republic Day,Govt,NORMAL
+2020,"January 29, 2020, Wednesday",Vasant Panchami,Hindu,NORMAL
+2020,"January 30, 2020, Thursday",Gandhi Punyatithi,Govt,NORMAL
+2020,"February 4, 2020, Tuesday",World Cancer Day,Modern,NORMAL
+2020,"February 9, 2020, Sunday",Guru Ravidas Jayanti,Hindu,NORMAL
+2020,"February 14, 2020, Friday",Valentine's Day,Modern,NORMAL
+2020,"February 18, 2020, Tuesday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2020,"February 19, 2020, Wednesday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2020,"February 21, 2020, Friday",Maha Shivaratri,Hindu,NORMAL
+2020,"February 25, 2020, Tuesday",Ramakrishna Jayanti,Hindu,NORMAL
+2020,"March 8, 2020, Sunday",International Women's Day,Modern,NORMAL
+2020,"March 8, 2020, Sunday",Hazarat Ali's Birthday,Islamic,NORMAL
+2020,"March 9, 2020, Monday",Chhoti Holi,Hindu,NORMAL
+2020,"March 9, 2020, Monday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2020,"March 9, 2020, Monday",Holika Dahan,Hindu,NORMAL
+2020,"March 10, 2020, Tuesday",Holi,Hindu,NORMAL
+2020,"March 12, 2020, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2020,"March 14, 2020, Saturday",Rang Panchami,Hindu,RANG_PANCHAMI
+2020,"March 20, 2020, Friday",Parsi New Year,Hindu,NORMAL
+2020,"March 20, 2020, Friday",Vernal Equinox,Hindu,NORMAL
+2020,"March 23, 2020, Monday",Shaheed Diwas,Govt,NORMAL
+2020,"March 25, 2020, Wednesday",Jhulelal Jayanti,Hindu,NORMAL
+2020,"March 25, 2020, Wednesday",Gudi Padwa,Hindu,NORMAL
+2020,"March 25, 2020, Wednesday",Ugadi,Hindu,NORMAL
+2020,"April 1, 2020, Wednesday",Bank's Holiday,Govt,NORMAL
+2020,"April 2, 2020, Thursday",Rama Navami,Hindu,NORMAL
+2020,"April 6, 2020, Monday",Mahavir Swami Jayanti,Hindu,NORMAL
+2020,"April 10, 2020, Friday",Good Friday,Christian,NORMAL
+2020,"April 12, 2020, Sunday",Easter,Christian,NORMAL
+2020,"April 13, 2020, Monday",Solar New Year,Hindu,NORMAL
+2020,"April 13, 2020, Monday",Baisakhi,Sikh,NORMAL
+2020,"April 14, 2020, Tuesday",Ambedkar Jayanti,Govt,NORMAL
+2020,"April 18, 2020, Saturday",Vallabhacharya Jayanti,Hindu,NORMAL
+2020,"April 22, 2020, Wednesday",Earth Day,Modern,NORMAL
+2020,"April 28, 2020, Tuesday",Surdas Jayanti,Hindu,NORMAL
+2020,"April 28, 2020, Tuesday",Shankaracharya Jayanti,Hindu,NORMAL
+2020,"May 1, 2020, Friday",International Workers' Day,Modern,NORMAL
+2020,"May 3, 2020, Sunday",World Laughter Day,Modern,NORMAL
+2020,"May 7, 2020, Thursday",Buddha Purnima,Hindu,NORMAL
+2020,"May 7, 2020, Thursday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2020,"May 10, 2020, Sunday",Mother's Day,Modern,NORMAL
+2020,"May 22, 2020, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2020,"May 24, 2020, Sunday",Eid al-Fitr,Islamic,NORMAL
+2020,"May 24, 2020, Sunday",Ramadan,Islamic,NORMAL
+2020,"May 25, 2020, Monday",Maharana Pratap Jayanti,Hindu,NORMAL
+2020,"May 31, 2020, Sunday",World No Tobacco Day,Modern,NORMAL
+2020,"June 5, 2020, Friday",Kabirdas Jayanti,Hindu,NORMAL
+2020,"June 5, 2020, Friday",World Environment Day,Modern,NORMAL
+2020,"June 21, 2020, Sunday",International Yoga Day,Modern,NORMAL
+2020,"June 21, 2020, Sunday",Father's Day,Modern,NORMAL
+2020,"June 21, 2020, Sunday",Longest Day of Year,Hindu,NORMAL
+2020,"June 23, 2020, Tuesday",Jagannath Rathyatra,Hindu,NORMAL
+2020,"July 5, 2020, Sunday",Guru Purnima,Hindu,NORMAL
+2020,"July 27, 2020, Monday",Tulsidas Jayanti,Hindu,NORMAL
+2020,"July 31, 2020, Friday",Bakrid,Islamic,NORMAL
+2020,"July 31, 2020, Friday",Eid al-Adha,Islamic,NORMAL
+2020,"August 2, 2020, Sunday",Friendship Day,Modern,NORMAL
+2020,"August 3, 2020, Monday",Rakhi,Hindu,NORMAL
+2020,"August 3, 2020, Monday",Raksha Bandhan,Hindu,NORMAL
+2020,"August 11, 2020, Tuesday",Janmashtami *Smarta,Hindu,NORMAL
+2020,"August 12, 2020, Wednesday",Janmashtami *ISKCON,Hindu,NORMAL
+2020,"August 15, 2020, Saturday",Independence Day,Govt,NORMAL
+2020,"August 20, 2020, Thursday",Islamic New Year,Islamic,NORMAL
+2020,"August 20, 2020, Thursday",Al-Hijra,Islamic,NORMAL
+2020,"August 22, 2020, Saturday",Ganesh Chaturthi,Hindu,NORMAL
+2020,"August 29, 2020, Saturday",Day of Ashura,Islamic,NORMAL
+2020,"August 29, 2020, Saturday",Muharram,Islamic,NORMAL
+2020,"August 31, 2020, Monday",Onam,Hindu,NORMAL
+2020,"September 5, 2020, Saturday",Teachers' Day,Modern,NORMAL
+2020,"September 14, 2020, Monday",Hindi Diwas,Modern,NORMAL
+2020,"September 15, 2020, Tuesday",Visvesvaraya Jayanti,Govt,NORMAL
+2020,"September 15, 2020, Tuesday",Engineer's Day,Modern,NORMAL
+2020,"September 22, 2020, Tuesday",Autumnal Equinox,Hindu,NORMAL
+2020,"October 2, 2020, Friday",Gandhi Jayanti,Govt,NORMAL
+2020,"October 17, 2020, Saturday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2020,"October 24, 2020, Saturday",Durga Ashtami,Hindu,NORMAL
+2020,"October 24, 2020, Saturday",Maha Navami,Hindu,NORMAL
+2020,"October 25, 2020, Sunday",Dussehra,Hindu,NORMAL
+2020,"October 26, 2020, Monday",Madhvacharya Jayanti,Hindu,NORMAL
+2020,"October 29, 2020, Thursday",Milad un-Nabi,Islamic,NORMAL
+2020,"October 29, 2020, Thursday",Eid-e-Milad,Islamic,NORMAL
+2020,"October 31, 2020, Saturday",Valmiki Jayanti,Hindu,NORMAL
+2020,"October 31, 2020, Saturday",Meerabai Jayanti,Hindu,NORMAL
+2020,"November 4, 2020, Wednesday",Karwa Chauth,Hindu,NORMAL
+2020,"November 14, 2020, Saturday",Children's Day,Modern,NORMAL
+2020,"November 14, 2020, Saturday",Nehru Jayanti,Govt,NORMAL
+2020,"November 14, 2020, Saturday",Diwali,Hindu,NORMAL
+2020,"November 14, 2020, Saturday",Lakshmi Puja,Hindu,NORMAL
+2020,"November 14, 2020, Saturday",Narak Chaturdashi,Hindu,NORMAL
+2020,"November 15, 2020, Sunday",Govardhan Puja,Hindu,NORMAL
+2020,"November 16, 2020, Monday",Bhaiya Dooj,Hindu,NORMAL
+2020,"November 20, 2020, Friday",Chhath Puja,Hindu,NORMAL
+2020,"November 30, 2020, Monday",Guru Nanak Jayanti,Hindu,NORMAL
+2020,"December 1, 2020, Tuesday",World AIDS Day,Modern,NORMAL
+2020,"December 21, 2020, Monday",Shortest Day of Year,Hindu,NORMAL
+2020,"December 25, 2020, Friday",Merry Christmas,Christian,NORMAL
+2021,"January 1, 2021, Friday",English New Year,Christian,NORMAL
+2021,"January 12, 2021, Tuesday",Swami Vivekananda Jayanti,Govt,NORMAL
+2021,"January 12, 2021, Tuesday",National Youth Day,Modern,NORMAL
+2021,"January 13, 2021, Wednesday",Lohri,Sikh,NORMAL
+2021,"January 14, 2021, Thursday",Makara Sankranti,Hindu,NORMAL
+2021,"January 14, 2021, Thursday",Pongal,Hindu,NORMAL
+2021,"January 20, 2021, Wednesday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2021,"January 23, 2021, Saturday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2021,"January 24, 2021, Sunday",Tailang Swami Jayanti,Hindu,NORMAL
+2021,"January 26, 2021, Tuesday",Republic Day,Govt,NORMAL
+2021,"January 30, 2021, Saturday",Gandhi Punyatithi,Govt,NORMAL
+2021,"February 4, 2021, Thursday",World Cancer Day,Modern,NORMAL
+2021,"February 4, 2021, Thursday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2021,"February 14, 2021, Sunday",Valentine's Day,Modern,NORMAL
+2021,"February 16, 2021, Tuesday",Vasant Panchami,Hindu,NORMAL
+2021,"February 19, 2021, Friday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2021,"February 25, 2021, Thursday",Hazarat Ali's Birthday,Islamic,NORMAL
+2021,"February 27, 2021, Saturday",Guru Ravidas Jayanti,Hindu,NORMAL
+2021,"March 8, 2021, Monday",International Women's Day,Modern,NORMAL
+2021,"March 8, 2021, Monday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2021,"March 11, 2021, Thursday",Maha Shivaratri,Hindu,NORMAL
+2021,"March 15, 2021, Monday",Ramakrishna Jayanti,Hindu,NORMAL
+2021,"March 20, 2021, Saturday",Parsi New Year,Hindu,NORMAL
+2021,"March 20, 2021, Saturday",Vernal Equinox,Hindu,NORMAL
+2021,"March 23, 2021, Tuesday",Shaheed Diwas,Govt,NORMAL
+2021,"March 28, 2021, Sunday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2021,"March 28, 2021, Sunday",Holika Dahan,Hindu,NORMAL
+2021,"March 28, 2021, Sunday",Chhoti Holi,Hindu,NORMAL
+2021,"March 29, 2021, Monday",Holi,Hindu,NORMAL
+2021,"March 31, 2021, Wednesday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2021,"April 1, 2021, Thursday",Bank's Holiday,Govt,NORMAL
+2021,"April 2, 2021, Friday",Good Friday,Christian,NORMAL
+2021,"April 2, 2021, Friday",Rang Panchami,Hindu,RANG_PANCHAMI
+2021,"April 4, 2021, Sunday",Easter,Christian,NORMAL
+2021,"April 13, 2021, Tuesday",Jhulelal Jayanti,Hindu,NORMAL
+2021,"April 13, 2021, Tuesday",Gudi Padwa,Hindu,NORMAL
+2021,"April 13, 2021, Tuesday",Ugadi,Hindu,NORMAL
+2021,"April 14, 2021, Wednesday",Baisakhi,Sikh,NORMAL
+2021,"April 14, 2021, Wednesday",Ambedkar Jayanti,Govt,NORMAL
+2021,"April 14, 2021, Wednesday",Solar New Year,Hindu,NORMAL
+2021,"April 21, 2021, Wednesday",Rama Navami,Hindu,NORMAL
+2021,"April 22, 2021, Thursday",Earth Day,Modern,NORMAL
+2021,"April 25, 2021, Sunday",Mahavir Swami Jayanti,Hindu,NORMAL
+2021,"May 1, 2021, Saturday",International Workers' Day,Modern,NORMAL
+2021,"May 2, 2021, Sunday",World Laughter Day,Modern,NORMAL
+2021,"May 7, 2021, Friday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2021,"May 7, 2021, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2021,"May 7, 2021, Friday",Vallabhacharya Jayanti,Hindu,NORMAL
+2021,"May 9, 2021, Sunday",Mother's Day,Modern,NORMAL
+2021,"May 13, 2021, Thursday",Ramadan,Islamic,NORMAL
+2021,"May 13, 2021, Thursday",Eid al-Fitr,Islamic,NORMAL
+2021,"May 17, 2021, Monday",Surdas Jayanti,Hindu,NORMAL
+2021,"May 17, 2021, Monday",Shankaracharya Jayanti,Hindu,NORMAL
+2021,"May 26, 2021, Wednesday",Buddha Purnima,Hindu,NORMAL
+2021,"May 31, 2021, Monday",World No Tobacco Day,Modern,NORMAL
+2021,"June 5, 2021, Saturday",World Environment Day,Modern,NORMAL
+2021,"June 13, 2021, Sunday",Maharana Pratap Jayanti,Hindu,NORMAL
+2021,"June 20, 2021, Sunday",Father's Day,Modern,NORMAL
+2021,"June 21, 2021, Monday",International Yoga Day,Modern,NORMAL
+2021,"June 21, 2021, Monday",Longest Day of Year,Hindu,NORMAL
+2021,"June 24, 2021, Thursday",Kabirdas Jayanti,Hindu,NORMAL
+2021,"July 12, 2021, Monday",Jagannath Rathyatra,Hindu,NORMAL
+2021,"July 20, 2021, Tuesday",Eid al-Adha,Islamic,NORMAL
+2021,"July 20, 2021, Tuesday",Bakrid,Islamic,NORMAL
+2021,"July 24, 2021, Saturday",Guru Purnima,Hindu,NORMAL
+2021,"August 1, 2021, Sunday",Friendship Day,Modern,NORMAL
+2021,"August 10, 2021, Tuesday",Islamic New Year,Islamic,NORMAL
+2021,"August 10, 2021, Tuesday",Al-Hijra,Islamic,NORMAL
+2021,"August 15, 2021, Sunday",Independence Day,Govt,NORMAL
+2021,"August 15, 2021, Sunday",Tulsidas Jayanti,Hindu,NORMAL
+2021,"August 19, 2021, Thursday",Muharram,Islamic,NORMAL
+2021,"August 19, 2021, Thursday",Day of Ashura,Islamic,NORMAL
+2021,"August 21, 2021, Saturday",Onam,Hindu,NORMAL
+2021,"August 22, 2021, Sunday",Rakhi,Hindu,NORMAL
+2021,"August 22, 2021, Sunday",Raksha Bandhan,Hindu,NORMAL
+2021,"August 30, 2021, Monday",Krishna Janmashtami,Hindu,NORMAL
+2021,"September 5, 2021, Sunday",Teachers' Day,Modern,NORMAL
+2021,"September 10, 2021, Friday",Ganesh Chaturthi,Hindu,NORMAL
+2021,"September 14, 2021, Tuesday",Hindi Diwas,Modern,NORMAL
+2021,"September 15, 2021, Wednesday",Engineer's Day,Modern,NORMAL
+2021,"September 15, 2021, Wednesday",Visvesvaraya Jayanti,Govt,NORMAL
+2021,"September 23, 2021, Thursday",Autumnal Equinox,Hindu,NORMAL
+2021,"October 2, 2021, Saturday",Gandhi Jayanti,Govt,NORMAL
+2021,"October 7, 2021, Thursday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2021,"October 13, 2021, Wednesday",Durga Ashtami,Hindu,NORMAL
+2021,"October 14, 2021, Thursday",Maha Navami,Hindu,NORMAL
+2021,"October 15, 2021, Friday",Dussehra,Hindu,NORMAL
+2021,"October 15, 2021, Friday",Madhvacharya Jayanti,Hindu,NORMAL
+2021,"October 19, 2021, Tuesday",Eid-e-Milad,Islamic,NORMAL
+2021,"October 19, 2021, Tuesday",Milad un-Nabi,Islamic,NORMAL
+2021,"October 20, 2021, Wednesday",Meerabai Jayanti,Hindu,NORMAL
+2021,"October 20, 2021, Wednesday",Valmiki Jayanti,Hindu,NORMAL
+2021,"October 24, 2021, Sunday",Karwa Chauth,Hindu,NORMAL
+2021,"November 4, 2021, Thursday",Lakshmi Puja,Hindu,NORMAL
+2021,"November 4, 2021, Thursday",Diwali,Hindu,NORMAL
+2021,"November 4, 2021, Thursday",Narak Chaturdashi,Hindu,NORMAL
+2021,"November 5, 2021, Friday",Govardhan Puja,Hindu,NORMAL
+2021,"November 6, 2021, Saturday",Bhaiya Dooj,Hindu,NORMAL
+2021,"November 10, 2021, Wednesday",Chhath Puja,Hindu,NORMAL
+2021,"November 14, 2021, Sunday",Children's Day,Modern,NORMAL
+2021,"November 14, 2021, Sunday",Nehru Jayanti,Govt,NORMAL
+2021,"November 19, 2021, Friday",Guru Nanak Jayanti,Hindu,NORMAL
+2021,"December 1, 2021, Wednesday",World AIDS Day,Modern,NORMAL
+2021,"December 21, 2021, Tuesday",Shortest Day of Year,Hindu,NORMAL
+2021,"December 25, 2021, Saturday",Merry Christmas,Christian,NORMAL
+2022,"January 1, 2022, Saturday",English New Year,Christian,NORMAL
+2022,"January 9, 2022, Sunday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2022,"January 12, 2022, Wednesday",Swami Vivekananda Jayanti,Govt,NORMAL
+2022,"January 12, 2022, Wednesday",National Youth Day,Modern,NORMAL
+2022,"January 13, 2022, Thursday",Tailang Swami Jayanti,Hindu,NORMAL
+2022,"January 13, 2022, Thursday",Lohri,Sikh,NORMAL
+2022,"January 14, 2022, Friday",Makara Sankranti,Hindu,NORMAL
+2022,"January 14, 2022, Friday",Pongal,Hindu,NORMAL
+2022,"January 23, 2022, Sunday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2022,"January 25, 2022, Tuesday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2022,"January 26, 2022, Wednesday",Republic Day,Govt,NORMAL
+2022,"January 30, 2022, Sunday",Gandhi Punyatithi,Govt,NORMAL
+2022,"February 4, 2022, Friday",World Cancer Day,Modern,NORMAL
+2022,"February 5, 2022, Saturday",Vasant Panchami,Hindu,NORMAL
+2022,"February 14, 2022, Monday",Valentine's Day,Modern,NORMAL
+2022,"February 15, 2022, Tuesday",Hazarat Ali's Birthday,Islamic,NORMAL
+2022,"February 16, 2022, Wednesday",Guru Ravidas Jayanti,Hindu,NORMAL
+2022,"February 19, 2022, Saturday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2022,"February 26, 2022, Saturday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2022,"March 1, 2022, Tuesday",Maha Shivaratri,Hindu,NORMAL
+2022,"March 4, 2022, Friday",Ramakrishna Jayanti,Hindu,NORMAL
+2022,"March 8, 2022, Tuesday",International Women's Day,Modern,NORMAL
+2022,"March 17, 2022, Thursday",Chhoti Holi,Hindu,NORMAL
+2022,"March 17, 2022, Thursday",Holika Dahan,Hindu,NORMAL
+2022,"March 18, 2022, Friday",Holi,Hindu,NORMAL
+2022,"March 18, 2022, Friday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2022,"March 20, 2022, Sunday",Vernal Equinox,Hindu,NORMAL
+2022,"March 20, 2022, Sunday",Parsi New Year,Hindu,NORMAL
+2022,"March 21, 2022, Monday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2022,"March 22, 2022, Tuesday",Rang Panchami,Hindu,RANG_PANCHAMI
+2022,"March 23, 2022, Wednesday",Shaheed Diwas,Govt,NORMAL
+2022,"April 1, 2022, Friday",Bank's Holiday,Govt,NORMAL
+2022,"April 2, 2022, Saturday",Ugadi,Hindu,NORMAL
+2022,"April 2, 2022, Saturday",Gudi Padwa,Hindu,NORMAL
+2022,"April 2, 2022, Saturday",Jhulelal Jayanti,Hindu,NORMAL
+2022,"April 10, 2022, Sunday",Rama Navami,Hindu,NORMAL
+2022,"April 14, 2022, Thursday",Mahavir Swami Jayanti,Hindu,NORMAL
+2022,"April 14, 2022, Thursday",Ambedkar Jayanti,Govt,NORMAL
+2022,"April 14, 2022, Thursday",Baisakhi,Sikh,NORMAL
+2022,"April 14, 2022, Thursday",Solar New Year,Hindu,NORMAL
+2022,"April 15, 2022, Friday",Good Friday,Christian,NORMAL
+2022,"April 17, 2022, Sunday",Easter,Christian,NORMAL
+2022,"April 22, 2022, Friday",Earth Day,Modern,NORMAL
+2022,"April 26, 2022, Tuesday",Vallabhacharya Jayanti,Hindu,NORMAL
+2022,"April 29, 2022, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2022,"May 1, 2022, Sunday",World Laughter Day,Modern,NORMAL
+2022,"May 1, 2022, Sunday",International Workers' Day,Modern,NORMAL
+2022,"May 3, 2022, Tuesday",Ramadan,Islamic,NORMAL
+2022,"May 3, 2022, Tuesday",Eid al-Fitr,Islamic,NORMAL
+2022,"May 6, 2022, Friday",Shankaracharya Jayanti,Hindu,NORMAL
+2022,"May 6, 2022, Friday",Surdas Jayanti,Hindu,NORMAL
+2022,"May 7, 2022, Saturday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2022,"May 8, 2022, Sunday",Mother's Day,Modern,NORMAL
+2022,"May 16, 2022, Monday",Buddha Purnima,Hindu,NORMAL
+2022,"May 31, 2022, Tuesday",World No Tobacco Day,Modern,NORMAL
+2022,"June 2, 2022, Thursday",Maharana Pratap Jayanti,Hindu,NORMAL
+2022,"June 5, 2022, Sunday",World Environment Day,Modern,NORMAL
+2022,"June 14, 2022, Tuesday",Kabirdas Jayanti,Hindu,NORMAL
+2022,"June 19, 2022, Sunday",Father's Day,Modern,NORMAL
+2022,"June 21, 2022, Tuesday",Longest Day of Year,Hindu,NORMAL
+2022,"June 21, 2022, Tuesday",International Yoga Day,Modern,NORMAL
+2022,"July 1, 2022, Friday",Jagannath Rathyatra,Hindu,NORMAL
+2022,"July 10, 2022, Sunday",Bakrid,Islamic,NORMAL
+2022,"July 10, 2022, Sunday",Eid al-Adha,Islamic,NORMAL
+2022,"July 13, 2022, Wednesday",Guru Purnima,Hindu,NORMAL
+2022,"July 30, 2022, Saturday",Al-Hijra,Islamic,NORMAL
+2022,"July 30, 2022, Saturday",Islamic New Year,Islamic,NORMAL
+2022,"August 4, 2022, Thursday",Tulsidas Jayanti,Hindu,NORMAL
+2022,"August 7, 2022, Sunday",Friendship Day,Modern,NORMAL
+2022,"August 8, 2022, Monday",Day of Ashura,Islamic,NORMAL
+2022,"August 8, 2022, Monday",Muharram,Islamic,NORMAL
+2022,"August 11, 2022, Thursday",Rakhi,Hindu,NORMAL
+2022,"August 11, 2022, Thursday",Raksha Bandhan,Hindu,NORMAL
+2022,"August 15, 2022, Monday",Independence Day,Govt,NORMAL
+2022,"August 18, 2022, Thursday",Janmashtami *Smarta,Hindu,NORMAL
+2022,"August 19, 2022, Friday",Janmashtami *ISKCON,Hindu,NORMAL
+2022,"August 31, 2022, Wednesday",Ganesh Chaturthi,Hindu,NORMAL
+2022,"September 5, 2022, Monday",Teachers' Day,Modern,NORMAL
+2022,"September 8, 2022, Thursday",Onam,Hindu,NORMAL
+2022,"September 14, 2022, Wednesday",Hindi Diwas,Modern,NORMAL
+2022,"September 15, 2022, Thursday",Engineer's Day,Modern,NORMAL
+2022,"September 15, 2022, Thursday",Visvesvaraya Jayanti,Govt,NORMAL
+2022,"September 23, 2022, Friday",Autumnal Equinox,Hindu,NORMAL
+2022,"September 26, 2022, Monday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2022,"October 2, 2022, Sunday",Gandhi Jayanti,Govt,NORMAL
+2022,"October 3, 2022, Monday",Durga Ashtami,Hindu,NORMAL
+2022,"October 4, 2022, Tuesday",Maha Navami,Hindu,NORMAL
+2022,"October 5, 2022, Wednesday",Dussehra,Hindu,NORMAL
+2022,"October 5, 2022, Wednesday",Madhvacharya Jayanti,Hindu,NORMAL
+2022,"October 8, 2022, Saturday",Milad un-Nabi,Islamic,NORMAL
+2022,"October 8, 2022, Saturday",Eid-e-Milad,Islamic,NORMAL
+2022,"October 9, 2022, Sunday",Valmiki Jayanti,Hindu,NORMAL
+2022,"October 9, 2022, Sunday",Meerabai Jayanti,Hindu,NORMAL
+2022,"October 13, 2022, Thursday",Karwa Chauth,Hindu,NORMAL
+2022,"October 24, 2022, Monday",Lakshmi Puja,Hindu,NORMAL
+2022,"October 24, 2022, Monday",Narak Chaturdashi,Hindu,NORMAL
+2022,"October 24, 2022, Monday",Diwali,Hindu,NORMAL
+2022,"October 26, 2022, Wednesday",Bhaiya Dooj,Hindu,NORMAL
+2022,"October 26, 2022, Wednesday",Govardhan Puja,Hindu,NORMAL
+2022,"October 30, 2022, Sunday",Chhath Puja,Hindu,NORMAL
+2022,"November 8, 2022, Tuesday",Guru Nanak Jayanti,Hindu,NORMAL
+2022,"November 14, 2022, Monday",Children's Day,Modern,NORMAL
+2022,"November 14, 2022, Monday",Nehru Jayanti,Govt,NORMAL
+2022,"December 1, 2022, Thursday",World AIDS Day,Modern,NORMAL
+2022,"December 22, 2022, Thursday",Shortest Day of Year,Hindu,NORMAL
+2022,"December 25, 2022, Sunday",Merry Christmas,Christian,NORMAL
+2022,"December 29, 2022, Thursday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2023,"January 1, 2023, Sunday",English New Year,Christian,NORMAL
+2023,"January 2, 2023, Monday",Tailang Swami Jayanti,Hindu,NORMAL
+2023,"January 12, 2023, Thursday",National Youth Day,Modern,NORMAL
+2023,"January 12, 2023, Thursday",Swami Vivekananda Jayanti,Govt,NORMAL
+2023,"January 14, 2023, Saturday",Lohri,Sikh,NORMAL
+2023,"January 14, 2023, Saturday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2023,"January 15, 2023, Sunday",Makara Sankranti,Hindu,NORMAL
+2023,"January 15, 2023, Sunday",Pongal,Hindu,NORMAL
+2023,"January 23, 2023, Monday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2023,"January 26, 2023, Thursday",Republic Day,Govt,NORMAL
+2023,"January 26, 2023, Thursday",Vasant Panchami,Hindu,NORMAL
+2023,"January 30, 2023, Monday",Gandhi Punyatithi,Govt,NORMAL
+2023,"February 4, 2023, Saturday",World Cancer Day,Modern,NORMAL
+2023,"February 4, 2023, Saturday",Hazarat Ali's Birthday,Islamic,NORMAL
+2023,"February 5, 2023, Sunday",Guru Ravidas Jayanti,Hindu,NORMAL
+2023,"February 14, 2023, Tuesday",Valentine's Day,Modern,NORMAL
+2023,"February 15, 2023, Wednesday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2023,"February 18, 2023, Saturday",Maha Shivaratri,Hindu,NORMAL
+2023,"February 19, 2023, Sunday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2023,"February 21, 2023, Tuesday",Ramakrishna Jayanti,Hindu,NORMAL
+2023,"March 7, 2023, Tuesday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2023,"March 7, 2023, Tuesday",Holika Dahan,Hindu,NORMAL
+2023,"March 7, 2023, Tuesday",Chhoti Holi,Hindu,NORMAL
+2023,"March 8, 2023, Wednesday",Holi,Hindu,NORMAL
+2023,"March 8, 2023, Wednesday",International Women's Day,Modern,NORMAL
+2023,"March 10, 2023, Friday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2023,"March 12, 2023, Sunday",Rang Panchami,Hindu,RANG_PANCHAMI
+2023,"March 21, 2023, Tuesday",Vernal Equinox,Hindu,NORMAL
+2023,"March 21, 2023, Tuesday",Parsi New Year,Hindu,NORMAL
+2023,"March 22, 2023, Wednesday",Jhulelal Jayanti,Hindu,NORMAL
+2023,"March 22, 2023, Wednesday",Gudi Padwa,Hindu,NORMAL
+2023,"March 22, 2023, Wednesday",Ugadi,Hindu,NORMAL
+2023,"March 23, 2023, Thursday",Shaheed Diwas,Govt,NORMAL
+2023,"March 30, 2023, Thursday",Rama Navami,Hindu,NORMAL
+2023,"April 1, 2023, Saturday",Bank's Holiday,Govt,NORMAL
+2023,"April 4, 2023, Tuesday",Mahavir Swami Jayanti,Hindu,NORMAL
+2023,"April 7, 2023, Friday",Good Friday,Christian,NORMAL
+2023,"April 9, 2023, Sunday",Easter,Christian,NORMAL
+2023,"April 14, 2023, Friday",Ambedkar Jayanti,Govt,NORMAL
+2023,"April 14, 2023, Friday",Solar New Year,Hindu,NORMAL
+2023,"April 14, 2023, Friday",Baisakhi,Sikh,NORMAL
+2023,"April 16, 2023, Sunday",Vallabhacharya Jayanti,Hindu,NORMAL
+2023,"April 21, 2023, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2023,"April 22, 2023, Saturday",Eid al-Fitr,Islamic,NORMAL
+2023,"April 22, 2023, Saturday",Ramadan,Islamic,NORMAL
+2023,"April 22, 2023, Saturday",Earth Day,Modern,NORMAL
+2023,"April 25, 2023, Tuesday",Shankaracharya Jayanti,Hindu,NORMAL
+2023,"April 25, 2023, Tuesday",Surdas Jayanti,Hindu,NORMAL
+2023,"May 1, 2023, Monday",International Workers' Day,Modern,NORMAL
+2023,"May 5, 2023, Friday",Buddha Purnima,Hindu,NORMAL
+2023,"May 7, 2023, Sunday",World Laughter Day,Modern,NORMAL
+2023,"May 7, 2023, Sunday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2023,"May 14, 2023, Sunday",Mother's Day,Modern,NORMAL
+2023,"May 22, 2023, Monday",Maharana Pratap Jayanti,Hindu,NORMAL
+2023,"May 31, 2023, Wednesday",World No Tobacco Day,Modern,NORMAL
+2023,"June 4, 2023, Sunday",Kabirdas Jayanti,Hindu,NORMAL
+2023,"June 5, 2023, Monday",World Environment Day,Modern,NORMAL
+2023,"June 18, 2023, Sunday",Father's Day,Modern,NORMAL
+2023,"June 20, 2023, Tuesday",Jagannath Rathyatra,Hindu,NORMAL
+2023,"June 21, 2023, Wednesday",International Yoga Day,Modern,NORMAL
+2023,"June 21, 2023, Wednesday",Longest Day of Year,Hindu,NORMAL
+2023,"June 29, 2023, Thursday",Bakrid,Islamic,NORMAL
+2023,"June 29, 2023, Thursday",Eid al-Adha,Islamic,NORMAL
+2023,"July 3, 2023, Monday",Guru Purnima,Hindu,NORMAL
+2023,"July 19, 2023, Wednesday",Islamic New Year,Islamic,NORMAL
+2023,"July 19, 2023, Wednesday",Al-Hijra,Islamic,NORMAL
+2023,"July 28, 2023, Friday",Day of Ashura,Islamic,NORMAL
+2023,"July 28, 2023, Friday",Muharram,Islamic,NORMAL
+2023,"August 6, 2023, Sunday",Friendship Day,Modern,NORMAL
+2023,"August 15, 2023, Tuesday",Independence Day,Govt,NORMAL
+2023,"August 23, 2023, Wednesday",Tulsidas Jayanti,Hindu,NORMAL
+2023,"August 29, 2023, Tuesday",Onam,Hindu,NORMAL
+2023,"August 30, 2023, Wednesday",Rakhi,Hindu,NORMAL
+2023,"August 30, 2023, Wednesday",Raksha Bandhan,Hindu,NORMAL
+2023,"September 5, 2023, Tuesday",Teachers' Day,Modern,NORMAL
+2023,"September 6, 2023, Wednesday",Janmashtami *Smarta,Hindu,NORMAL
+2023,"September 7, 2023, Thursday",Janmashtami *ISKCON,Hindu,NORMAL
+2023,"September 14, 2023, Thursday",Hindi Diwas,Modern,NORMAL
+2023,"September 15, 2023, Friday",Engineer's Day,Modern,NORMAL
+2023,"September 15, 2023, Friday",Visvesvaraya Jayanti,Govt,NORMAL
+2023,"September 19, 2023, Tuesday",Ganesh Chaturthi,Hindu,NORMAL
+2023,"September 23, 2023, Saturday",Autumnal Equinox,Hindu,NORMAL
+2023,"September 27, 2023, Wednesday",Eid-e-Milad,Islamic,NORMAL
+2023,"September 27, 2023, Wednesday",Milad un-Nabi,Islamic,NORMAL
+2023,"October 2, 2023, Monday",Gandhi Jayanti,Govt,NORMAL
+2023,"October 15, 2023, Sunday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2023,"October 22, 2023, Sunday",Durga Ashtami,Hindu,NORMAL
+2023,"October 23, 2023, Monday",Maha Navami,Hindu,NORMAL
+2023,"October 24, 2023, Tuesday",Dussehra,Hindu,NORMAL
+2023,"October 24, 2023, Tuesday",Madhvacharya Jayanti,Hindu,NORMAL
+2023,"October 28, 2023, Saturday",Valmiki Jayanti,Hindu,NORMAL
+2023,"October 28, 2023, Saturday",Meerabai Jayanti,Hindu,NORMAL
+2023,"November 1, 2023, Wednesday",Karwa Chauth,Hindu,NORMAL
+2023,"November 12, 2023, Sunday",Diwali,Hindu,NORMAL
+2023,"November 12, 2023, Sunday",Narak Chaturdashi,Hindu,NORMAL
+2023,"November 12, 2023, Sunday",Lakshmi Puja,Hindu,NORMAL
+2023,"November 14, 2023, Tuesday",Govardhan Puja,Hindu,NORMAL
+2023,"November 14, 2023, Tuesday",Children's Day,Modern,NORMAL
+2023,"November 14, 2023, Tuesday",Nehru Jayanti,Govt,NORMAL
+2023,"November 14, 2023, Tuesday",Bhaiya Dooj,Hindu,NORMAL
+2023,"November 19, 2023, Sunday",Chhath Puja,Hindu,NORMAL
+2023,"November 27, 2023, Monday",Guru Nanak Jayanti,Hindu,NORMAL
+2023,"December 1, 2023, Friday",World AIDS Day,Modern,NORMAL
+2023,"December 22, 2023, Friday",Shortest Day of Year,Hindu,NORMAL
+2023,"December 25, 2023, Monday",Merry Christmas,Christian,NORMAL
+2024,"January 1, 2024, Monday",English New Year,Christian,NORMAL
+2024,"January 12, 2024, Friday",National Youth Day,Modern,NORMAL
+2024,"January 12, 2024, Friday",Swami Vivekananda Jayanti,Govt,NORMAL
+2024,"January 14, 2024, Sunday",Lohri,Sikh,NORMAL
+2024,"January 15, 2024, Monday",Makara Sankranti,Hindu,NORMAL
+2024,"January 15, 2024, Monday",Pongal,Hindu,NORMAL
+2024,"January 17, 2024, Wednesday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2024,"January 21, 2024, Sunday",Tailang Swami Jayanti,Hindu,NORMAL
+2024,"January 23, 2024, Tuesday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2024,"January 24, 2024, Wednesday",Hazarat Ali's Birthday,Islamic,NORMAL
+2024,"January 26, 2024, Friday",Republic Day,Govt,NORMAL
+2024,"January 30, 2024, Tuesday",Gandhi Punyatithi,Govt,NORMAL
+2024,"February 2, 2024, Friday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2024,"February 4, 2024, Sunday",World Cancer Day,Modern,NORMAL
+2024,"February 14, 2024, Wednesday",Vasant Panchami,Hindu,NORMAL
+2024,"February 14, 2024, Wednesday",Valentine's Day,Modern,NORMAL
+2024,"February 19, 2024, Monday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2024,"February 24, 2024, Saturday",Guru Ravidas Jayanti,Hindu,NORMAL
+2024,"March 5, 2024, Tuesday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2024,"March 8, 2024, Friday",International Women's Day,Modern,NORMAL
+2024,"March 8, 2024, Friday",Maha Shivaratri,Hindu,NORMAL
+2024,"March 12, 2024, Tuesday",Ramakrishna Jayanti,Hindu,NORMAL
+2024,"March 20, 2024, Wednesday",Vernal Equinox,Hindu,NORMAL
+2024,"March 20, 2024, Wednesday",Parsi New Year,Hindu,NORMAL
+2024,"March 23, 2024, Saturday",Shaheed Diwas,Govt,NORMAL
+2024,"March 24, 2024, Sunday",Chhoti Holi,Hindu,NORMAL
+2024,"March 24, 2024, Sunday",Holika Dahan,Hindu,NORMAL
+2024,"March 25, 2024, Monday",Holi,Hindu,NORMAL
+2024,"March 25, 2024, Monday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2024,"March 28, 2024, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2024,"March 29, 2024, Friday",Good Friday,Christian,NORMAL
+2024,"March 30, 2024, Saturday",Rang Panchami,Hindu,RANG_PANCHAMI
+2024,"March 31, 2024, Sunday",Easter,Christian,NORMAL
+2024,"April 1, 2024, Monday",Bank's Holiday,Govt,NORMAL
+2024,"April 5, 2024, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2024,"April 9, 2024, Tuesday",Jhulelal Jayanti,Hindu,NORMAL
+2024,"April 9, 2024, Tuesday",Ugadi,Hindu,NORMAL
+2024,"April 9, 2024, Tuesday",Gudi Padwa,Hindu,NORMAL
+2024,"April 10, 2024, Wednesday",Eid al-Fitr,Islamic,NORMAL
+2024,"April 10, 2024, Wednesday",Ramadan,Islamic,NORMAL
+2024,"April 13, 2024, Saturday",Baisakhi,Sikh,NORMAL
+2024,"April 13, 2024, Saturday",Solar New Year,Hindu,NORMAL
+2024,"April 14, 2024, Sunday",Ambedkar Jayanti,Govt,NORMAL
+2024,"April 17, 2024, Wednesday",Rama Navami,Hindu,NORMAL
+2024,"April 21, 2024, Sunday",Mahavir Swami Jayanti,Hindu,NORMAL
+2024,"April 22, 2024, Monday",Earth Day,Modern,NORMAL
+2024,"May 1, 2024, Wednesday",International Workers' Day,Modern,NORMAL
+2024,"May 4, 2024, Saturday",Vallabhacharya Jayanti,Hindu,NORMAL
+2024,"May 5, 2024, Sunday",World Laughter Day,Modern,NORMAL
+2024,"May 7, 2024, Tuesday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2024,"May 12, 2024, Sunday",Shankaracharya Jayanti,Hindu,NORMAL
+2024,"May 12, 2024, Sunday",Mother's Day,Modern,NORMAL
+2024,"May 12, 2024, Sunday",Surdas Jayanti,Hindu,NORMAL
+2024,"May 23, 2024, Thursday",Buddha Purnima,Hindu,NORMAL
+2024,"May 31, 2024, Friday",World No Tobacco Day,Modern,NORMAL
+2024,"June 5, 2024, Wednesday",World Environment Day,Modern,NORMAL
+2024,"June 9, 2024, Sunday",Maharana Pratap Jayanti,Hindu,NORMAL
+2024,"June 16, 2024, Sunday",Father's Day,Modern,NORMAL
+2024,"June 17, 2024, Monday",Eid al-Adha,Islamic,NORMAL
+2024,"June 17, 2024, Monday",Bakrid,Islamic,NORMAL
+2024,"June 21, 2024, Friday",International Yoga Day,Modern,NORMAL
+2024,"June 21, 2024, Friday",Longest Day of Year,Hindu,NORMAL
+2024,"June 22, 2024, Saturday",Kabirdas Jayanti,Hindu,NORMAL
+2024,"July 7, 2024, Sunday",Jagannath Rathyatra,Hindu,NORMAL
+2024,"July 8, 2024, Monday",Islamic New Year,Islamic,NORMAL
+2024,"July 8, 2024, Monday",Al-Hijra,Islamic,NORMAL
+2024,"July 17, 2024, Wednesday",Muharram,Islamic,NORMAL
+2024,"July 17, 2024, Wednesday",Day of Ashura,Islamic,NORMAL
+2024,"July 21, 2024, Sunday",Guru Purnima,Hindu,NORMAL
+2024,"August 4, 2024, Sunday",Friendship Day,Modern,NORMAL
+2024,"August 11, 2024, Sunday",Tulsidas Jayanti,Hindu,NORMAL
+2024,"August 15, 2024, Thursday",Independence Day,Govt,NORMAL
+2024,"August 19, 2024, Monday",Raksha Bandhan,Hindu,NORMAL
+2024,"August 19, 2024, Monday",Rakhi,Hindu,NORMAL
+2024,"August 26, 2024, Monday",Krishna Janmashtami,Hindu,NORMAL
+2024,"September 5, 2024, Thursday",Teachers' Day,Modern,NORMAL
+2024,"September 7, 2024, Saturday",Ganesh Chaturthi,Hindu,NORMAL
+2024,"September 14, 2024, Saturday",Hindi Diwas,Modern,NORMAL
+2024,"September 15, 2024, Sunday",Engineer's Day,Modern,NORMAL
+2024,"September 15, 2024, Sunday",Visvesvaraya Jayanti,Govt,NORMAL
+2024,"September 15, 2024, Sunday",Onam,Hindu,NORMAL
+2024,"September 16, 2024, Monday",Eid-e-Milad,Islamic,NORMAL
+2024,"September 16, 2024, Monday",Milad un-Nabi,Islamic,NORMAL
+2024,"September 22, 2024, Sunday",Autumnal Equinox,Hindu,NORMAL
+2024,"October 2, 2024, Wednesday",Gandhi Jayanti,Govt,NORMAL
+2024,"October 3, 2024, Thursday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2024,"October 11, 2024, Friday",Maha Navami,Hindu,NORMAL
+2024,"October 11, 2024, Friday",Durga Ashtami,Hindu,NORMAL
+2024,"October 12, 2024, Saturday",Dussehra,Hindu,NORMAL
+2024,"October 13, 2024, Sunday",Madhvacharya Jayanti,Hindu,NORMAL
+2024,"October 17, 2024, Thursday",Valmiki Jayanti,Hindu,NORMAL
+2024,"October 17, 2024, Thursday",Meerabai Jayanti,Hindu,NORMAL
+2024,"October 20, 2024, Sunday",Karwa Chauth,Hindu,NORMAL
+2024,"October 31, 2024, Thursday",Narak Chaturdashi,Hindu,NORMAL
+2024,"November 1, 2024, Friday",Lakshmi Puja,Hindu,NORMAL
+2024,"November 1, 2024, Friday",Diwali,Hindu,NORMAL
+2024,"November 2, 2024, Saturday",Govardhan Puja,Hindu,NORMAL
+2024,"November 3, 2024, Sunday",Bhaiya Dooj,Hindu,NORMAL
+2024,"November 7, 2024, Thursday",Chhath Puja,Hindu,NORMAL
+2024,"November 14, 2024, Thursday",Children's Day,Modern,NORMAL
+2024,"November 14, 2024, Thursday",Nehru Jayanti,Govt,NORMAL
+2024,"November 15, 2024, Friday",Guru Nanak Jayanti,Hindu,NORMAL
+2024,"December 1, 2024, Sunday",World AIDS Day,Modern,NORMAL
+2024,"December 21, 2024, Saturday",Shortest Day of Year,Hindu,NORMAL
+2024,"December 25, 2024, Wednesday",Merry Christmas,Christian,NORMAL
+2025,"January 1, 2025, Wednesday",English New Year,Christian,NORMAL
+2025,"January 6, 2025, Monday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2025,"January 10, 2025, Friday",Tailang Swami Jayanti,Hindu,NORMAL
+2025,"January 12, 2025, Sunday",Swami Vivekananda Jayanti,Govt,NORMAL
+2025,"January 12, 2025, Sunday",National Youth Day,Modern,NORMAL
+2025,"January 13, 2025, Monday",Lohri,Sikh,NORMAL
+2025,"January 13, 2025, Monday",Hazarat Ali's Birthday,Islamic,NORMAL
+2025,"January 14, 2025, Tuesday",Makara Sankranti,Hindu,NORMAL
+2025,"January 14, 2025, Tuesday",Pongal,Hindu,NORMAL
+2025,"January 21, 2025, Tuesday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2025,"January 23, 2025, Thursday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2025,"January 26, 2025, Sunday",Republic Day,Govt,NORMAL
+2025,"January 30, 2025, Thursday",Gandhi Punyatithi,Govt,NORMAL
+2025,"February 2, 2025, Sunday",Vasant Panchami,Hindu,NORMAL
+2025,"February 4, 2025, Tuesday",World Cancer Day,Modern,NORMAL
+2025,"February 12, 2025, Wednesday",Guru Ravidas Jayanti,Hindu,NORMAL
+2025,"February 14, 2025, Friday",Valentine's Day,Modern,NORMAL
+2025,"February 19, 2025, Wednesday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2025,"February 23, 2025, Sunday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2025,"February 26, 2025, Wednesday",Maha Shivaratri,Hindu,NORMAL
+2025,"March 1, 2025, Saturday",Ramakrishna Jayanti,Hindu,NORMAL
+2025,"March 8, 2025, Saturday",International Women's Day,Modern,NORMAL
+2025,"March 13, 2025, Thursday",Chhoti Holi,Hindu,NORMAL
+2025,"March 13, 2025, Thursday",Holika Dahan,Hindu,NORMAL
+2025,"March 14, 2025, Friday",Holi,Hindu,NORMAL
+2025,"March 14, 2025, Friday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2025,"March 17, 2025, Monday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2025,"March 19, 2025, Wednesday",Rang Panchami,Hindu,RANG_PANCHAMI
+2025,"March 20, 2025, Thursday",Parsi New Year,Hindu,NORMAL
+2025,"March 20, 2025, Thursday",Vernal Equinox,Hindu,NORMAL
+2025,"March 23, 2025, Sunday",Shaheed Diwas,Govt,NORMAL
+2025,"March 28, 2025, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2025,"March 30, 2025, Sunday",Jhulelal Jayanti,Hindu,NORMAL
+2025,"March 30, 2025, Sunday",Gudi Padwa,Hindu,NORMAL
+2025,"March 30, 2025, Sunday",Ugadi,Hindu,NORMAL
+2025,"March 31, 2025, Monday",Eid al-Fitr,Islamic,NORMAL
+2025,"March 31, 2025, Monday",Ramadan,Islamic,NORMAL
+2025,"April 1, 2025, Tuesday",Bank's Holiday,Govt,NORMAL
+2025,"April 6, 2025, Sunday",Rama Navami,Hindu,NORMAL
+2025,"April 10, 2025, Thursday",Mahavir Swami Jayanti,Hindu,NORMAL
+2025,"April 14, 2025, Monday",Ambedkar Jayanti,Govt,NORMAL
+2025,"April 14, 2025, Monday",Solar New Year,Hindu,NORMAL
+2025,"April 14, 2025, Monday",Baisakhi,Sikh,NORMAL
+2025,"April 18, 2025, Friday",Good Friday,Christian,NORMAL
+2025,"April 20, 2025, Sunday",Easter,Christian,NORMAL
+2025,"April 22, 2025, Tuesday",Earth Day,Modern,NORMAL
+2025,"April 24, 2025, Thursday",Vallabhacharya Jayanti,Hindu,NORMAL
+2025,"May 1, 2025, Thursday",International Workers' Day,Modern,NORMAL
+2025,"May 2, 2025, Friday",Surdas Jayanti,Hindu,NORMAL
+2025,"May 2, 2025, Friday",Shankaracharya Jayanti,Hindu,NORMAL
+2025,"May 4, 2025, Sunday",World Laughter Day,Modern,NORMAL
+2025,"May 7, 2025, Wednesday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2025,"May 11, 2025, Sunday",Mother's Day,Modern,NORMAL
+2025,"May 12, 2025, Monday",Buddha Purnima,Hindu,NORMAL
+2025,"May 29, 2025, Thursday",Maharana Pratap Jayanti,Hindu,NORMAL
+2025,"May 31, 2025, Saturday",World No Tobacco Day,Modern,NORMAL
+2025,"June 5, 2025, Thursday",World Environment Day,Modern,NORMAL
+2025,"June 7, 2025, Saturday",Bakrid,Islamic,NORMAL
+2025,"June 7, 2025, Saturday",Eid al-Adha,Islamic,NORMAL
+2025,"June 11, 2025, Wednesday",Kabirdas Jayanti,Hindu,NORMAL
+2025,"June 15, 2025, Sunday",Father's Day,Modern,NORMAL
+2025,"June 21, 2025, Saturday",Longest Day of Year,Hindu,NORMAL
+2025,"June 21, 2025, Saturday",International Yoga Day,Modern,NORMAL
+2025,"June 27, 2025, Friday",Jagannath Rathyatra,Hindu,NORMAL
+2025,"June 27, 2025, Friday",Al-Hijra,Islamic,NORMAL
+2025,"June 27, 2025, Friday",Islamic New Year,Islamic,NORMAL
+2025,"July 6, 2025, Sunday",Muharram,Islamic,NORMAL
+2025,"July 6, 2025, Sunday",Day of Ashura,Islamic,NORMAL
+2025,"July 10, 2025, Thursday",Guru Purnima,Hindu,NORMAL
+2025,"July 31, 2025, Thursday",Tulsidas Jayanti,Hindu,NORMAL
+2025,"August 3, 2025, Sunday",Friendship Day,Modern,NORMAL
+2025,"August 9, 2025, Saturday",Rakhi,Hindu,NORMAL
+2025,"August 9, 2025, Saturday",Raksha Bandhan,Hindu,NORMAL
+2025,"August 15, 2025, Friday",Independence Day,Govt,NORMAL
+2025,"August 15, 2025, Friday",Janmashtami *Smarta,Hindu,NORMAL
+2025,"August 16, 2025, Saturday",Janmashtami *ISKCON,Hindu,NORMAL
+2025,"August 27, 2025, Wednesday",Ganesh Chaturthi,Hindu,NORMAL
+2025,"September 5, 2025, Friday",Teachers' Day,Modern,NORMAL
+2025,"September 5, 2025, Friday",Eid-e-Milad,Islamic,NORMAL
+2025,"September 5, 2025, Friday",Milad un-Nabi,Islamic,NORMAL
+2025,"September 5, 2025, Friday",Onam,Hindu,NORMAL
+2025,"September 14, 2025, Sunday",Hindi Diwas,Modern,NORMAL
+2025,"September 15, 2025, Monday",Engineer's Day,Modern,NORMAL
+2025,"September 15, 2025, Monday",Visvesvaraya Jayanti,Govt,NORMAL
+2025,"September 22, 2025, Monday",Autumnal Equinox,Hindu,NORMAL
+2025,"September 22, 2025, Monday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2025,"September 30, 2025, Tuesday",Durga Ashtami,Hindu,NORMAL
+2025,"October 1, 2025, Wednesday",Maha Navami,Hindu,NORMAL
+2025,"October 2, 2025, Thursday",Gandhi Jayanti,Govt,NORMAL
+2025,"October 2, 2025, Thursday",Dussehra,Hindu,NORMAL
+2025,"October 2, 2025, Thursday",Madhvacharya Jayanti,Hindu,NORMAL
+2025,"October 7, 2025, Tuesday",Meerabai Jayanti,Hindu,NORMAL
+2025,"October 7, 2025, Tuesday",Valmiki Jayanti,Hindu,NORMAL
+2025,"October 10, 2025, Friday",Karwa Chauth,Hindu,NORMAL
+2025,"October 20, 2025, Monday",Diwali,Hindu,NORMAL
+2025,"October 20, 2025, Monday",Narak Chaturdashi,Hindu,NORMAL
+2025,"October 20, 2025, Monday",Lakshmi Puja,Hindu,NORMAL
+2025,"October 22, 2025, Wednesday",Govardhan Puja,Hindu,NORMAL
+2025,"October 23, 2025, Thursday",Bhaiya Dooj,Hindu,NORMAL
+2025,"October 27, 2025, Monday",Chhath Puja,Hindu,NORMAL
+2025,"November 5, 2025, Wednesday",Guru Nanak Jayanti,Hindu,NORMAL
+2025,"November 14, 2025, Friday",Children's Day,Modern,NORMAL
+2025,"November 14, 2025, Friday",Nehru Jayanti,Govt,NORMAL
+2025,"December 1, 2025, Monday",World AIDS Day,Modern,NORMAL
+2025,"December 21, 2025, Sunday",Shortest Day of Year,Hindu,NORMAL
+2025,"December 25, 2025, Thursday",Merry Christmas,Christian,NORMAL
+2025,"December 27, 2025, Saturday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2025,"December 30, 2025, Tuesday",Tailang Swami Jayanti,Hindu,NORMAL
+2026,"January 1, 2026, Thursday",English New Year,Christian,NORMAL
+2026,"January 2, 2026, Friday",Hazarat Ali's Birthday,Islamic,NORMAL
+2026,"January 9, 2026, Friday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2026,"January 12, 2026, Monday",Swami Vivekananda Jayanti,Govt,NORMAL
+2026,"January 12, 2026, Monday",National Youth Day,Modern,NORMAL
+2026,"January 13, 2026, Tuesday",Lohri,Sikh,NORMAL
+2026,"January 14, 2026, Wednesday",Pongal,Hindu,NORMAL
+2026,"January 14, 2026, Wednesday",Makara Sankranti,Hindu,NORMAL
+2026,"January 23, 2026, Friday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2026,"January 23, 2026, Friday",Vasant Panchami,Hindu,NORMAL
+2026,"January 26, 2026, Monday",Republic Day,Govt,NORMAL
+2026,"January 30, 2026, Friday",Gandhi Punyatithi,Govt,NORMAL
+2026,"February 1, 2026, Sunday",Guru Ravidas Jayanti,Hindu,NORMAL
+2026,"February 4, 2026, Wednesday",World Cancer Day,Modern,NORMAL
+2026,"February 12, 2026, Thursday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2026,"February 14, 2026, Saturday",Valentine's Day,Modern,NORMAL
+2026,"February 15, 2026, Sunday",Maha Shivaratri,Hindu,NORMAL
+2026,"February 19, 2026, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2026,"February 19, 2026, Thursday",Ramakrishna Jayanti,Hindu,NORMAL
+2026,"March 3, 2026, Tuesday",Holika Dahan,Hindu,NORMAL
+2026,"March 3, 2026, Tuesday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2026,"March 3, 2026, Tuesday",Chhoti Holi,Hindu,NORMAL
+2026,"March 4, 2026, Wednesday",Holi,Hindu,NORMAL
+2026,"March 6, 2026, Friday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2026,"March 8, 2026, Sunday",Rang Panchami,Hindu,RANG_PANCHAMI
+2026,"March 8, 2026, Sunday",International Women's Day,Modern,NORMAL
+2026,"March 19, 2026, Thursday",Ugadi,Hindu,NORMAL
+2026,"March 19, 2026, Thursday",Gudi Padwa,Hindu,NORMAL
+2026,"March 20, 2026, Friday",Eid al-Fitr,Islamic,NORMAL
+2026,"March 20, 2026, Friday",Jhulelal Jayanti,Hindu,NORMAL
+2026,"March 20, 2026, Friday",Vernal Equinox,Hindu,NORMAL
+2026,"March 20, 2026, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2026,"March 20, 2026, Friday",Parsi New Year,Hindu,NORMAL
+2026,"March 20, 2026, Friday",Ramadan,Islamic,NORMAL
+2026,"March 23, 2026, Monday",Shaheed Diwas,Govt,NORMAL
+2026,"March 26, 2026, Thursday",Rama Navami *Smarta,Hindu,NORMAL
+2026,"March 27, 2026, Friday",Rama Navami *ISKCON,Hindu,NORMAL
+2026,"March 31, 2026, Tuesday",Mahavir Swami Jayanti,Hindu,NORMAL
+2026,"April 1, 2026, Wednesday",Bank's Holiday,Govt,NORMAL
+2026,"April 3, 2026, Friday",Good Friday,Christian,NORMAL
+2026,"April 5, 2026, Sunday",Easter,Christian,NORMAL
+2026,"April 13, 2026, Monday",Vallabhacharya Jayanti,Hindu,NORMAL
+2026,"April 14, 2026, Tuesday",Baisakhi,Sikh,NORMAL
+2026,"April 14, 2026, Tuesday",Solar New Year,Hindu,NORMAL
+2026,"April 14, 2026, Tuesday",Ambedkar Jayanti,Govt,NORMAL
+2026,"April 21, 2026, Tuesday",Surdas Jayanti,Hindu,NORMAL
+2026,"April 21, 2026, Tuesday",Shankaracharya Jayanti,Hindu,NORMAL
+2026,"April 22, 2026, Wednesday",Earth Day,Modern,NORMAL
+2026,"May 1, 2026, Friday",International Workers' Day,Modern,NORMAL
+2026,"May 1, 2026, Friday",Buddha Purnima,Hindu,NORMAL
+2026,"May 3, 2026, Sunday",World Laughter Day,Modern,NORMAL
+2026,"May 7, 2026, Thursday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2026,"May 10, 2026, Sunday",Mother's Day,Modern,NORMAL
+2026,"May 27, 2026, Wednesday",Bakrid,Islamic,NORMAL
+2026,"May 27, 2026, Wednesday",Eid al-Adha,Islamic,NORMAL
+2026,"May 31, 2026, Sunday",World No Tobacco Day,Modern,NORMAL
+2026,"June 5, 2026, Friday",World Environment Day,Modern,NORMAL
+2026,"June 17, 2026, Wednesday",Al-Hijra,Islamic,NORMAL
+2026,"June 17, 2026, Wednesday",Maharana Pratap Jayanti,Hindu,NORMAL
+2026,"June 17, 2026, Wednesday",Islamic New Year,Islamic,NORMAL
+2026,"June 21, 2026, Sunday",International Yoga Day,Modern,NORMAL
+2026,"June 21, 2026, Sunday",Father's Day,Modern,NORMAL
+2026,"June 21, 2026, Sunday",Longest Day of Year,Hindu,NORMAL
+2026,"June 26, 2026, Friday",Muharram,Islamic,NORMAL
+2026,"June 26, 2026, Friday",Day of Ashura,Islamic,NORMAL
+2026,"June 29, 2026, Monday",Kabirdas Jayanti,Hindu,NORMAL
+2026,"July 16, 2026, Thursday",Jagannath Rathyatra,Hindu,NORMAL
+2026,"July 29, 2026, Wednesday",Guru Purnima,Hindu,NORMAL
+2026,"August 2, 2026, Sunday",Friendship Day,Modern,NORMAL
+2026,"August 15, 2026, Saturday",Independence Day,Govt,NORMAL
+2026,"August 19, 2026, Wednesday",Tulsidas Jayanti,Hindu,NORMAL
+2026,"August 26, 2026, Wednesday",Onam,Hindu,NORMAL
+2026,"August 26, 2026, Wednesday",Milad un-Nabi,Islamic,NORMAL
+2026,"August 26, 2026, Wednesday",Eid-e-Milad,Islamic,NORMAL
+2026,"August 28, 2026, Friday",Rakhi,Hindu,NORMAL
+2026,"August 28, 2026, Friday",Raksha Bandhan,Hindu,NORMAL
+2026,"September 4, 2026, Friday",Krishna Janmashtami,Hindu,NORMAL
+2026,"September 5, 2026, Saturday",Teachers' Day,Modern,NORMAL
+2026,"September 14, 2026, Monday",Hindi Diwas,Modern,NORMAL
+2026,"September 14, 2026, Monday",Ganesh Chaturthi,Hindu,NORMAL
+2026,"September 15, 2026, Tuesday",Visvesvaraya Jayanti,Govt,NORMAL
+2026,"September 15, 2026, Tuesday",Engineer's Day,Modern,NORMAL
+2026,"September 23, 2026, Wednesday",Autumnal Equinox,Hindu,NORMAL
+2026,"October 2, 2026, Friday",Gandhi Jayanti,Govt,NORMAL
+2026,"October 11, 2026, Sunday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2026,"October 19, 2026, Monday",Maha Navami,Hindu,NORMAL
+2026,"October 19, 2026, Monday",Durga Ashtami,Hindu,NORMAL
+2026,"October 20, 2026, Tuesday",Dussehra,Hindu,NORMAL
+2026,"October 21, 2026, Wednesday",Madhvacharya Jayanti,Hindu,NORMAL
+2026,"October 26, 2026, Monday",Valmiki Jayanti,Hindu,NORMAL
+2026,"October 26, 2026, Monday",Meerabai Jayanti,Hindu,NORMAL
+2026,"October 29, 2026, Thursday",Karwa Chauth,Hindu,NORMAL
+2026,"November 8, 2026, Sunday",Narak Chaturdashi,Hindu,NORMAL
+2026,"November 8, 2026, Sunday",Lakshmi Puja,Hindu,NORMAL
+2026,"November 8, 2026, Sunday",Diwali,Hindu,NORMAL
+2026,"November 10, 2026, Tuesday",Govardhan Puja,Hindu,NORMAL
+2026,"November 11, 2026, Wednesday",Bhaiya Dooj,Hindu,NORMAL
+2026,"November 14, 2026, Saturday",Children's Day,Modern,NORMAL
+2026,"November 14, 2026, Saturday",Nehru Jayanti,Govt,NORMAL
+2026,"November 15, 2026, Sunday",Chhath Puja,Hindu,NORMAL
+2026,"November 24, 2026, Tuesday",Guru Nanak Jayanti,Hindu,NORMAL
+2026,"December 1, 2026, Tuesday",World AIDS Day,Modern,NORMAL
+2026,"December 22, 2026, Tuesday",Shortest Day of Year,Hindu,NORMAL
+2026,"December 23, 2026, Wednesday",Hazarat Ali's Birthday,Islamic,NORMAL
+2026,"December 25, 2026, Friday",Merry Christmas,Christian,NORMAL
+2027,"January 1, 2027, Friday",English New Year,Christian,NORMAL
+2027,"January 12, 2027, Tuesday",National Youth Day,Modern,NORMAL
+2027,"January 12, 2027, Tuesday",Swami Vivekananda Jayanti,Govt,NORMAL
+2027,"January 14, 2027, Thursday",Lohri,Sikh,NORMAL
+2027,"January 15, 2027, Friday",Pongal,Hindu,NORMAL
+2027,"January 15, 2027, Friday",Makara Sankranti,Hindu,NORMAL
+2027,"January 15, 2027, Friday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2027,"January 19, 2027, Tuesday",Tailang Swami Jayanti,Hindu,NORMAL
+2027,"January 23, 2027, Saturday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2027,"January 26, 2027, Tuesday",Republic Day,Govt,NORMAL
+2027,"January 28, 2027, Thursday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2027,"January 30, 2027, Saturday",Gandhi Punyatithi,Govt,NORMAL
+2027,"February 4, 2027, Thursday",World Cancer Day,Modern,NORMAL
+2027,"February 11, 2027, Thursday",Vasant Panchami,Hindu,NORMAL
+2027,"February 14, 2027, Sunday",Valentine's Day,Modern,NORMAL
+2027,"February 19, 2027, Friday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2027,"February 20, 2027, Saturday",Guru Ravidas Jayanti,Hindu,NORMAL
+2027,"March 2, 2027, Tuesday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2027,"March 5, 2027, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2027,"March 6, 2027, Saturday",Maha Shivaratri,Hindu,NORMAL
+2027,"March 8, 2027, Monday",International Women's Day,Modern,NORMAL
+2027,"March 10, 2027, Wednesday",Ramadan,Islamic,NORMAL
+2027,"March 10, 2027, Wednesday",Ramakrishna Jayanti,Hindu,NORMAL
+2027,"March 10, 2027, Wednesday",Eid al-Fitr,Islamic,NORMAL
+2027,"March 21, 2027, Sunday",Vernal Equinox,Hindu,NORMAL
+2027,"March 21, 2027, Sunday",Parsi New Year,Hindu,NORMAL
+2027,"March 21, 2027, Sunday",Chhoti Holi,Hindu,NORMAL
+2027,"March 21, 2027, Sunday",Holika Dahan,Hindu,NORMAL
+2027,"March 22, 2027, Monday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2027,"March 22, 2027, Monday",Holi,Hindu,NORMAL
+2027,"March 23, 2027, Tuesday",Shaheed Diwas,Govt,NORMAL
+2027,"March 25, 2027, Thursday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2027,"March 26, 2027, Friday",Good Friday,Christian,NORMAL
+2027,"March 27, 2027, Saturday",Rang Panchami,Hindu,RANG_PANCHAMI
+2027,"March 28, 2027, Sunday",Easter,Christian,NORMAL
+2027,"April 1, 2027, Thursday",Bank's Holiday,Govt,NORMAL
+2027,"April 7, 2027, Wednesday",Ugadi,Hindu,NORMAL
+2027,"April 7, 2027, Wednesday",Gudi Padwa,Hindu,NORMAL
+2027,"April 8, 2027, Thursday",Jhulelal Jayanti,Hindu,NORMAL
+2027,"April 14, 2027, Wednesday",Baisakhi,Sikh,NORMAL
+2027,"April 14, 2027, Wednesday",Ambedkar Jayanti,Govt,NORMAL
+2027,"April 14, 2027, Wednesday",Solar New Year,Hindu,NORMAL
+2027,"April 15, 2027, Thursday",Rama Navami,Hindu,NORMAL
+2027,"April 19, 2027, Monday",Mahavir Swami Jayanti,Hindu,NORMAL
+2027,"April 22, 2027, Thursday",Earth Day,Modern,NORMAL
+2027,"May 1, 2027, Saturday",International Workers' Day,Modern,NORMAL
+2027,"May 2, 2027, Sunday",Vallabhacharya Jayanti,Hindu,NORMAL
+2027,"May 2, 2027, Sunday",World Laughter Day,Modern,NORMAL
+2027,"May 7, 2027, Friday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2027,"May 9, 2027, Sunday",Mother's Day,Modern,NORMAL
+2027,"May 10, 2027, Monday",Surdas Jayanti,Hindu,NORMAL
+2027,"May 10, 2027, Monday",Shankaracharya Jayanti,Hindu,NORMAL
+2027,"May 17, 2027, Monday",Eid al-Adha,Islamic,NORMAL
+2027,"May 17, 2027, Monday",Bakrid,Islamic,NORMAL
+2027,"May 20, 2027, Thursday",Buddha Purnima,Hindu,NORMAL
+2027,"May 31, 2027, Monday",World No Tobacco Day,Modern,NORMAL
+2027,"June 5, 2027, Saturday",World Environment Day,Modern,NORMAL
+2027,"June 6, 2027, Sunday",Al-Hijra,Islamic,NORMAL
+2027,"June 6, 2027, Sunday",Islamic New Year,Islamic,NORMAL
+2027,"June 7, 2027, Monday",Maharana Pratap Jayanti,Hindu,NORMAL
+2027,"June 15, 2027, Tuesday",Muharram,Islamic,NORMAL
+2027,"June 15, 2027, Tuesday",Day of Ashura,Islamic,NORMAL
+2027,"June 18, 2027, Friday",Kabirdas Jayanti,Hindu,NORMAL
+2027,"June 20, 2027, Sunday",Father's Day,Modern,NORMAL
+2027,"June 21, 2027, Monday",International Yoga Day,Modern,NORMAL
+2027,"June 21, 2027, Monday",Longest Day of Year,Hindu,NORMAL
+2027,"July 5, 2027, Monday",Jagannath Rathyatra,Hindu,NORMAL
+2027,"July 18, 2027, Sunday",Guru Purnima,Hindu,NORMAL
+2027,"August 1, 2027, Sunday",Friendship Day,Modern,NORMAL
+2027,"August 8, 2027, Sunday",Tulsidas Jayanti,Hindu,NORMAL
+2027,"August 15, 2027, Sunday",Independence Day,Govt,NORMAL
+2027,"August 15, 2027, Sunday",Milad un-Nabi,Islamic,NORMAL
+2027,"August 15, 2027, Sunday",Eid-e-Milad,Islamic,NORMAL
+2027,"August 17, 2027, Tuesday",Raksha Bandhan,Hindu,NORMAL
+2027,"August 17, 2027, Tuesday",Rakhi,Hindu,NORMAL
+2027,"August 25, 2027, Wednesday",Krishna Janmashtami,Hindu,NORMAL
+2027,"September 4, 2027, Saturday",Ganesh Chaturthi,Hindu,NORMAL
+2027,"September 5, 2027, Sunday",Teachers' Day,Modern,NORMAL
+2027,"September 12, 2027, Sunday",Onam,Hindu,NORMAL
+2027,"September 14, 2027, Tuesday",Hindi Diwas,Modern,NORMAL
+2027,"September 15, 2027, Wednesday",Engineer's Day,Modern,NORMAL
+2027,"September 15, 2027, Wednesday",Visvesvaraya Jayanti,Govt,NORMAL
+2027,"September 23, 2027, Thursday",Autumnal Equinox,Hindu,NORMAL
+2027,"September 30, 2027, Thursday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2027,"October 2, 2027, Saturday",Gandhi Jayanti,Govt,NORMAL
+2027,"October 7, 2027, Thursday",Durga Ashtami,Hindu,NORMAL
+2027,"October 8, 2027, Friday",Maha Navami,Hindu,NORMAL
+2027,"October 9, 2027, Saturday",Dussehra,Hindu,NORMAL
+2027,"October 10, 2027, Sunday",Madhvacharya Jayanti,Hindu,NORMAL
+2027,"October 15, 2027, Friday",Meerabai Jayanti,Hindu,NORMAL
+2027,"October 15, 2027, Friday",Valmiki Jayanti,Hindu,NORMAL
+2027,"October 18, 2027, Monday",Karwa Chauth,Hindu,NORMAL
+2027,"October 28, 2027, Thursday",Narak Chaturdashi,Hindu,NORMAL
+2027,"October 29, 2027, Friday",Diwali,Hindu,NORMAL
+2027,"October 29, 2027, Friday",Lakshmi Puja,Hindu,NORMAL
+2027,"October 30, 2027, Saturday",Govardhan Puja,Hindu,NORMAL
+2027,"October 31, 2027, Sunday",Bhaiya Dooj,Hindu,NORMAL
+2027,"November 4, 2027, Thursday",Chhath Puja,Hindu,NORMAL
+2027,"November 14, 2027, Sunday",Children's Day,Modern,NORMAL
+2027,"November 14, 2027, Sunday",Guru Nanak Jayanti,Hindu,NORMAL
+2027,"November 14, 2027, Sunday",Nehru Jayanti,Govt,NORMAL
+2027,"December 1, 2027, Wednesday",World AIDS Day,Modern,NORMAL
+2027,"December 12, 2027, Sunday",Hazarat Ali's Birthday,Islamic,NORMAL
+2027,"December 22, 2027, Wednesday",Shortest Day of Year,Hindu,NORMAL
+2027,"December 25, 2027, Saturday",Merry Christmas,Christian,NORMAL
+2028,"January 1, 2028, Saturday",English New Year,Christian,NORMAL
+2028,"January 4, 2028, Tuesday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2028,"January 8, 2028, Saturday",Tailang Swami Jayanti,Hindu,NORMAL
+2028,"January 12, 2028, Wednesday",Swami Vivekananda Jayanti,Govt,NORMAL
+2028,"January 12, 2028, Wednesday",National Youth Day,Modern,NORMAL
+2028,"January 14, 2028, Friday",Lohri,Sikh,NORMAL
+2028,"January 15, 2028, Saturday",Makara Sankranti,Hindu,NORMAL
+2028,"January 15, 2028, Saturday",Pongal,Hindu,NORMAL
+2028,"January 18, 2028, Tuesday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2028,"January 23, 2028, Sunday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2028,"January 26, 2028, Wednesday",Republic Day,Govt,NORMAL
+2028,"January 30, 2028, Sunday",Gandhi Punyatithi,Govt,NORMAL
+2028,"January 31, 2028, Monday",Vasant Panchami,Hindu,NORMAL
+2028,"February 4, 2028, Friday",World Cancer Day,Modern,NORMAL
+2028,"February 10, 2028, Thursday",Guru Ravidas Jayanti,Hindu,NORMAL
+2028,"February 14, 2028, Monday",Valentine's Day,Modern,NORMAL
+2028,"February 19, 2028, Saturday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2028,"February 19, 2028, Saturday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2028,"February 23, 2028, Wednesday",Maha Shivaratri,Hindu,NORMAL
+2028,"February 25, 2028, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2028,"February 27, 2028, Sunday",Eid al-Fitr,Islamic,NORMAL
+2028,"February 27, 2028, Sunday",Ramadan,Islamic,NORMAL
+2028,"February 27, 2028, Sunday",Ramakrishna Jayanti,Hindu,NORMAL
+2028,"March 8, 2028, Wednesday",International Women's Day,Modern,NORMAL
+2028,"March 10, 2028, Friday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2028,"March 10, 2028, Friday",Chhoti Holi,Hindu,NORMAL
+2028,"March 10, 2028, Friday",Holika Dahan,Hindu,NORMAL
+2028,"March 11, 2028, Saturday",Holi,Hindu,NORMAL
+2028,"March 13, 2028, Monday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2028,"March 16, 2028, Thursday",Rang Panchami,Hindu,RANG_PANCHAMI
+2028,"March 20, 2028, Monday",Parsi New Year,Hindu,NORMAL
+2028,"March 20, 2028, Monday",Vernal Equinox,Hindu,NORMAL
+2028,"March 23, 2028, Thursday",Shaheed Diwas,Govt,NORMAL
+2028,"March 27, 2028, Monday",Ugadi,Hindu,NORMAL
+2028,"March 27, 2028, Monday",Gudi Padwa,Hindu,NORMAL
+2028,"March 27, 2028, Monday",Jhulelal Jayanti,Hindu,NORMAL
+2028,"April 1, 2028, Saturday",Bank's Holiday,Govt,NORMAL
+2028,"April 3, 2028, Monday",Rama Navami *Smarta,Hindu,NORMAL
+2028,"April 4, 2028, Tuesday",Rama Navami *ISKCON,Hindu,NORMAL
+2028,"April 7, 2028, Friday",Mahavir Swami Jayanti,Hindu,NORMAL
+2028,"April 13, 2028, Thursday",Solar New Year,Hindu,NORMAL
+2028,"April 13, 2028, Thursday",Baisakhi,Sikh,NORMAL
+2028,"April 14, 2028, Friday",Ambedkar Jayanti,Govt,NORMAL
+2028,"April 14, 2028, Friday",Good Friday,Christian,NORMAL
+2028,"April 16, 2028, Sunday",Easter,Christian,NORMAL
+2028,"April 20, 2028, Thursday",Vallabhacharya Jayanti,Hindu,NORMAL
+2028,"April 22, 2028, Saturday",Earth Day,Modern,NORMAL
+2028,"April 29, 2028, Saturday",Surdas Jayanti,Hindu,NORMAL
+2028,"April 29, 2028, Saturday",Shankaracharya Jayanti,Hindu,NORMAL
+2028,"May 1, 2028, Monday",International Workers' Day,Modern,NORMAL
+2028,"May 5, 2028, Friday",Bakrid,Islamic,NORMAL
+2028,"May 5, 2028, Friday",Eid al-Adha,Islamic,NORMAL
+2028,"May 7, 2028, Sunday",World Laughter Day,Modern,NORMAL
+2028,"May 7, 2028, Sunday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2028,"May 8, 2028, Monday",Buddha Purnima,Hindu,NORMAL
+2028,"May 14, 2028, Sunday",Mother's Day,Modern,NORMAL
+2028,"May 25, 2028, Thursday",Islamic New Year,Islamic,NORMAL
+2028,"May 25, 2028, Thursday",Al-Hijra,Islamic,NORMAL
+2028,"May 27, 2028, Saturday",Maharana Pratap Jayanti,Hindu,NORMAL
+2028,"May 31, 2028, Wednesday",World No Tobacco Day,Modern,NORMAL
+2028,"June 3, 2028, Saturday",Muharram,Islamic,NORMAL
+2028,"June 3, 2028, Saturday",Day of Ashura,Islamic,NORMAL
+2028,"June 5, 2028, Monday",World Environment Day,Modern,NORMAL
+2028,"June 7, 2028, Wednesday",Kabirdas Jayanti,Hindu,NORMAL
+2028,"June 18, 2028, Sunday",Father's Day,Modern,NORMAL
+2028,"June 21, 2028, Wednesday",International Yoga Day,Modern,NORMAL
+2028,"June 21, 2028, Wednesday",Longest Day of Year,Hindu,NORMAL
+2028,"June 24, 2028, Saturday",Jagannath Rathyatra,Hindu,NORMAL
+2028,"July 6, 2028, Thursday",Guru Purnima,Hindu,NORMAL
+2028,"July 28, 2028, Friday",Tulsidas Jayanti,Hindu,NORMAL
+2028,"August 3, 2028, Thursday",Milad un-Nabi,Islamic,NORMAL
+2028,"August 3, 2028, Thursday",Eid-e-Milad,Islamic,NORMAL
+2028,"August 5, 2028, Saturday",Rakhi,Hindu,NORMAL
+2028,"August 5, 2028, Saturday",Raksha Bandhan,Hindu,NORMAL
+2028,"August 6, 2028, Sunday",Friendship Day,Modern,NORMAL
+2028,"August 13, 2028, Sunday",Krishna Janmashtami,Hindu,NORMAL
+2028,"August 15, 2028, Tuesday",Independence Day,Govt,NORMAL
+2028,"August 23, 2028, Wednesday",Ganesh Chaturthi,Hindu,NORMAL
+2028,"September 1, 2028, Friday",Onam,Hindu,NORMAL
+2028,"September 5, 2028, Tuesday",Teachers' Day,Modern,NORMAL
+2028,"September 14, 2028, Thursday",Hindi Diwas,Modern,NORMAL
+2028,"September 15, 2028, Friday",Visvesvaraya Jayanti,Govt,NORMAL
+2028,"September 15, 2028, Friday",Engineer's Day,Modern,NORMAL
+2028,"September 19, 2028, Tuesday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2028,"September 22, 2028, Friday",Autumnal Equinox,Hindu,NORMAL
+2028,"September 26, 2028, Tuesday",Durga Ashtami,Hindu,NORMAL
+2028,"September 26, 2028, Tuesday",Maha Navami,Hindu,NORMAL
+2028,"September 27, 2028, Wednesday",Dussehra,Hindu,NORMAL
+2028,"September 28, 2028, Thursday",Madhvacharya Jayanti,Hindu,NORMAL
+2028,"October 2, 2028, Monday",Gandhi Jayanti,Govt,NORMAL
+2028,"October 3, 2028, Tuesday",Valmiki Jayanti,Hindu,NORMAL
+2028,"October 3, 2028, Tuesday",Meerabai Jayanti,Hindu,NORMAL
+2028,"October 7, 2028, Saturday",Karwa Chauth,Hindu,NORMAL
+2028,"October 17, 2028, Tuesday",Narak Chaturdashi,Hindu,NORMAL
+2028,"October 17, 2028, Tuesday",Lakshmi Puja,Hindu,NORMAL
+2028,"October 17, 2028, Tuesday",Diwali,Hindu,NORMAL
+2028,"October 18, 2028, Wednesday",Govardhan Puja,Hindu,NORMAL
+2028,"October 19, 2028, Thursday",Bhaiya Dooj,Hindu,NORMAL
+2028,"October 23, 2028, Monday",Chhath Puja,Hindu,NORMAL
+2028,"November 2, 2028, Thursday",Guru Nanak Jayanti,Hindu,NORMAL
+2028,"November 14, 2028, Tuesday",Children's Day,Modern,NORMAL
+2028,"November 14, 2028, Tuesday",Nehru Jayanti,Govt,NORMAL
+2028,"November 30, 2028, Thursday",Hazarat Ali's Birthday,Islamic,NORMAL
+2028,"December 1, 2028, Friday",World AIDS Day,Modern,NORMAL
+2028,"December 21, 2028, Thursday",Shortest Day of Year,Hindu,NORMAL
+2028,"December 23, 2028, Saturday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2028,"December 25, 2028, Monday",Merry Christmas,Christian,NORMAL
+2028,"December 27, 2028, Wednesday",Tailang Swami Jayanti,Hindu,NORMAL
+2029,"January 1, 2029, Monday",English New Year,Christian,NORMAL
+2029,"January 7, 2029, Sunday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2029,"January 12, 2029, Friday",National Youth Day,Modern,NORMAL
+2029,"January 12, 2029, Friday",Swami Vivekananda Jayanti,Govt,NORMAL
+2029,"January 13, 2029, Saturday",Lohri,Sikh,NORMAL
+2029,"January 14, 2029, Sunday",Pongal,Hindu,NORMAL
+2029,"January 14, 2029, Sunday",Makara Sankranti,Hindu,NORMAL
+2029,"January 19, 2029, Friday",Vasant Panchami,Hindu,NORMAL
+2029,"January 23, 2029, Tuesday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2029,"January 26, 2029, Friday",Republic Day,Govt,NORMAL
+2029,"January 30, 2029, Tuesday",Guru Ravidas Jayanti,Hindu,NORMAL
+2029,"January 30, 2029, Tuesday",Gandhi Punyatithi,Govt,NORMAL
+2029,"February 4, 2029, Sunday",World Cancer Day,Modern,NORMAL
+2029,"February 8, 2029, Thursday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2029,"February 9, 2029, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2029,"February 11, 2029, Sunday",Maha Shivaratri,Hindu,NORMAL
+2029,"February 14, 2029, Wednesday",Valentine's Day,Modern,NORMAL
+2029,"February 15, 2029, Thursday",Ramakrishna Jayanti,Hindu,NORMAL
+2029,"February 15, 2029, Thursday",Eid al-Fitr,Islamic,NORMAL
+2029,"February 15, 2029, Thursday",Ramadan,Islamic,NORMAL
+2029,"February 19, 2029, Monday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2029,"February 28, 2029, Wednesday",Chhoti Holi,Hindu,NORMAL
+2029,"February 28, 2029, Wednesday",Holika Dahan,Hindu,NORMAL
+2029,"February 28, 2029, Wednesday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2029,"March 1, 2029, Thursday",Holi,Hindu,NORMAL
+2029,"March 3, 2029, Saturday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2029,"March 4, 2029, Sunday",Rang Panchami,Hindu,RANG_PANCHAMI
+2029,"March 8, 2029, Thursday",International Women's Day,Modern,NORMAL
+2029,"March 20, 2029, Tuesday",Parsi New Year,Hindu,NORMAL
+2029,"March 20, 2029, Tuesday",Vernal Equinox,Hindu,NORMAL
+2029,"March 23, 2029, Friday",Shaheed Diwas,Govt,NORMAL
+2029,"March 30, 2029, Friday",Good Friday,Christian,NORMAL
+2029,"April 1, 2029, Sunday",Bank's Holiday,Govt,NORMAL
+2029,"April 1, 2029, Sunday",Easter,Christian,NORMAL
+2029,"April 14, 2029, Saturday",Ugadi,Hindu,NORMAL
+2029,"April 14, 2029, Saturday",Gudi Padwa,Hindu,NORMAL
+2029,"April 14, 2029, Saturday",Solar New Year,Hindu,NORMAL
+2029,"April 14, 2029, Saturday",Baisakhi,Sikh,NORMAL
+2029,"April 14, 2029, Saturday",Ambedkar Jayanti,Govt,NORMAL
+2029,"April 15, 2029, Sunday",Jhulelal Jayanti,Hindu,NORMAL
+2029,"April 22, 2029, Sunday",Earth Day,Modern,NORMAL
+2029,"April 23, 2029, Monday",Rama Navami,Hindu,NORMAL
+2029,"April 24, 2029, Tuesday",Bakrid,Islamic,NORMAL
+2029,"April 24, 2029, Tuesday",Eid al-Adha,Islamic,NORMAL
+2029,"April 26, 2029, Thursday",Mahavir Swami Jayanti,Hindu,NORMAL
+2029,"May 1, 2029, Tuesday",International Workers' Day,Modern,NORMAL
+2029,"May 6, 2029, Sunday",World Laughter Day,Modern,NORMAL
+2029,"May 7, 2029, Monday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2029,"May 9, 2029, Wednesday",Vallabhacharya Jayanti,Hindu,NORMAL
+2029,"May 13, 2029, Sunday",Mother's Day,Modern,NORMAL
+2029,"May 15, 2029, Tuesday",Islamic New Year,Islamic,NORMAL
+2029,"May 15, 2029, Tuesday",Al-Hijra,Islamic,NORMAL
+2029,"May 18, 2029, Friday",Shankaracharya Jayanti,Hindu,NORMAL
+2029,"May 18, 2029, Friday",Surdas Jayanti,Hindu,NORMAL
+2029,"May 24, 2029, Thursday",Day of Ashura,Islamic,NORMAL
+2029,"May 24, 2029, Thursday",Muharram,Islamic,NORMAL
+2029,"May 27, 2029, Sunday",Buddha Purnima,Hindu,NORMAL
+2029,"May 31, 2029, Thursday",World No Tobacco Day,Modern,NORMAL
+2029,"June 5, 2029, Tuesday",World Environment Day,Modern,NORMAL
+2029,"June 15, 2029, Friday",Maharana Pratap Jayanti,Hindu,NORMAL
+2029,"June 17, 2029, Sunday",Father's Day,Modern,NORMAL
+2029,"June 21, 2029, Thursday",International Yoga Day,Modern,NORMAL
+2029,"June 21, 2029, Thursday",Longest Day of Year,Hindu,NORMAL
+2029,"June 26, 2029, Tuesday",Kabirdas Jayanti,Hindu,NORMAL
+2029,"July 13, 2029, Friday",Jagannath Rathyatra,Hindu,NORMAL
+2029,"July 24, 2029, Tuesday",Milad un-Nabi,Islamic,NORMAL
+2029,"July 24, 2029, Tuesday",Eid-e-Milad,Islamic,NORMAL
+2029,"July 25, 2029, Wednesday",Guru Purnima,Hindu,NORMAL
+2029,"August 5, 2029, Sunday",Friendship Day,Modern,NORMAL
+2029,"August 15, 2029, Wednesday",Independence Day,Govt,NORMAL
+2029,"August 16, 2029, Thursday",Tulsidas Jayanti,Hindu,NORMAL
+2029,"August 22, 2029, Wednesday",Onam,Hindu,NORMAL
+2029,"August 23, 2029, Thursday",Raksha Bandhan,Hindu,NORMAL
+2029,"August 23, 2029, Thursday",Rakhi,Hindu,NORMAL
+2029,"September 1, 2029, Saturday",Krishna Janmashtami,Hindu,NORMAL
+2029,"September 5, 2029, Wednesday",Teachers' Day,Modern,NORMAL
+2029,"September 11, 2029, Tuesday",Ganesh Chaturthi,Hindu,NORMAL
+2029,"September 14, 2029, Friday",Hindi Diwas,Modern,NORMAL
+2029,"September 15, 2029, Saturday",Visvesvaraya Jayanti,Govt,NORMAL
+2029,"September 15, 2029, Saturday",Engineer's Day,Modern,NORMAL
+2029,"September 22, 2029, Saturday",Autumnal Equinox,Hindu,NORMAL
+2029,"October 2, 2029, Tuesday",Gandhi Jayanti,Govt,NORMAL
+2029,"October 8, 2029, Monday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2029,"October 14, 2029, Sunday",Durga Ashtami,Hindu,NORMAL
+2029,"October 15, 2029, Monday",Maha Navami,Hindu,NORMAL
+2029,"October 16, 2029, Tuesday",Dussehra,Hindu,NORMAL
+2029,"October 16, 2029, Tuesday",Madhvacharya Jayanti,Hindu,NORMAL
+2029,"October 22, 2029, Monday",Valmiki Jayanti,Hindu,NORMAL
+2029,"October 22, 2029, Monday",Meerabai Jayanti,Hindu,NORMAL
+2029,"October 26, 2029, Friday",Karwa Chauth,Hindu,NORMAL
+2029,"November 5, 2029, Monday",Lakshmi Puja,Hindu,NORMAL
+2029,"November 5, 2029, Monday",Diwali,Hindu,NORMAL
+2029,"November 5, 2029, Monday",Narak Chaturdashi,Hindu,NORMAL
+2029,"November 6, 2029, Tuesday",Govardhan Puja,Hindu,NORMAL
+2029,"November 7, 2029, Wednesday",Bhaiya Dooj,Hindu,NORMAL
+2029,"November 11, 2029, Sunday",Chhath Puja,Hindu,NORMAL
+2029,"November 14, 2029, Wednesday",Nehru Jayanti,Govt,NORMAL
+2029,"November 14, 2029, Wednesday",Children's Day,Modern,NORMAL
+2029,"November 20, 2029, Tuesday",Hazarat Ali's Birthday,Islamic,NORMAL
+2029,"November 21, 2029, Wednesday",Guru Nanak Jayanti,Hindu,NORMAL
+2029,"December 1, 2029, Saturday",World AIDS Day,Modern,NORMAL
+2029,"December 21, 2029, Friday",Shortest Day of Year,Hindu,NORMAL
+2029,"December 25, 2029, Tuesday",Merry Christmas,Christian,NORMAL
+2030,"January 1, 2030, Tuesday",English New Year,Christian,NORMAL
+2030,"January 10, 2030, Thursday",Guru Gobind Singh Jayanti,Hindu,NORMAL
+2030,"January 12, 2030, Saturday",National Youth Day,Modern,NORMAL
+2030,"January 12, 2030, Saturday",Swami Vivekananda Jayanti,Govt,NORMAL
+2030,"January 13, 2030, Sunday",Lohri,Sikh,NORMAL
+2030,"January 14, 2030, Monday",Makara Sankranti,Hindu,NORMAL
+2030,"January 14, 2030, Monday",Pongal,Hindu,NORMAL
+2030,"January 15, 2030, Tuesday",Tailang Swami Jayanti,Hindu,NORMAL
+2030,"January 23, 2030, Wednesday",Subhas Chandra Bose Jayanti,Govt,NORMAL
+2030,"January 26, 2030, Saturday",Republic Day,Govt,NORMAL
+2030,"January 26, 2030, Saturday",Vivekananda Jayanti *Samvat,Hindu,NORMAL
+2030,"January 30, 2030, Wednesday",Gandhi Punyatithi,Govt,NORMAL
+2030,"February 1, 2030, Friday",Jamat Ul-Vida,Islamic,NORMAL
+2030,"February 4, 2030, Monday",World Cancer Day,Modern,NORMAL
+2030,"February 5, 2030, Tuesday",Eid al-Fitr,Islamic,NORMAL
+2030,"February 5, 2030, Tuesday",Ramadan,Islamic,NORMAL
+2030,"February 7, 2030, Thursday",Vasant Panchami,Hindu,NORMAL
+2030,"February 14, 2030, Thursday",Valentine's Day,Modern,NORMAL
+2030,"February 18, 2030, Monday",Guru Ravidas Jayanti,Hindu,NORMAL
+2030,"February 19, 2030, Tuesday",Chhatrapati Shivaji Maharaj Jayanti,Govt,NORMAL
+2030,"February 27, 2030, Wednesday",Maharishi Dayanand Saraswati Jayanti,Hindu,NORMAL
+2030,"March 2, 2030, Saturday",Maha Shivaratri,Hindu,NORMAL
+2030,"March 6, 2030, Wednesday",Ramakrishna Jayanti,Hindu,NORMAL
+2030,"March 8, 2030, Friday",International Women's Day,Modern,NORMAL
+2030,"March 19, 2030, Tuesday",Holika Dahan,Hindu,NORMAL
+2030,"March 19, 2030, Tuesday",Chaitanya Mahaprabhu Jayanti,Hindu,NORMAL
+2030,"March 19, 2030, Tuesday",Chhoti Holi,Hindu,NORMAL
+2030,"March 20, 2030, Wednesday",Vernal Equinox,Hindu,NORMAL
+2030,"March 20, 2030, Wednesday",Parsi New Year,Hindu,NORMAL
+2030,"March 20, 2030, Wednesday",Holi,Hindu,NORMAL
+2030,"March 22, 2030, Friday",Chhatrapati Shivaji Maharaj Jayanti,Hindu,NORMAL
+2030,"March 23, 2030, Saturday",Shaheed Diwas,Govt,NORMAL
+2030,"March 24, 2030, Sunday",Rang Panchami,Hindu,RANG_PANCHAMI
+2030,"April 1, 2030, Monday",Bank's Holiday,Govt,NORMAL
+2030,"April 3, 2030, Wednesday",Gudi Padwa,Hindu,NORMAL
+2030,"April 3, 2030, Wednesday",Ugadi,Hindu,NORMAL
+2030,"April 4, 2030, Thursday",Jhulelal Jayanti,Hindu,NORMAL
+2030,"April 12, 2030, Friday",Rama Navami,Hindu,NORMAL
+2030,"April 14, 2030, Sunday",Baisakhi,Sikh,NORMAL
+2030,"April 14, 2030, Sunday",Bakrid,Islamic,NORMAL
+2030,"April 14, 2030, Sunday",Eid al-Adha,Islamic,NORMAL
+2030,"April 14, 2030, Sunday",Ambedkar Jayanti,Govt,NORMAL
+2030,"April 14, 2030, Sunday",Solar New Year,Hindu,NORMAL
+2030,"April 16, 2030, Tuesday",Mahavir Swami Jayanti,Hindu,NORMAL
+2030,"April 19, 2030, Friday",Good Friday,Christian,NORMAL
+2030,"April 21, 2030, Sunday",Easter,Christian,NORMAL
+2030,"April 22, 2030, Monday",Earth Day,Modern,NORMAL
+2030,"April 28, 2030, Sunday",Vallabhacharya Jayanti,Hindu,NORMAL
+2030,"May 1, 2030, Wednesday",International Workers' Day,Modern,NORMAL
+2030,"May 4, 2030, Saturday",Al-Hijra,Islamic,NORMAL
+2030,"May 4, 2030, Saturday",Islamic New Year,Islamic,NORMAL
+2030,"May 5, 2030, Sunday",World Laughter Day,Modern,NORMAL
+2030,"May 7, 2030, Tuesday",Rabindranath Tagore Jayanti,Govt,NORMAL
+2030,"May 8, 2030, Wednesday",Surdas Jayanti,Hindu,NORMAL
+2030,"May 8, 2030, Wednesday",Shankaracharya Jayanti,Hindu,NORMAL
+2030,"May 12, 2030, Sunday",Mother's Day,Modern,NORMAL
+2030,"May 13, 2030, Monday",Muharram,Islamic,NORMAL
+2030,"May 13, 2030, Monday",Day of Ashura,Islamic,NORMAL
+2030,"May 17, 2030, Friday",Buddha Purnima,Hindu,NORMAL
+2030,"May 31, 2030, Friday",World No Tobacco Day,Modern,NORMAL
+2030,"June 4, 2030, Tuesday",Maharana Pratap Jayanti,Hindu,NORMAL
+2030,"June 5, 2030, Wednesday",World Environment Day,Modern,NORMAL
+2030,"June 15, 2030, Saturday",Kabirdas Jayanti,Hindu,NORMAL
+2030,"June 16, 2030, Sunday",Father's Day,Modern,NORMAL
+2030,"June 21, 2030, Friday",Longest Day of Year,Hindu,NORMAL
+2030,"June 21, 2030, Friday",International Yoga Day,Modern,NORMAL
+2030,"July 2, 2030, Tuesday",Jagannath Rathyatra,Hindu,NORMAL
+2030,"July 13, 2030, Saturday",Eid-e-Milad,Islamic,NORMAL
+2030,"July 13, 2030, Saturday",Milad un-Nabi,Islamic,NORMAL
+2030,"July 15, 2030, Monday",Guru Purnima,Hindu,NORMAL
+2030,"August 4, 2030, Sunday",Friendship Day,Modern,NORMAL
+2030,"August 6, 2030, Tuesday",Tulsidas Jayanti,Hindu,NORMAL
+2030,"August 13, 2030, Tuesday",Rakhi,Hindu,NORMAL
+2030,"August 13, 2030, Tuesday",Raksha Bandhan,Hindu,NORMAL
+2030,"August 15, 2030, Thursday",Independence Day,Govt,NORMAL
+2030,"August 21, 2030, Wednesday",Krishna Janmashtami,Hindu,NORMAL
+2030,"September 1, 2030, Sunday",Ganesh Chaturthi,Hindu,NORMAL
+2030,"September 5, 2030, Thursday",Teachers' Day,Modern,NORMAL
+2030,"September 9, 2030, Monday",Onam,Hindu,NORMAL
+2030,"September 14, 2030, Saturday",Hindi Diwas,Modern,NORMAL
+2030,"September 15, 2030, Sunday",Engineer's Day,Modern,NORMAL
+2030,"September 15, 2030, Sunday",Visvesvaraya Jayanti,Govt,NORMAL
+2030,"September 23, 2030, Monday",Autumnal Equinox,Hindu,NORMAL
+2030,"September 28, 2030, Saturday",Maharaja Agrasen Jayanti,Hindu,NORMAL
+2030,"October 2, 2030, Wednesday",Gandhi Jayanti,Govt,NORMAL
+2030,"October 4, 2030, Friday",Durga Ashtami,Hindu,NORMAL
+2030,"October 5, 2030, Saturday",Maha Navami,Hindu,NORMAL
+2030,"October 6, 2030, Sunday",Madhvacharya Jayanti,Hindu,NORMAL
+2030,"October 6, 2030, Sunday",Dussehra,Hindu,NORMAL
+2030,"October 11, 2030, Friday",Valmiki Jayanti,Hindu,NORMAL
+2030,"October 11, 2030, Friday",Meerabai Jayanti,Hindu,NORMAL
+2030,"October 15, 2030, Tuesday",Karwa Chauth,Hindu,NORMAL
+2030,"October 26, 2030, Saturday",Diwali,Hindu,NORMAL
+2030,"October 26, 2030, Saturday",Narak Chaturdashi,Hindu,NORMAL
+2030,"October 26, 2030, Saturday",Lakshmi Puja,Hindu,NORMAL
+2030,"October 27, 2030, Sunday",Govardhan Puja,Hindu,NORMAL
+2030,"October 28, 2030, Monday",Bhaiya Dooj,Hindu,NORMAL
+2030,"November 1, 2030, Friday",Chhath Puja,Hindu,NORMAL
+2030,"November 9, 2030, Saturday",Hazarat Ali's Birthday,Islamic,NORMAL
+2030,"November 10, 2030, Sunday",Guru Nanak Jayanti,Hindu,NORMAL
+2030,"November 14, 2030, Thursday",Children's Day,Modern,NORMAL
+2030,"November 14, 2030, Thursday",Nehru Jayanti,Govt,NORMAL
+2030,"December 1, 2030, Sunday",World AIDS Day,Modern,NORMAL
+2030,"December 22, 2030, Sunday",Shortest Day of Year,Hindu,NORMAL
+2030,"December 25, 2030, Wednesday",Merry Christmas,Christian,NORMAL
+2030,"December 30, 2030, Monday",Guru Gobind Singh Jayanti,Hindu,NORMAL

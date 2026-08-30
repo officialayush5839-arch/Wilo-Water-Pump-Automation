@@ -29,6 +29,7 @@ sys.path.insert(0, _HERE)
 
 import tank_config as CFG
 from pump_logic import HybridPumpLogic, PumpDecision
+from festival_policy import get_festival_policy_engine
 from data_logger import DataLogger
 from runtime_channel import atomic_write_json, read_json, remove_file
 
@@ -112,6 +113,7 @@ class PumpController:
         self.sensor = None
         self.csv    = None
         self.logic  = None
+        self.festival_policy = None
 
         # ── Latest data ──
         self.last_packet = None
@@ -177,7 +179,14 @@ class PumpController:
         self.csv = DataLogger(CFG.CSV_LOG_PATH, CFG.LOG_INTERVAL_S)
         self.csv.initialize()
 
-        # ── 5. Hybrid pump logic ──
+        # ── 5. Festival policy & Hybrid pump logic ──
+        try:
+            self.festival_policy = get_festival_policy_engine()
+            logger.info("Festival policy engine initialised ✓")
+        except Exception as e:
+            logger.warning(f"Festival policy init failed: {e}")
+            self.festival_policy = None
+
         self.logic = HybridPumpLogic(
             critical_low=CFG.UPPER_CRITICAL_LOW, low=CFG.UPPER_LOW,
             high=CFG.UPPER_HIGH, critical_high=CFG.UPPER_CRITICAL_HIGH,
@@ -188,7 +197,8 @@ class PumpController:
             voltage_guard_enabled=CFG.POWER_VOLTAGE_PROTECTION,
             min_voltage_ac=CFG.MIN_MAINS_VOLTAGE_AC,
             override_timeout_min=CFG.OVERRIDE_TIMEOUT_MIN,
-            ml_enabled=CFG.ML_ENABLED, ml_window_min=CFG.ML_ACTIVATION_WINDOW_MIN
+            ml_enabled=CFG.ML_ENABLED, ml_window_min=CFG.ML_ACTIVATION_WINDOW_MIN,
+            festival_policy=self.festival_policy
         )
 
         # ── 6. Try loading ML prediction ──
@@ -255,11 +265,35 @@ class PumpController:
             self.logic.set_override(None)
             self.logic.set_manual_mode(False)
             logger.info("Control command accepted: override CLEAR — also disabled manual mode")
+        elif action == 'festival_mode':
+            enabled = bool(command.get('metadata', {}).get('enabled', False))
+            if self.festival_policy:
+                self.festival_policy.set_mode(enabled)
+            logger.info(f"Control command accepted: festival_mode {'ON' if enabled else 'OFF'}")
+        elif action == 'festival_select':
+            meta = command.get('metadata', {})
+            fest_name = meta.get('festival_name')
+            fest_date = meta.get('festival_date')
+            if self.festival_policy:
+                self.festival_policy.select_festival(fest_name, fest_date)
+            logger.info(f"Control command accepted: festival_select {fest_name} {fest_date}")
+        elif action == 'festival_reset':
+            if self.festival_policy:
+                self.festival_policy.reset()
+            logger.info("Control command accepted: festival_reset")
+        elif action == 'festival_simulate':
+            meta = command.get('metadata', {})
+            s_date = meta.get('date')
+            s_time = meta.get('time')
+            if self.festival_policy:
+                self.festival_policy.set_simulation(s_date, s_time)
+            logger.info(f"Control command accepted: festival_simulate {s_date} {s_time}")
         else:
             logger.warning("Unknown control command: %s", action)
 
     def _write_runtime_status(self, decision, current_a, voltage_v):
         packet = self.last_packet or {}
+        festival_status = self.festival_policy.get_status() if self.festival_policy else None
         payload = {
             'connected': True,
             'controller_mode': 'dry-run' if self.dry_run else 'live',
@@ -270,7 +304,7 @@ class PumpController:
                 'state': decision.state.value if decision else None,
                 'ts': decision.ts.isoformat() if decision else None,
             },
-            'host': os.uname().nodename,
+            'host': os.uname().nodename if hasattr(os, 'uname') else 'wilo-host',
             'last_lora_ts': self.logic.last_lora_ts.isoformat() if self.logic and self.logic.last_lora_ts else None,
             'lora_age_s': (
                 round((datetime.now() - self.logic.last_lora_ts).total_seconds(), 1)
@@ -282,6 +316,7 @@ class PumpController:
             'ml_prediction': self.logic.ml_prediction if self.logic else None,
             'override': self.logic.override if self.logic else None,
             'system_mode': 'manual' if self.logic and self.logic.manual_mode else 'auto',
+            'festival': festival_status,
             'pressure_kpa': packet.get('pressure_kpa'),
             'pump_relay_on': self.relay.pump_on if self.relay else False,
             'sensor_status': packet.get('status'),

@@ -97,7 +97,100 @@ logs/lora/esp32_pressure_packets.csv
 
 - **Fast-Forward Simulation**: 30-day simulation with 60x speed
 - **Basic Simulation**: Real-time simulation for testing
-- **Pattern Validation**: Historical pattern validation through simulation
+### 🪔 Festival-Aware Pump Control (Policy Engine)
+
+The system integrates a deterministic, context-aware **Festival Policy Engine** (`src/controller/festival_policy.py`) designed to respect cultural water usage patterns without compromising safety.
+
+```text
+                    ┌───────────────────────┐
+                    │   Sensor / LoRa Data  │
+                    └───────────┬───────────┘
+                                │
+                                ↓
+                    ┌───────────────────────┐
+                    │   Pump Logic Engine   │
+                    └───────────┬───────────┘
+                                │
+       ┌────────────────────────┼────────────────────────┐
+       │                        │                        │
+       ↓                        ↓                        ↓
+  Manual Mode             Safety System           Festival Policy
+       │                        │                        │
+  (P0 Freeze /                  │                  ┌─────┴─────┐
+   P2 Override)                 │                  │           │
+       │                        │            Rang Panchami   Other
+       │                        │                  │       Festivals
+       │                        │              < 7:00 PM       │
+       │                        │                  │        NORMAL
+       │                        │                BLOCK         │
+       │                        │                  │           │
+       └────────────────────────┼──────────────────┘           │
+                                ↓                              │
+                          ML Scheduler ◄───────────────────────┘
+                                ↓
+                         Normal Threshold
+                                ↓
+                          Final Decision
+                                ↓
+                              Relay
+```
+
+#### 1. Normal Operation
+On normal days or when Festival Mode is OFF, the pump operates strictly under automatic threshold control (`UPPER_LOW = 25%`, `UPPER_HIGH = 85%`) and ML scheduling windows.
+
+#### 2. Festival Mode
+When Festival Mode is toggled ON, the controller evaluates the active festival rule for the day in Indian Standard Time (`Asia/Kolkata`, UTC+5:30).
+
+#### 3. Rang Panchami Special Schedule
+Rang Panchami is celebrated with major community water festivities. Before 07:00 PM (19:00 IST):
+- **AUTOMATIC PUMP START IS BLOCKED**: The pump will NOT start automatically, even if the upper tank is empty (`0%` or critical low `<= 10%`), even if ML models schedule an activation, and even if normal hysteresis thresholds are crossed.
+- **Audit Reason**: `"Rang Panchami automatic-start restriction active until 07:00 PM (Festival Policy)"`.
+
+#### 4. 07:00 PM Release Rule
+At exactly `19:00` (7:00 PM IST), the Rang Panchami restriction expires automatically. The policy returns control to the existing automatic threshold and ML logic, ensuring tanks are replenished for evening household demand.
+
+#### 5. Other Festivals
+All other festivals (Diwali, Holi, Ganesh Chaturthi, Eid, Christmas, etc.) operate under `POLICY_NORMAL`. No pump inhibition is imposed.
+
+#### 6. Safety System Priority
+Festival policy **never** inhibits or overrides safety shutdowns. If the pump is running and an overfill hazard (`UPPER_CRITICAL_HIGH = 95%`), dry-run (`current < 1.5A`), max continuous run timeout (`> 180 min`), sensor fault, undervoltage, or LoRa timeout occurs, the safety system **instantly shuts the pump OFF**.
+
+#### 7. Manual Mode Priority
+Manual controls (on-board buttons, operator force ON/OFF, and dashboard overrides) retain full authority (P0/P2 priority) and are never silently disabled by festival rules.
+
+#### 8. Interactive Calendar & UI
+Located directly below the **Admin** button at the top-right of the dashboard:
+- **Holiday / Festival Policy** button opens a responsive modal with a month-navigable calendar highlighting all festival dates.
+- Dedicated **Festival Policy Card** in the primary dashboard grid dynamically displays festival status, active rule, auto-start inhibition state, and release time.
+
+#### 9. Backend REST APIs
+- `GET /api/festivals`: List all holidays and festivals from `Holidays_2020_2030.csv`.
+- `GET /api/festivals/today`: Today's festival and active policy in IST.
+- `GET /api/festivals/upcoming`: Upcoming festivals within N days.
+- `GET /api/festival/status`: Current festival policy state and restriction status.
+- `POST /api/festival/mode`: Body `{"enabled": true/false}` to toggle Festival Mode.
+- `POST /api/festival/select`: Body `{"festival_name": "...", "festival_date": "YYYY-MM-DD"}`.
+- `POST /api/festival/reset`: Resets custom selections and developer simulations.
+- `POST /api/festival/simulate`: Body `{"date": "YYYY-MM-DD", "time": "HH:MM"}` for demonstration.
+
+#### 10. Testing & Demonstration Procedure
+Run automated test suite:
+```bash
+python -m pytest tests/unit/test_festival_policy.py -v
+```
+To demonstrate Rang Panchami mode live without waiting for the actual calendar date:
+1. Open the dashboard in browser (`http://localhost:8080` or `http://localhost:8082`).
+2. Click **Holiday / Festival Policy** below the Admin button.
+3. Turn **Festival Mode ON**.
+4. In the Developer Test & Simulation box, click **Simulate RP (2:45 PM - Blocked)**:
+   - Notice the prominent amber banner appears: `RANG PANCHAMI — AUTOMATIC START RESTRICTION ACTIVE`.
+   - In the Festival Policy card, Automatic Start shows `BLOCKED`.
+   - Empty tank or low level will not trigger pump start.
+5. Click **Simulate RP (7:01 PM - Released)**:
+   - Notice restriction is released (`RESTRICTION RELEASED`).
+   - Automatic Start changes to `ENABLED`.
+   - Pump is permitted to start normally.
+6. Click **Reset All** to return to real-time clock.
 
 ## 📋 Requirements
 
